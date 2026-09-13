@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="/css/tokens.css?v=v7">
   <link rel="stylesheet" href="/style.css?v=v7">
   <link rel="stylesheet" href="/css/community.css?v=v7">
+  <script src="/js/i18n.js?v=v7"></script>
+  <script src="/js/marked.min.js?v=v7"></script>
+  <script src="/js/guides.js?v=v7"></script>
 </head>
 <body class="docs-body community-body">
   <header class="docs-topbar">
@@ -23,9 +26,9 @@
 
   <div class="guide-container doc-page has-toc-sidebar" id="guide-viewer">
     <header class="doc-header">
-      <a href="/" class="back-nav">
+      <a href="/" class="back-nav" data-i18n="backHub">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Volver al Hub de Guías
+        <span data-i18n="backHub">Volver al Hub de Guías</span>
       </a>
 
       <h1 class="page-title" id="viewer-title">Cargando guía...</h1>
@@ -39,7 +42,7 @@
           <time class="poster-date meta-chip" id="viewer-date">2026</time>
           <button type="button" class="copy-link poster-copy meta-chip" id="copy-link">
             <svg class="tool-ic" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            <span>Copiar enlace</span>
+            <span data-i18n="copy">Copiar enlace</span>
           </button>
         </div>
       </div>
@@ -99,7 +102,9 @@
         return null;
       }
 
-      function applyGuide(guide) {
+      var currentGuide = null;
+
+      function applyGuide(guide, preferredLang) {
         if (!guide) {
           document.title = 'Pieza no encontrada · ATM Docs';
           document.body.classList.add('is-not-found');
@@ -122,31 +127,44 @@
           return;
         }
 
-        document.title = guide.title + ' · ATM Docs';
+        currentGuide = guide;
+        window.__currentGuide = guide;
+        var lang = preferredLang || (typeof window.atmLang === 'function' ? window.atmLang() : 'es');
+
+        // Check for translations
+        var itemData = guide;
+        if (guide.translations && guide.translations[lang]) {
+          itemData = Object.assign({}, guide, guide.translations[lang]);
+        } else if (guide.translations && guide.translations['es']) {
+          itemData = Object.assign({}, guide, guide.translations['es']);
+        }
+
+        var postTitle = itemData.title || guide.title || '';
+        document.title = postTitle + ' · ATM Docs';
         var titleEl = document.getElementById('viewer-title');
         if (typeof window.formatTitleTickers === 'function') {
-          titleEl.innerHTML = window.formatTitleTickers(guide.title);
+          titleEl.innerHTML = window.formatTitleTickers(postTitle);
         } else {
-          titleEl.textContent = guide.title;
+          titleEl.textContent = postTitle;
         }
 
         var subEl = document.getElementById('viewer-subtitle');
-        if (subEl) subEl.textContent = guide.summary || '';
+        if (subEl) subEl.textContent = itemData.summary || guide.summary || '';
 
         var authorEl = document.getElementById('viewer-author');
-        if (authorEl) authorEl.textContent = guide.authorName || 'Alberto Trujillo';
+        if (authorEl) authorEl.textContent = itemData.authorName || guide.authorName || 'Alberto Trujillo';
 
         var handleEl = document.getElementById('viewer-handle');
         if (handleEl) {
-          var h = guide.handle ? '@' + String(guide.handle).replace(/^@/, '') : '@atrumin16';
+          var h = (itemData.handle || guide.handle) ? '@' + String(itemData.handle || guide.handle).replace(/^@/, '') : '@atrumin16';
           handleEl.textContent = h;
           handleEl.href = '/u/' + h;
         }
 
         var dateEl = document.getElementById('viewer-date');
-        if (dateEl) dateEl.textContent = guide.date || '2026';
+        if (dateEl) dateEl.textContent = itemData.date || guide.date || '2026';
 
-        var activeSlug = guide.slug || currentSlug;
+        var activeSlug = itemData.slug || guide.slug || currentSlug;
         var copyBtn = document.getElementById('copy-link');
         if (copyBtn) copyBtn.setAttribute('data-slug', activeSlug);
 
@@ -156,14 +174,47 @@
         var socialBar = document.getElementById('guide-social-bar');
         if (socialBar) socialBar.setAttribute('data-slug', activeSlug);
 
-        var rawContent = guide.content || guide.body || guide.markdown || guide.markdown_text || '';
+        var rawContent = itemData.content || itemData.body || itemData.markdown || itemData.markdown_text || guide.content || guide.body || '';
+
+        // Strip duplicate heading if identical to title
+        if (typeof window.stripDuplicateHeading === 'function') {
+          rawContent = window.stripDuplicateHeading(rawContent, postTitle);
+        } else {
+          var normT = postTitle.toLowerCase().replace(/[$#*_\(\)\[\]:!¡?¿`'"]/g, '').replace(/\s+/g, ' ').trim();
+          var m = rawContent.match(/^(\s*#{1,3}\s+)([^\n\r]+)([\r\n]+)/);
+          if (m) {
+            var hT = m[2].trim().toLowerCase().replace(/[$#*_\(\)\[\]:!¡?¿`'"]/g, '').replace(/\s+/g, ' ').trim();
+            if (hT === normT || normT.indexOf(hT) !== -1 || hT.indexOf(normT) !== -1) {
+              rawContent = rawContent.slice(m[0].length).trim();
+            }
+          }
+        }
+
         var mdEl = document.getElementById('guide-markdown');
         if (mdEl) mdEl.textContent = rawContent;
 
         var bodyEl = document.getElementById('guide-body');
-        if (bodyEl && rawContent && (!bodyEl.innerHTML.trim() || !window.__atmGuidesLoaded)) {
+        if (bodyEl && rawContent) {
           if (window.marked && typeof window.marked.parse === 'function') {
             bodyEl.innerHTML = window.marked.parse(rawContent);
+
+            // Remove duplicate first H1/H2 if identical to title
+            var firstH = bodyEl.querySelector('h1:first-child, h2:first-child');
+            if (firstH && postTitle) {
+              var nF = firstH.textContent.toLowerCase().replace(/[$#*_\(\)\[\]:!¡?¿`'"]/g, '').replace(/\s+/g, ' ').trim();
+              var nT = postTitle.toLowerCase().replace(/[$#*_\(\)\[\]:!¡?¿`'"]/g, '').replace(/\s+/g, ' ').trim();
+              if (nF === nT || nT.indexOf(nF) !== -1 || nF.indexOf(nT) !== -1) {
+                firstH.remove();
+              }
+            }
+
+            if (typeof window.linkifyTickers === 'function') {
+              window.linkifyTickers(bodyEl);
+            }
+
+            if (typeof window.initBrkCalculator === 'function') {
+              window.initBrkCalculator(bodyEl);
+            }
           }
         }
 
@@ -175,8 +226,14 @@
           window.atmHydrateSocial(activeSlug);
         }
 
-        document.dispatchEvent(new CustomEvent('atm:content', { detail: { slug: activeSlug } }));
+        if (typeof window.atmApplyUi === 'function') {
+          window.atmApplyUi(lang);
+        }
+
+        document.dispatchEvent(new CustomEvent('atm:content', { detail: { slug: activeSlug, lang: lang } }));
       }
+
+      window.atmApplyGuide = applyGuide;
 
       var currentSlug = getCurrentGuideId();
 
@@ -221,15 +278,20 @@
         .catch(function () {
           applyGuide(null);
         });
+
+      // 3. Listen to language changes
+      document.addEventListener('atm:lang', function (e) {
+        var newLang = e && e.detail && e.detail.lang;
+        if (currentGuide) {
+          applyGuide(currentGuide, newLang);
+        }
+      });
     })();
   </script>
 
-  <script src="/js/i18n.js?v=v7"></script>
   <script src="/js/chrome.js?v=v7"></script>
   <script src="/js/social.js?v=v7"></script>
   <script src="/js/forum.js?v=v7"></script>
   <script src="/js/translate.js?v=v7"></script>
-  <script src="/js/marked.min.js?v=v7"></script>
-  <script src="/js/guides.js?v=v7"></script>
 </body>
 </html>

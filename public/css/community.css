@@ -1982,7 +1982,14 @@ article.doc blockquote {
   background: rgba(248, 113, 113, 0.1);
 }
 
-.vote-ic { display: block; flex-shrink: 0; }
+.vote-ic,
+.tool-ic {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
 
 /* Tables — scoped so enterprise-email / glossary tables keep their own rules */
 .table-wrap,

@@ -49,7 +49,7 @@ window.ATM_UI = {
     previewFail: 'Este tipo no se puede previsualizar. Descárgalo si lo necesitas.',
     logout: 'Salir',
     newGuide: 'Publicar', editGuide: 'Editar publicación', edit: 'Editar', delete: 'Borrar',
-    writeHeadingNew: 'Nueva publicación', backIndex: '← Índice',
+    writeHeadingNew: 'Nueva publicación', backIndex: '← Índice', backHub: 'Volver al Hub de Guías',
     publishKicker: 'Studio Enterprise · ATM Guides', writeKind: 'Tipo',
     writeSummary: 'Resumen / Portada', dropHint: 'Suelta archivos aquí: texto al cuerpo, el resto se adjunta.',
     'kind-guide': 'Guía', 'kind-post': 'Post', 'kind-opinion': 'Opinión', 'kind-analysis': 'Análisis',
@@ -111,7 +111,7 @@ window.ATM_UI = {
     previewFail: 'This type cannot be previewed. Download it if you need it.',
     logout: 'Log out',
     newGuide: 'Publish', editGuide: 'Edit post', edit: 'Edit', delete: 'Delete',
-    writeHeadingNew: 'New post', backIndex: '← Index',
+    writeHeadingNew: 'New post', backIndex: '← Index', backHub: 'Back to Guides Hub',
     publishKicker: 'Studio Enterprise · ATM Guides', writeKind: 'Type',
     writeSummary: 'Summary / Cover', dropHint: 'Drop files here: text becomes the body, the rest is attached.',
     'kind-guide': 'Guide', 'kind-post': 'Post', 'kind-opinion': 'Opinion', 'kind-analysis': 'Analysis',
@@ -173,7 +173,7 @@ window.ATM_UI = {
     previewFail: 'Aquest tipus no es pot previsualitzar. Descarrega’l si cal.',
     logout: 'Sortir',
     newGuide: 'Publicar', editGuide: 'Editar publicació', edit: 'Editar', delete: 'Esborrar',
-    writeHeadingNew: 'Nova publicació', backIndex: '← Índex',
+    writeHeadingNew: 'Nova publicació', backIndex: '← Índex', backHub: 'Tornar al Hub de Guies',
     publishKicker: 'Studio Enterprise · ATM Guides', writeKind: 'Tipus',
     writeSummary: 'Resum / Portada', dropHint: 'Arrossega fitxers aquí: text al cos, la resta s’adjunta.',
     'kind-guide': 'Guia', 'kind-post': 'Post', 'kind-opinion': 'Opinió', 'kind-analysis': 'Anàlisi',
@@ -235,7 +235,7 @@ window.ATM_UI = {
     previewFail: 'Ce type de fichier ne peut être prévisualisé.',
     logout: 'Déconnexion',
     newGuide: 'Publier', editGuide: 'Modifier la publication', edit: 'Modifier', delete: 'Supprimer',
-    writeHeadingNew: 'Nouvelle publication', backIndex: '← Index',
+    writeHeadingNew: 'Nouvelle publication', backIndex: '← Index', backHub: 'Retour au Hub des Guides',
     publishKicker: 'Studio Enterprise · ATM Guides', writeKind: 'Type',
     writeSummary: 'Résumé / Couverture', dropHint: 'Glissez des fichiers ici : le texte devient le corps, le reste est joint.',
     'kind-guide': 'Guide', 'kind-post': 'Article', 'kind-opinion': 'Opinion', 'kind-analysis': 'Analyse',
@@ -969,12 +969,7 @@ window.ATM_UI = {
       var saved = known(localStorage.getItem('atm_lang'));
       if (saved) return saved;
     } catch (e) {}
-    var nav = (navigator.language || 'es').toLowerCase();
-    if (nav.indexOf('ca') === 0) return 'ca';
-    if (nav.indexOf('zh') === 0) return 'zh';
-    if (nav.indexOf('ja') === 0) return 'ja';
-    if (nav.indexOf('ar') === 0) return 'ar';
-    return known(nav.slice(0, 2)) || 'es';
+    return 'es';
   };
 
   window.atmT = function (key) {

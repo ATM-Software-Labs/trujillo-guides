@@ -428,7 +428,7 @@
     if (!text) return '';
     const tickerRegex = /\(?\$([A-Z0-9]+(?:\.[A-Z0-9]+)?)\)?/g;
     return text.replace(tickerRegex, (match, ticker) => {
-      return `<a href="https://www.tradingview.com/symbols/${ticker}/" target="_blank" rel="noopener noreferrer" class="ticker-badge" style="display: inline-flex; align-items: center; padding: 0.12rem 0.5rem; border-radius: 6px; font-size: 0.8em; font-family: ui-monospace, monospace; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); text-decoration: none; cursor: pointer; pointer-events: auto; position: relative; z-index: 10; margin-left: 0.35rem; vertical-align: middle;">$${ticker}</a>`;
+      return `<a href="https://es.tradingview.com/symbols/${encodeURIComponent(ticker)}/" target="_blank" rel="noopener noreferrer" class="ticker-badge" style="display: inline-flex; align-items: center; padding: 0.12rem 0.5rem; border-radius: 6px; font-size: 0.8em; font-family: ui-monospace, monospace; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); text-decoration: none; cursor: pointer; pointer-events: auto; position: relative; z-index: 10; margin-left: 0.35rem; vertical-align: middle;">$${ticker}</a>`;
     });
   }
   window.formatTitleTickers = formatTitleTickers;
@@ -481,8 +481,8 @@
         frag.appendChild(document.createTextNode(m[1]));
         var a = document.createElement('a');
         a.className = 'ticker ticker-badge';
-        a.href = 'https://www.tradingview.com/symbols/' + encodeURIComponent(m[2]) + '/';
-        a.rel = 'noopener';
+        a.href = 'https://es.tradingview.com/symbols/' + encodeURIComponent(m[2]) + '/';
+        a.rel = 'noopener noreferrer';
         a.target = '_blank';
         a.textContent = '$' + m[2];
         frag.appendChild(a);
@@ -493,6 +493,7 @@
       node.parentNode.replaceChild(frag, node);
     });
   }
+  window.linkifyTickers = linkifyTickers;
 
   function executeScripts(root) {
     if (!root) return;
@@ -573,6 +574,26 @@
     });
   }
 
+  function stripDuplicateHeading(md, title) {
+    if (!md) return '';
+    var text = String(md).trim();
+    if (!title) return text;
+    function norm(s) {
+      return String(s || '').toLowerCase().replace(/[$#*_\(\)\[\]:!¡?¿`'"]/g, '').replace(/\s+/g, ' ').trim();
+    }
+    var nTitle = norm(title);
+    var m = text.match(/^(\s*#{1,3}\s+)([^\n\r]+)([\r\n]+)/);
+    if (m) {
+      var hText = m[2].trim();
+      var nhText = norm(hText);
+      if (nhText === nTitle || nTitle.indexOf(nhText) !== -1 || nhText.indexOf(nTitle) !== -1) {
+        return text.slice(m[0].length).trim();
+      }
+    }
+    return text;
+  }
+  window.stripDuplicateHeading = stripDuplicateHeading;
+
   function renderMarkdown(root) {
     var src = readMarkdown();
     if (!src.trim() || !window.marked) {
@@ -580,22 +601,35 @@
       return;
     }
     configureMarked();
-    var html = marked.parse(preprocess(src));
+    var vTitleEl = document.getElementById('viewer-title');
+    var postTitle = vTitleEl ? (vTitleEl.textContent || '').trim() : '';
+    var cleanSrc = stripDuplicateHeading(src, postTitle);
+    var html = marked.parse(preprocess(cleanSrc));
     var target = document.getElementById('guide-body') || $('[data-markdown]') || root;
     if (target.getAttribute && target.getAttribute('data-markdown') !== null) {
       target.removeAttribute('data-markdown');
     }
     target.innerHTML = html;
+    var firstH = target.querySelector('h1:first-child, h2:first-child');
+    if (firstH && postTitle) {
+      function norm(s) { return String(s || '').toLowerCase().replace(/[$#*_\(\)\[\]:!¡?¿`'"]/g, '').replace(/\s+/g, ' ').trim(); }
+      var nF = norm(firstH.textContent);
+      var nT = norm(postTitle);
+      if (nF === nT || nT.indexOf(nF) !== -1 || nF.indexOf(nT) !== -1) {
+        firstH.remove();
+      }
+    }
     unwrapInteractiveWidgets(target);
     executeScripts(target);
     wrapTables(target);
+    linkifyTickers(target);
+    initBrkCalculator(target);
   }
 
   function initBrkCalculator(root) {
     var scope = root || document;
-    var container = scope.querySelector('#brk-calculator');
-    if (!container || container.getAttribute('data-calc-bound')) return;
-    container.setAttribute('data-calc-bound', '1');
+    var container = scope.querySelector ? scope.querySelector('#brk-calculator') : document.querySelector('#brk-calculator');
+    if (!container) return;
 
     var cashRange = container.querySelector('#brk-cash-range');
     var cashVal = container.querySelector('#brk-cash-val');
@@ -643,26 +677,27 @@
       if (intrinsicEl) intrinsicEl.textContent = '$' + intrinsicShare.toFixed(2);
       if (totalEnterprise) totalEnterprise.textContent = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' B';
 
-      // Margin of Safety: (Intrinsic - MarketPrice) / Intrinsic * 100
-      var marginPct = ((intrinsicShare - mktPrice) / intrinsicShare) * 100;
+      // Margin of Safety: ((Intrinsic - MarketPrice) / MarketPrice) * 100
+      var marginPct = ((intrinsicShare - mktPrice) / mktPrice) * 100;
       if (marginVal) {
         var sign = marginPct >= 0 ? '+' : '';
         marginVal.textContent = sign + marginPct.toFixed(1) + '%';
         marginVal.style.color = marginPct >= 0 ? '#34d399' : '#f87171';
       }
+      var lang = (typeof window.atmLang === 'function' ? window.atmLang() : 'es');
       if (marginBadge) {
         if (marginPct > 15) {
-          marginBadge.textContent = 'Marge Protector Alt';
+          marginBadge.textContent = (lang === 'ca') ? 'Marge Protector Alt' : (lang === 'en') ? 'High Margin of Safety' : (lang === 'fr') ? 'Marge Protectrice Élevée' : 'Margen Protector Alto';
           marginBadge.style.color = '#34d399';
           marginBadge.style.background = 'rgba(52, 211, 153, 0.12)';
           marginBadge.style.borderColor = 'rgba(52, 211, 153, 0.3)';
         } else if (marginPct >= 0) {
-          marginBadge.textContent = 'Infravalorada';
+          marginBadge.textContent = (lang === 'ca') ? 'Infravalorada' : (lang === 'en') ? 'Undervalued' : (lang === 'fr') ? 'Sous-évaluée' : 'Infravalorada';
           marginBadge.style.color = '#38bdf8';
           marginBadge.style.background = 'rgba(56, 189, 248, 0.12)';
           marginBadge.style.borderColor = 'rgba(56, 189, 248, 0.3)';
         } else {
-          marginBadge.textContent = 'Sobrevalorada';
+          marginBadge.textContent = (lang === 'ca') ? 'Sobrevalorada' : (lang === 'en') ? 'Overvalued' : (lang === 'fr') ? 'Surévaluée' : 'Sobrevalorada';
           marginBadge.style.color = '#f87171';
           marginBadge.style.background = 'rgba(248, 113, 113, 0.12)';
           marginBadge.style.borderColor = 'rgba(248, 113, 113, 0.3)';
@@ -688,11 +723,14 @@
       if (psOps) psOps.textContent = '$' + (opsValue / SHARES_B).toFixed(2);
     }
 
-    [cashRange, portRange, ebitRange, multRange, priceInput].forEach(function (input) {
-      if (!input) return;
-      input.addEventListener('input', recalculate);
-      input.addEventListener('change', recalculate);
-    });
+    if (!container.getAttribute('data-calc-bound')) {
+      container.setAttribute('data-calc-bound', '1');
+      [cashRange, portRange, ebitRange, multRange, priceInput].forEach(function (input) {
+        if (!input) return;
+        input.addEventListener('input', recalculate);
+        input.addEventListener('change', recalculate);
+      });
+    }
 
     recalculate();
   }
@@ -1242,7 +1280,14 @@
     initMutationObserver();
     initEditOption();
     autoEnhanceArticle();
-    document.addEventListener('atm:content', autoEnhanceArticle);
+    document.addEventListener('atm:content', function () {
+      enhance(root);
+      autoEnhanceArticle();
+    });
+    document.addEventListener('atm:lang', function () {
+      enhance(root);
+      autoEnhanceArticle();
+    });
   }
 
   window.atmRerenderGuide = boot;

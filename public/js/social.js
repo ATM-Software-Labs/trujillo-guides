@@ -118,6 +118,7 @@
 
   var ICON_UP = '<svg class="vote-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v8a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h2z"/><path d="M7 11V8a3 3 0 0 1 3-3h1v6h6.2a1.8 1.8 0 0 1 1.76 2.17l-1.05 5.1A1.8 1.8 0 0 1 16.15 20H9a2 2 0 0 1-2-2v-7z"/></svg>';
   var ICON_DOWN = '<svg class="vote-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 13V5a1 1 0 0 1 1-1h1a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2z"/><path d="M17 13v3a3 3 0 0 1-3 3h-1v-6H6.8a1.8 1.8 0 0 1-1.76-2.17l1.05-5.1A1.8 1.8 0 0 1 7.85 4H15a2 2 0 0 1 2 2v7z"/></svg>';
+  var ICON_COMMENT = '<svg class="tool-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
   var ICON_SHARE = '<svg class="tool-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
   var ICON_SAVE = '<svg class="tool-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
   var ICON_EDIT = '<svg class="tool-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
@@ -127,6 +128,7 @@
   function barHtml() {
     return '<button type="button" class="vote-btn" data-vote="up" data-i18n-title="like" title="' + t('like') + '" aria-label="' + t('like') + '">' + ICON_UP + ' <span data-up-count>0</span></button>' +
       '<button type="button" class="vote-btn" data-vote="down" data-i18n-title="dislike" title="' + t('dislike') + '" aria-label="' + t('dislike') + '">' + ICON_DOWN + ' <span data-down-count>0</span></button>' +
+      '<button type="button" class="tool-btn" data-comments data-i18n-title="comments" title="' + t('comments') + '" aria-label="' + t('comments') + '">' + ICON_COMMENT + ' <span data-comments-count>0</span></button>' +
       '<button type="button" class="tool-btn" data-share data-i18n-title="share" title="' + t('share') + '" aria-label="' + t('share') + '">' + ICON_SHARE + '</button>' +
       '<button type="button" class="tool-btn" data-save data-i18n-title="save" title="' + t('save') + '" aria-label="' + t('save') + '">' + ICON_SAVE + '</button>' +
       '<button type="button" class="tool-btn" data-edit data-i18n-title="edit" title="' + t('edit') + '" aria-label="' + t('edit') + '" hidden>' + ICON_EDIT + '</button>' +
@@ -137,14 +139,42 @@
 
   function setBar(bar, data) {
     if (!bar || !data) return;
+    var slug = bar.getAttribute('data-slug') || '';
     var up = bar.querySelector('[data-up-count]');
     var down = bar.querySelector('[data-down-count]');
     if (up) up.textContent = String(data.up || data.likes || 0);
     if (down) down.textContent = String(data.down || 0);
+    var commEl = bar.querySelector('[data-comments-count]');
+    if (commEl && slug) {
+      try {
+        var commList = JSON.parse(localStorage.getItem('atm_comments_' + slug) || '[]');
+        commEl.textContent = String(commList.length || 0);
+      } catch (e) {
+        commEl.textContent = '0';
+      }
+    }
     var upBtn = bar.querySelector('[data-vote="up"]');
     var downBtn = bar.querySelector('[data-vote="down"]');
-    if (upBtn) upBtn.classList.toggle('is-on', !!data.liked);
-    if (downBtn) downBtn.classList.toggle('is-on', !!data.disliked);
+    if (upBtn) {
+      upBtn.classList.toggle('is-on', !!data.liked);
+      upBtn.title = t('like');
+      upBtn.setAttribute('aria-label', t('like'));
+    }
+    if (downBtn) {
+      downBtn.classList.toggle('is-on', !!data.disliked);
+      downBtn.title = t('dislike');
+      downBtn.setAttribute('aria-label', t('dislike'));
+    }
+    var commBtn = bar.querySelector('[data-comments]');
+    if (commBtn) {
+      commBtn.title = t('comments');
+      commBtn.setAttribute('aria-label', t('comments'));
+    }
+    var shareBtn = bar.querySelector('[data-share]');
+    if (shareBtn && !shareBtn.classList.contains('is-on')) {
+      shareBtn.title = t('share');
+      shareBtn.setAttribute('aria-label', t('share'));
+    }
     var pin = bar.querySelector('[data-pin]');
     if (pin) {
       pin.hidden = data.canPin === false;
@@ -155,7 +185,7 @@
     }
     var save = bar.querySelector('[data-save]');
     if (save) {
-      var on = isSaved(bar.getAttribute('data-slug'));
+      var on = isSaved(slug);
       save.innerHTML = ICON_SAVE;
       save.title = on ? t('saved') : t('save');
       save.setAttribute('aria-label', save.title);
@@ -387,6 +417,19 @@
       window.__taFollowing = following;
       try { localStorage.setItem('atm_following', JSON.stringify(following)); } catch (err) {}
       hydrate();
+      return;
+    }
+    var commentsBtn = e.target.closest('[data-comments]');
+    if (commentsBtn) {
+      e.preventDefault();
+      var forum = document.getElementById('guide-forum') || document.querySelector('.forum, #comments, .guide-forum');
+      if (forum) {
+        var y = forum.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop) - 60;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        var input = forum.querySelector('input, textarea');
+        if (input) setTimeout(function () { input.focus(); }, 350);
+      }
+      return;
     }
   });
 
@@ -394,6 +437,12 @@
   document.addEventListener('atm:content', function (e) {
     var slug = e && e.detail && e.detail.slug;
     hydrate(slug);
+  });
+  document.addEventListener('atm:lang', function () {
+    hydrate();
+  });
+  document.addEventListener('atm:comments', function () {
+    hydrate();
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { hydrate(); });

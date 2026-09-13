@@ -19,11 +19,29 @@
       summary: 'Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.',
       date: '11 sep 2026',
       updatedAt: 1789222141213,
-      static: true
+      static: true,
+      translations: {
+        es: {
+          title: 'Infraestructura de Correo Corporativo para Startups a Coste 0 €',
+          summary: 'Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.'
+        },
+        ca: {
+          title: 'Infraestructura de Correu Corporatiu per a Startups a Cost 0 €',
+          summary: 'Arquitectura de correu corporatiu i identitat per a startups sense Google Workspace: enrutament a l\'Edge, DKIM 2048-bit i avatars verificats.'
+        },
+        en: {
+          title: 'Zero-Cost Corporate Email Infrastructure for Startups',
+          summary: 'Corporate email and identity architecture for startups without Google Workspace: Edge routing, 2048-bit DKIM, and verified avatars.'
+        },
+        fr: {
+          title: 'Infrastructure de Messagerie d\'Entreprise à Coût 0 € pour Startups',
+          summary: 'Architecture de messagerie d\'entreprise et identité pour startups sans Google Workspace : routage en périphérie (Edge), DKIM 2048 bits et avatars vérifiés.'
+        }
+      }
     },
     {
       slug: 'informe-msft',
-      title: "Informe d'anàlisi tècnica, estratègica i financera ($MSFT)",
+      title: 'Informe de análisis técnico, estratégico y financiero ($MSFT)',
       href: '/g.html?id=informe-msft',
       handle: 'atrumin16',
       authorName: 'Alberto Trujillo Mingorance',
@@ -35,14 +53,32 @@
       up: 2,
       pinned: false,
       fixada: false,
-      summary: 'Anàlisi exhaustiva de Microsoft: Azure, Office 365, integració Copilot/OpenAI, valoració DCF i escenaris de creixement.',
+      summary: 'Análisis exhaustivo de Microsoft: Azure, Office 365, integración Copilot/OpenAI, valoración DCF y escenarios de crecimiento.',
       date: '10 sep 2026',
       updatedAt: 1789173489276,
-      static: false
+      static: false,
+      translations: {
+        es: {
+          title: 'Informe de análisis técnico, estratégico y financiero ($MSFT)',
+          summary: 'Análisis exhaustivo de Microsoft: Azure, Office 365, integración Copilot/OpenAI, valoración DCF y escenarios de crecimiento.'
+        },
+        ca: {
+          title: 'Informe d\'anàlisi tècnica, estratègica i financera ($MSFT)',
+          summary: 'Anàlisi exhaustiva de Microsoft: Azure, Office 365, integració Copilot/OpenAI, valoració DCF i escenaris de creixement.'
+        },
+        en: {
+          title: 'Technical, Strategic and Financial Analysis Report ($MSFT)',
+          summary: 'Comprehensive analysis of Microsoft: Azure, Office 365, Copilot/OpenAI integration, DCF valuation, and growth scenarios.'
+        },
+        fr: {
+          title: 'Rapport d\'analyse technique, stratégique et financière ($MSFT)',
+          summary: 'Analyse approfondie de Microsoft : Azure, Office 365, intégration Copilot/OpenAI, valorisation DCF et scénarios de croissance.'
+        }
+      }
     },
     {
       slug: 'desglose-cartera-berkshire-brk',
-      title: 'Desglossament de Cartera i Simulador de Berkshire Hathaway ($BRK.B)',
+      title: 'Desglose de Cartera y Simulador de Berkshire Hathaway ($BRK.B)',
       href: '/g.html?id=desglose-cartera-berkshire-brk',
       handle: 'atrumin16',
       authorName: 'Alberto Trujillo Mingorance',
@@ -57,11 +93,29 @@
       summary: 'Calculadora interactiva del balance: negocios privados, T-Bills y cartera cotizada según capital o acciones.',
       date: '11 sep 2026',
       updatedAt: 1789241840820,
-      static: false
+      static: false,
+      translations: {
+        es: {
+          title: 'Desglose de Cartera y Simulador de Berkshire Hathaway ($BRK.B)',
+          summary: 'Calculadora interactiva del balance: negocios privados, T-Bills y cartera cotizada según capital o acciones.'
+        },
+        ca: {
+          title: 'Desglossament de Cartera i Simulador de Berkshire Hathaway ($BRK.B)',
+          summary: 'Calculadora interactiva del balanç: negocis privats, T-Bills i cartera cotitzada segons capital o accions.'
+        },
+        en: {
+          title: 'Portfolio Breakdown and Berkshire Hathaway Simulator ($BRK.B)',
+          summary: 'Interactive balance sheet calculator: private operating businesses, Treasury Bills, and public equities portfolio.'
+        },
+        fr: {
+          title: 'Ventilation du portefeuille et simulateur de Berkshire Hathaway ($BRK.B)',
+          summary: 'Calculateur interactif de bilan : entreprises privées, bons du Trésor et portefeuille coté.'
+        }
+      }
     },
     {
       slug: 'it-glossary',
-      title: 'Glossari Interactiu de Sistemes i Informàtica',
+      title: 'Glosario Interactivo de Sistemas e Informática',
       href: '/g.html?id=it-glossary',
       handle: 'atrumin16',
       authorName: 'Alberto Trujillo Mingorance',
@@ -73,10 +127,28 @@
       up: 0,
       pinned: false,
       fixada: false,
-      summary: 'Terminologia clau de xarxes, Cloud, DevOps, protocols de seguretat i arquitectura de sistemes distribuïts.',
+      summary: 'Terminología clave de redes, Cloud, DevOps, protocolos de seguridad y arquitectura de sistemas distribuidos.',
       date: '09 sep 2026',
       updatedAt: 1788800000000,
-      static: true
+      static: true,
+      translations: {
+        es: {
+          title: 'Glosario Interactivo de Sistemas e Informática',
+          summary: 'Terminología clave de redes, Cloud, DevOps, protocolos de seguridad y arquitectura de sistemas distribuidos.'
+        },
+        ca: {
+          title: 'Glossari Interactiu de Sistemes i Informàtica',
+          summary: 'Terminologia clau de xarxes, Cloud, DevOps, protocols de seguretat i arquitectura de sistemes distribuïts.'
+        },
+        en: {
+          title: 'Interactive Systems and IT Glossary',
+          summary: 'Key terminology for networks, Cloud, DevOps, security protocols, and distributed systems architecture.'
+        },
+        fr: {
+          title: 'Glossaire interactif des systèmes et de l\'informatique',
+          "summary": 'Terminologie essentielle des réseaux, du Cloud, du DevOps, des protocoles de sécurité et de l\'architecture distribuée.'
+        }
+      }
     }
   ];
 
@@ -218,10 +290,12 @@
     var body = document.createElement('div');
     body.className = 'guide-card-body';
 
-    // Title with universal ticker parser
+    // Title with universal ticker parser and multilingual support
+    var lang = (typeof window.atmLang === 'function' ? window.atmLang() : 'es');
+    var itemTitle = (g.translations && g.translations[lang] && g.translations[lang].title) || g.title || g.slug;
     var h3 = document.createElement('h3');
     h3.className = 'guide-card-title';
-    h3.innerHTML = formatTitleTickers(g.title || g.slug);
+    h3.innerHTML = formatTitleTickers(itemTitle);
     body.appendChild(h3);
 
     // Standardized bottom metadata row:
