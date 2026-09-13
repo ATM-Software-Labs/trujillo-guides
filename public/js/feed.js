@@ -469,8 +469,10 @@
       var localList = JSON.parse(localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides') || '[]');
       if (Array.isArray(localList) && localList.length) {
         var merged = baseList.slice();
+        var CANONICAL = ['correo-corporativo-startups', 'informe-msft', 'desglose-cartera-berkshire-brk', 'it-glossary'];
         localList.forEach(function (lg) {
-          var targetSlug = String(lg.slug || lg.id || '').toLowerCase();
+          var targetSlug = String(lg.slug || lg.id || '').toLowerCase().trim();
+          if (CANONICAL.indexOf(targetSlug) !== -1) return;
           var existingIdx = merged.findIndex(function (g) { return String(g.slug || '').toLowerCase() === targetSlug; });
           if (existingIdx >= 0) {
             merged[existingIdx] = Object.assign({}, merged[existingIdx], lg);

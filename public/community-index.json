@@ -18,7 +18,6 @@
       "summary": "Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.",
       "date": "11 sep 2026",
       "updatedAt": 1789222141213,
-      "static": true,
       "translations": {
         "es": {
           "title": "Infraestructura de Correo Corporativo para Startups a Coste 0 €",
@@ -55,7 +54,6 @@
       "summary": "Análisis exhaustivo de Microsoft: Azure, Office 365, integración Copilot/OpenAI, valoración DCF y escenarios de crecimiento.",
       "date": "10 sep 2026",
       "updatedAt": 1789173489276,
-      "static": false,
       "translations": {
         "es": {
           "title": "Informe de análisis técnico, estratégico y financiero ($MSFT)",
@@ -92,7 +90,6 @@
       "summary": "Calculadora interactiva del balance: negocios privados, T-Bills y cartera cotizada según capital o acciones.",
       "date": "11 sep 2026",
       "updatedAt": 1789241840820,
-      "static": false,
       "translations": {
         "es": {
           "title": "Desglose de Cartera y Simulador de Berkshire Hathaway ($BRK.B)",
@@ -129,7 +126,6 @@
       "summary": "Terminología clave de redes, Cloud, DevOps, protocolos de seguridad y arquitectura de sistemas distribuidos.",
       "date": "09 sep 2026",
       "updatedAt": 1788800000000,
-      "static": true,
       "translations": {
         "es": {
           "title": "Glosario Interactivo de Sistemas e Informática",

@@ -127,44 +127,74 @@
           return;
         }
 
-        currentGuide = guide;
-        window.__currentGuide = guide;
-        var lang = preferredLang || (typeof window.atmLang === 'function' ? window.atmLang() : 'es');
+      var isApplying = false;
+      function applyGuide(guide, preferredLang) {
+        if (isApplying) return;
+        isApplying = true;
+        try {
+          _doApplyGuide(guide, preferredLang);
+        } finally {
+          isApplying = false;
+        }
+      }
 
-        // Check for translations
-        var itemData = guide;
-        if (guide.translations && guide.translations[lang]) {
-          itemData = Object.assign({}, guide, guide.translations[lang]);
-        } else if (guide.translations && guide.translations['es']) {
-          itemData = Object.assign({}, guide, guide.translations['es']);
+      function _doApplyGuide(guide, preferredLang) {
+        if (!guide) {
+          document.title = 'Pieza no encontrada · ATM Docs';
+          var titleEl404 = document.getElementById('viewer-title');
+          if (titleEl404) titleEl404.textContent = 'Pieza no encontrada';
+          var bodyEl = document.getElementById('guide-body');
+          if (bodyEl) {
+            bodyEl.innerHTML = '<div style="padding: 60px 20px; text-align: center; color: #94a3b8;">' +
+              '<h1 style="color: #f8fafc; font-size: 24px; margin-bottom: 12px;">Pieza no encontrada</h1>' +
+              '<p style="margin-bottom: 24px;">No se encontró ningún artículo con el identificador: <code style="color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px;">' + (currentSlug || 'desconocido') + '</code></p>' +
+              '<a href="/" style="color: #38bdf8; text-decoration: underline; font-weight: 500;">Volver al índice</a>' +
+              '</div>';
+          }
+          return;
         }
 
-        var postTitle = itemData.title || guide.title || '';
+        currentGuide = guide;
+        window.__currentGuide = guide;
+        var lang = preferredLang || (typeof window.atmLang === 'function' ? window.atmLang() : (localStorage.getItem('atm_lang') || 'es'));
+        if (!lang) lang = 'es';
+
+        // Check for translations
+        var trans = (guide.translations && guide.translations[lang]) || null;
+        var transEs = (guide.translations && guide.translations['es']) || null;
+        var transCa = (guide.translations && guide.translations['ca']) || null;
+
+        var postTitle = (trans && trans.title) || (lang === 'es' && transEs && transEs.title) || guide.title || '';
+        var postSummary = (trans && trans.summary) || (lang === 'es' && transEs && transEs.summary) || guide.summary || '';
+        var rawContent = (trans && trans.content) || (lang === 'es' && transEs && transEs.content) || (lang === 'ca' && transCa && transCa.content) || guide.content || guide.body || '';
+
         document.title = postTitle + ' · ATM Docs';
         var titleEl = document.getElementById('viewer-title');
-        if (typeof window.formatTitleTickers === 'function') {
-          titleEl.innerHTML = window.formatTitleTickers(postTitle);
-        } else {
-          titleEl.textContent = postTitle;
+        if (titleEl) {
+          if (typeof window.formatTitleTickers === 'function') {
+            titleEl.innerHTML = window.formatTitleTickers(postTitle);
+          } else {
+            titleEl.textContent = postTitle;
+          }
         }
 
         var subEl = document.getElementById('viewer-subtitle');
-        if (subEl) subEl.textContent = itemData.summary || guide.summary || '';
+        if (subEl) subEl.textContent = postSummary;
 
         var authorEl = document.getElementById('viewer-author');
-        if (authorEl) authorEl.textContent = itemData.authorName || guide.authorName || 'Alberto Trujillo';
+        if (authorEl) authorEl.textContent = guide.authorName || guide.author || 'Alberto Trujillo';
 
         var handleEl = document.getElementById('viewer-handle');
         if (handleEl) {
-          var h = (itemData.handle || guide.handle) ? '@' + String(itemData.handle || guide.handle).replace(/^@/, '') : '@atrumin16';
+          var h = (guide.handle || guide.username) ? '@' + String(guide.handle || guide.username).replace(/^@/, '') : '@atrumin16';
           handleEl.textContent = h;
           handleEl.href = '/u/' + h;
         }
 
         var dateEl = document.getElementById('viewer-date');
-        if (dateEl) dateEl.textContent = itemData.date || guide.date || '2026';
+        if (dateEl) dateEl.textContent = guide.date || '2026';
 
-        var activeSlug = itemData.slug || guide.slug || currentSlug;
+        var activeSlug = guide.slug || currentSlug;
         var copyBtn = document.getElementById('copy-link');
         if (copyBtn) copyBtn.setAttribute('data-slug', activeSlug);
 
@@ -173,8 +203,6 @@
 
         var socialBar = document.getElementById('guide-social-bar');
         if (socialBar) socialBar.setAttribute('data-slug', activeSlug);
-
-        var rawContent = itemData.content || itemData.body || itemData.markdown || itemData.markdown_text || guide.content || guide.body || '';
 
         // Strip duplicate heading if identical to title
         if (typeof window.stripDuplicateHeading === 'function') {
@@ -208,7 +236,9 @@
               }
             }
 
-            if (typeof window.linkifyTickers === 'function') {
+            if (typeof window.enhanceTickers === 'function') {
+              window.enhanceTickers(bodyEl);
+            } else if (typeof window.linkifyTickers === 'function') {
               window.linkifyTickers(bodyEl);
             }
 
@@ -242,25 +272,30 @@
         return;
       }
 
-      // 1. Check localStorage first for recently published local guides
+      var CANONICAL_SLUGS = ['correo-corporativo-startups', 'informe-msft', 'desglose-cartera-berkshire-brk', 'it-glossary'];
+
+      // Purge any stale copies of canonical guides from localStorage so they never contaminate the session
       try {
-        var localList = JSON.parse(localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides') || localStorage.getItem('atm_local_guides') || '[]');
-        if (Array.isArray(localList)) {
-          var foundLocal = localList.find(function (g) {
-            var s = String(g.slug || g.id || '').toLowerCase().trim();
-            return s === currentSlug || ALIASES[s] === currentSlug;
-          });
-          if (foundLocal) {
-            applyGuide(foundLocal);
-            return;
+        ['atm_guides_data', 'atm_custom_guides', 'atm_local_guides'].forEach(function (k) {
+          var raw = localStorage.getItem(k);
+          if (!raw) return;
+          var arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            var filtered = arr.filter(function (item) {
+              var s = String(item.slug || item.id || '').toLowerCase().trim();
+              return CANONICAL_SLUGS.indexOf(s) === -1 && CANONICAL_SLUGS.indexOf(ALIASES[s]) === -1;
+            });
+            if (filtered.length !== arr.length) {
+              localStorage.setItem(k, JSON.stringify(filtered));
+            }
           }
-        }
+        });
       } catch (e) {}
 
-      // 2. Fetch static catalog
-      fetch('/data/guides.json', { cache: 'default' })
+      // Always fetch fresh static catalog first with cache-busting
+      fetch('/data/guides.json?v=' + Date.now(), { cache: 'no-store' })
         .then(function (r) {
-          if (!r.ok) return fetch('/community-index.json').then(function (res) { return res.json(); });
+          if (!r.ok) return fetch('/community-index.json?v=' + Date.now(), { cache: 'no-store' }).then(function (res) { return res.json(); });
           return r.json();
         })
         .then(function (data) {
@@ -271,11 +306,39 @@
           });
           if (found) {
             applyGuide(found);
-          } else {
-            applyGuide(null);
+            return;
           }
+          // If not in static catalog, look in local user published guides
+          try {
+            var localList = JSON.parse(localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides') || localStorage.getItem('atm_local_guides') || '[]');
+            if (Array.isArray(localList)) {
+              var foundLocal = localList.find(function (g) {
+                var s = String(g.slug || g.id || '').toLowerCase().trim();
+                return s === currentSlug || ALIASES[s] === currentSlug;
+              });
+              if (foundLocal) {
+                applyGuide(foundLocal);
+                return;
+              }
+            }
+          } catch (e) {}
+          applyGuide(null);
         })
         .catch(function () {
+          // Offline fallback
+          try {
+            var localList = JSON.parse(localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides') || localStorage.getItem('atm_local_guides') || '[]');
+            if (Array.isArray(localList)) {
+              var foundLocal = localList.find(function (g) {
+                var s = String(g.slug || g.id || '').toLowerCase().trim();
+                return s === currentSlug || ALIASES[s] === currentSlug;
+              });
+              if (foundLocal) {
+                applyGuide(foundLocal);
+                return;
+              }
+            }
+          } catch (e) {}
           applyGuide(null);
         });
 

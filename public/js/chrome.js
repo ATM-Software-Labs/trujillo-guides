@@ -69,12 +69,16 @@
   }
 
   function initials(name) {
-    var n = firstName(name) || '?';
-    return n.slice(0, 1).toUpperCase();
+    if (!name) return 'AT';
+    var parts = String(name).trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0].slice(0, 2).toUpperCase();
   }
 
   function avatarHtml(src, name) {
-    if (src) return '<img class="account-photo" src="' + esc(src) + '" alt="" width="28" height="28">';
+    if (src) return '<img class="account-photo" src="' + esc(src) + '" alt="" width="24" height="24">';
     return '<span class="account-photo account-initials" aria-hidden="true">' + esc(initials(name)) + '</span>';
   }
 
@@ -86,7 +90,7 @@
       var label = firstName(displayName);
       var cleanHandle = (me.handle || me.username || '@atrumin16').replace(/^@/, '');
       return '<div class="account-menu-wrap" id="account-menu-wrap" data-notranslate>' +
-        '<button type="button" class="account-chip nav-profile-btn" id="account-btn" aria-haspopup="menu" aria-expanded="false" title="' + esc(displayName) + '">' +
+        '<button type="button" class="account-chip nav-profile-btn bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200" id="account-btn" aria-haspopup="menu" aria-expanded="false" title="' + esc(displayName) + '">' +
         avatarHtml(me.picture, displayName) +
         (label ? '<span class="account-first">' + esc(label) + '</span>' : '') +
         '</button>' +
@@ -100,7 +104,7 @@
     if (g && g !== 'Usuario') {
       var gFirst = firstName(g);
       return '<div class="account-menu-wrap" id="account-menu-wrap" data-notranslate>' +
-        '<button type="button" class="account-chip nav-profile-btn" id="account-btn" aria-haspopup="menu" aria-expanded="false" title="' + esc(g) + '">' +
+        '<button type="button" class="account-chip nav-profile-btn bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200" id="account-btn" aria-haspopup="menu" aria-expanded="false" title="' + esc(g) + '">' +
         avatarHtml('', g) +
         (gFirst ? '<span class="account-first">' + esc(gFirst) + '</span>' : '') +
         '</button>' +

@@ -426,9 +426,10 @@
   /* 5. Tickers, TradingView & Attachments */
   function formatTitleTickers(text) {
     if (!text) return '';
-    const tickerRegex = /\(?\$([A-Z0-9]+(?:\.[A-Z0-9]+)?)\)?/g;
-    return text.replace(tickerRegex, (match, ticker) => {
-      return `<a href="https://es.tradingview.com/symbols/${encodeURIComponent(ticker)}/" target="_blank" rel="noopener noreferrer" class="ticker-badge" style="display: inline-flex; align-items: center; padding: 0.12rem 0.5rem; border-radius: 6px; font-size: 0.8em; font-family: ui-monospace, monospace; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); text-decoration: none; cursor: pointer; pointer-events: auto; position: relative; z-index: 10; margin-left: 0.35rem; vertical-align: middle;">$${ticker}</a>`;
+    var tickerRegex = /\(?\$([A-Z0-9]{1,5}(?:\.[A-Z0-9]{1,2})?)\)?/g;
+    return text.replace(tickerRegex, function (match, ticker) {
+      if (/^\d{1,3}$/.test(ticker)) return match;
+      return '<a href="https://es.tradingview.com/symbols/' + encodeURIComponent(ticker) + '/" target="_blank" rel="noopener noreferrer" class="ticker-badge font-mono font-semibold text-cyan-400 hover:text-cyan-300 hover:underline px-1 py-0.5 rounded bg-cyan-950/40 border border-cyan-800/40">$' + ticker + '</a>';
     });
   }
   window.formatTitleTickers = formatTitleTickers;
@@ -443,7 +444,7 @@
     }
     var raw = el.textContent || '';
     if (raw.indexOf('$') === -1) return;
-    var re = /\(?\$([A-Z0-9]+(?:\.[A-Z0-9]+)?)\)?/;
+    var re = /\(?\$([A-Z0-9]{1,5}(?:\.[A-Z0-9]{1,2})?)\)?/;
     if (!re.test(raw)) return;
     el.setAttribute('data-ticker-parsed', '1');
     el.innerHTML = formatTitleTickers(raw);
@@ -457,43 +458,83 @@
     scope.querySelectorAll('.guide-card-title, .guide-card h2, .guide-card h3, .guide-card a.title').forEach(applyTickerToElement);
   }
 
-  function linkifyTickers(root) {
-    var scope = root || document;
+  function enhanceTickers(root) {
+    var scope = root || document.getElementById('guide-body') || document;
+    if (!scope) return;
     parseTitleAndCardTickers(scope);
+
     var walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
       acceptNode: function (node) {
         var p = node.parentElement;
-        if (!p || SKIP_TICKER[p.tagName] || p.classList.contains('ticker-badge') || (p.closest && (p.closest('.ticker-badge') || p.closest('#brk-calculator') || p.closest('.brk-calc-container')))) return NodeFilter.FILTER_REJECT;
-        if (!/\$(?:[A-Z0-9]{1,6}(?:\.[A-Z0-9]+)?|\d{4,5})/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.tagName.toUpperCase();
+        if (tag === 'A' || tag === 'SCRIPT' || tag === 'PRE' || tag === 'CODE' || tag === 'STYLE' || tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'BUTTON' || tag === 'SVG') {
+          return NodeFilter.FILTER_REJECT;
+        }
+        if (p.classList && p.classList.contains('ticker-badge')) return NodeFilter.FILTER_REJECT;
+        if (p.closest && (p.closest('a') || p.closest('.ticker-badge') || p.closest('pre') || p.closest('code') || p.closest('#brk-calculator') || p.closest('.brk-calc-container'))) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        if (!/\$[A-Z0-9]/i.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });
+
     var nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    var tickerRegex = /\$([A-Z0-9]{1,5}(?:\.[A-Z0-9]{1,2})?)/g;
+
     nodes.forEach(function (node) {
-      var frag = document.createDocumentFragment();
-      var re = /(^|[\s()])\\?\$([A-Z0-9]+(?:\.[A-Z0-9]+)?)\b/g;
       var text = node.nodeValue;
+      if (!tickerRegex.test(text)) return;
+      tickerRegex.lastIndex = 0;
+
+      var parent = node.parentNode;
+      if (!parent) return;
+
+      var frag = document.createDocumentFragment();
       var last = 0;
       var m;
-      while ((m = re.exec(text))) {
-        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
-        frag.appendChild(document.createTextNode(m[1]));
+
+      while ((m = tickerRegex.exec(text)) !== null) {
+        var sym = m[1];
+        if (/^\d{1,3}$/.test(sym)) {
+          continue;
+        }
+
+        if (m.index > last) {
+          frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        }
+
         var a = document.createElement('a');
-        a.className = 'ticker ticker-badge';
-        a.href = 'https://es.tradingview.com/symbols/' + encodeURIComponent(m[2]) + '/';
-        a.rel = 'noopener noreferrer';
+        a.href = 'https://es.tradingview.com/symbols/' + encodeURIComponent(sym) + '/';
         a.target = '_blank';
-        a.textContent = '$' + m[2];
+        a.rel = 'noopener noreferrer';
+        a.className = 'ticker-badge font-mono font-semibold text-cyan-400 hover:text-cyan-300 hover:underline px-1 py-0.5 rounded bg-cyan-950/40 border border-cyan-800/40';
+        a.textContent = '$' + sym;
         frag.appendChild(a);
+
         last = m.index + m[0].length;
       }
-      if (!last) return;
-      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-      node.parentNode.replaceChild(frag, node);
+
+      if (last > 0) {
+        if (last < text.length) {
+          frag.appendChild(document.createTextNode(text.slice(last)));
+        }
+        parent.replaceChild(frag, node);
+      }
     });
   }
-  window.linkifyTickers = linkifyTickers;
+  window.enhanceTickers = enhanceTickers;
+  window.linkifyTickers = enhanceTickers;
+
+  document.addEventListener('atm:content', function () {
+    var body = document.getElementById('guide-body');
+    if (body) {
+      enhanceTickers(body);
+    }
+  });
 
   function executeScripts(root) {
     if (!root) return;
