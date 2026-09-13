@@ -43,6 +43,7 @@
           </button>
         </div>
       </div>
+      <div id="guide-social-bar" class="social-bar"></div>
 
       <p class="page-subtitle" id="viewer-subtitle"></p>
     </header>
@@ -145,18 +146,36 @@
         var dateEl = document.getElementById('viewer-date');
         if (dateEl) dateEl.textContent = guide.date || '2026';
 
+        var activeSlug = guide.slug || currentSlug;
         var copyBtn = document.getElementById('copy-link');
-        if (copyBtn) copyBtn.setAttribute('data-slug', guide.slug || currentSlug);
+        if (copyBtn) copyBtn.setAttribute('data-slug', activeSlug);
 
         var metaBar = document.getElementById('guide-meta-bar');
-        if (metaBar) metaBar.setAttribute('data-slug', guide.slug || currentSlug);
+        if (metaBar) metaBar.setAttribute('data-slug', activeSlug);
 
+        var socialBar = document.getElementById('guide-social-bar');
+        if (socialBar) socialBar.setAttribute('data-slug', activeSlug);
+
+        var rawContent = guide.content || guide.body || guide.markdown || guide.markdown_text || '';
         var mdEl = document.getElementById('guide-markdown');
-        if (mdEl) mdEl.textContent = guide.content || '';
+        if (mdEl) mdEl.textContent = rawContent;
 
-        if (window.__atmGuidesLoaded && typeof window.atmRerenderGuide === 'function') {
+        var bodyEl = document.getElementById('guide-body');
+        if (bodyEl && rawContent && (!bodyEl.innerHTML.trim() || !window.__atmGuidesLoaded)) {
+          if (window.marked && typeof window.marked.parse === 'function') {
+            bodyEl.innerHTML = window.marked.parse(rawContent);
+          }
+        }
+
+        if (typeof window.atmRerenderGuide === 'function') {
           window.atmRerenderGuide();
         }
+
+        if (typeof window.atmHydrateSocial === 'function') {
+          window.atmHydrateSocial(activeSlug);
+        }
+
+        document.dispatchEvent(new CustomEvent('atm:content', { detail: { slug: activeSlug } }));
       }
 
       var currentSlug = getCurrentGuideId();

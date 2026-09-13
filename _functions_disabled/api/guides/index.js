@@ -26,7 +26,10 @@ async function fallbackFromAssets(context) {
   try {
     const assets = context.env && context.env.ASSETS;
     if (!assets) return [];
-    const res = await assets.fetch(new URL('/community-index.json', context.request.url));
+    let res = await assets.fetch(new URL('/data/guides.json', context.request.url));
+    if (!res || !res.ok) {
+      res = await assets.fetch(new URL('/community-index.json', context.request.url));
+    }
     if (!res || !res.ok) return [];
     const data = await res.json();
     return (data && (data.guides || data.items)) || [];

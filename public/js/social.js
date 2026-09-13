@@ -66,12 +66,45 @@
     return '';
   }
 
+  var SLUG_ALIASES = {
+    'enterprise-email': 'correo-corporativo-startups',
+    'infraestructura-de-correo-corporativo-para-start': 'correo-corporativo-startups',
+    'infraestructura-de-correo-corporativo-para-startups-a-coste-0': 'correo-corporativo-startups',
+    'correo-corporativo': 'correo-corporativo-startups',
+    'desglose-de-cartera-y-simulador-de-berkshire-hat': 'desglose-cartera-berkshire-brk',
+    'desglose-de-cartera-y-simulador-de-berkshire-hathaway': 'desglose-cartera-berkshire-brk',
+    'desglose-cartera-berkshire': 'desglose-cartera-berkshire-brk',
+    'berkshire': 'desglose-cartera-berkshire-brk',
+    'msft': 'informe-msft',
+    'microsoft': 'informe-msft',
+    'glosario': 'it-glossary',
+    'glossary': 'it-glossary',
+    'glossari': 'it-glossary'
+  };
+
   function slugFromPath() {
-    var tagged = document.querySelector('.social-bar[data-slug], #guide-forum[data-slug]');
-    if (tagged && tagged.getAttribute('data-slug')) return tagged.getAttribute('data-slug');
+    var tagged = document.querySelector('.social-bar[data-slug], #guide-meta-bar[data-slug], .meta-bar[data-slug], #guide-forum[data-slug], #copy-link[data-slug], [data-slug]');
+    if (tagged && tagged.getAttribute('data-slug')) {
+      var rawTag = tagged.getAttribute('data-slug').toLowerCase().trim();
+      if (rawTag) return SLUG_ALIASES[rawTag] || rawTag;
+    }
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var qId = params.get('id') || params.get('slug') || params.get('g') || params.get('piece');
+      if (qId) {
+        var cleanQ = qId.toLowerCase().trim();
+        return SLUG_ALIASES[cleanQ] || cleanQ;
+      }
+    } catch (e) {}
     var p = (location.pathname || '').replace(/\/+$/, '');
-    var m = p.match(/^\/g\/([a-z0-9-]+)$/i) || p.match(/^\/guides\/([a-z0-9-]+)$/i);
-    return m ? m[1].toLowerCase() : '';
+    var m = p.match(/^\/(?:guides|g|s)\/([a-z0-9-._]+)/i);
+    if (m && m[1]) {
+      var cleanP = m[1].toLowerCase().trim();
+      if (cleanP !== 'g.html' && cleanP !== 'g' && cleanP !== 'guides' && cleanP !== 's') {
+        return SLUG_ALIASES[cleanP] || cleanP;
+      }
+    }
+    return '';
   }
   function savedList() {
     try { return JSON.parse(localStorage.getItem('atm_saved') || '[]'); } catch (e) { return []; }
@@ -163,19 +196,24 @@
     } catch (e) {}
   }
 
-  async function hydrate() {
-    var slug = slugFromPath();
-    var bars = document.querySelectorAll('.social-bar[data-slug]');
-    if (slug && !bars.length) {
-      var meta = document.querySelector('.meta-bar');
+  async function hydrate(forcedSlug) {
+    var slug = (forcedSlug || slugFromPath() || '').toLowerCase().trim();
+    var bars = Array.from(document.querySelectorAll('.social-bar'));
+    if (!bars.length && slug) {
+      var meta = document.querySelector('#guide-meta-bar, .meta-bar, .poster-bar, header.doc-header');
       if (meta) {
         var bar = document.createElement('div');
         bar.className = 'social-bar';
         bar.setAttribute('data-slug', slug);
         bar.innerHTML = barHtml();
         meta.insertAdjacentElement('afterend', bar);
-        bars = document.querySelectorAll('.social-bar[data-slug]');
+        bars = [bar];
       }
+    }
+    if (slug && bars.length) {
+      bars.forEach(function (b) {
+        if (!b.getAttribute('data-slug')) b.setAttribute('data-slug', slug);
+      });
     }
     var me = null;
     try {
@@ -195,7 +233,12 @@
     if (!bars.length) return;
 
     bars.forEach(function (b) {
-      var s = b.getAttribute('data-slug') || slugFromPath();
+      var s = b.getAttribute('data-slug') || slug || slugFromPath();
+      if (!s) return;
+      if (!b.getAttribute('data-slug')) b.setAttribute('data-slug', s);
+      if (!b.querySelector('[data-vote]')) {
+        b.innerHTML = barHtml();
+      }
       var stats = getSocialStats(s);
       var handle = b.getAttribute('data-handle') || pageHandle();
       if (handle) b.setAttribute('data-handle', handle);
@@ -347,6 +390,13 @@
     }
   });
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hydrate);
+  window.atmHydrateSocial = hydrate;
+  document.addEventListener('atm:content', function (e) {
+    var slug = e && e.detail && e.detail.slug;
+    hydrate(slug);
+  });
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { hydrate(); });
   else hydrate();
 })();
+

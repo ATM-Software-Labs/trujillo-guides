@@ -4,18 +4,20 @@ import { useState } from 'react'
 
 type Props = {
   title: string
-  authorName: string
+  authorName?: string
   handle?: string
   avatar?: string
   category?: string
   publishedAt?: number
 }
 
-export function GuideHeader({ title, authorName, handle, avatar, category, publishedAt }: Props) {
+export function GuideHeader({
+  title,
+  authorName = 'Alberto Trujillo Mingorance',
+  handle = 'atrumin16',
+  category = 'Guides'
+}: Props) {
   const [copied, setCopied] = useState(false)
-  const when = publishedAt
-    ? new Date(publishedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
-    : ''
 
   async function copy() {
     try {
@@ -25,27 +27,24 @@ export function GuideHeader({ title, authorName, handle, avatar, category, publi
     } catch {}
   }
 
+  const cleanHandle = (handle || 'atrumin16').replace(/^@/, '')
+
   return (
     <header className="mx-auto max-w-3xl px-6 pt-8">
       <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">{title}</h1>
-      <div className="mb-8 flex flex-wrap items-center gap-2.5 border-b border-neutral-800 pb-4">
-        <img
-          src={avatar || '/avatar.png'}
-          alt=""
-          width={28}
-          height={28}
-          className="h-7 w-7 rounded-full bg-neutral-800 object-cover"
-        />
-        <p className="text-[13px] text-neutral-400">
-          <span className="font-medium text-neutral-200">{authorName}</span>
-          {handle ? <span> · @{handle}</span> : null}
-          {category ? <span> · {category}</span> : null}
-          {when ? <span> · {when}</span> : null}
-        </p>
+      <div className="flex items-center gap-2 text-xs text-slate-400 font-mono mt-2 mb-6 border-b border-slate-800/80 pb-3">
+        <span className="text-white font-medium">{authorName || 'Alberto Trujillo Mingorance'}</span>
+        <span className="text-slate-600">·</span>
+        <span className="text-cyan-400">@{cleanHandle}</span>
+        <span className="text-slate-600">·</span>
+        <span className="px-2 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-800/80 text-cyan-300 text-[10px] uppercase tracking-wider">
+          {category || 'Guides'}
+        </span>
+        <span className="text-slate-600">·</span>
         <button
           type="button"
           onClick={copy}
-          className="ml-auto rounded-lg border border-neutral-800 px-2.5 py-1 text-xs text-neutral-300 hover:text-white"
+          className="hover:text-white transition-colors"
         >
           {copied ? 'Copiado' : 'Copiar enlace'}
         </button>

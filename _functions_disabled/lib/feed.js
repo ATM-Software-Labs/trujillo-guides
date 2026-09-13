@@ -100,6 +100,7 @@ export function mergeGuideFeed(kvItems, hidden) {
       authorPicture: it.authorPicture || '/avatar.png',
       category: it.category || 'guide',
       summary: it.summary || (it.extras && it.extras.summary) || '',
+      content: it.content || it.body || it.markdown || (it.extras && it.extras.content) || '',
       updatedAt: it.updatedAt || it.date || 0,
       static: !!it.static
     });

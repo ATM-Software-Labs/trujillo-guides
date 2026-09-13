@@ -1202,7 +1202,6 @@
       alignToc();
       window.addEventListener('resize', alignToc);
     }
-  }
 
   function autoEnhanceArticle() {
     if (document.body.classList.contains('is-not-found') || document.querySelector('.is-not-found')) return;

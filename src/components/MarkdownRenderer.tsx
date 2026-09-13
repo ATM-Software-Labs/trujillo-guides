@@ -21,16 +21,22 @@ function withTickers(text: string) {
 
 const components: Components = {
   table: ({ children }) => (
-    <div className="my-6 overflow-x-auto rounded-lg border border-neutral-800 bg-neutral-950/40">
-      <table className="w-full text-sm">{children}</table>
+    <div className="my-6 overflow-x-auto">
+      <table className="w-full text-sm border-collapse border border-slate-700/60 rounded-xl overflow-hidden">
+        {children}
+      </table>
     </div>
   ),
-  thead: ({ children }) => <thead className="bg-neutral-900/70">{children}</thead>,
+  thead: ({ children }) => <thead className="bg-slate-800/80">{children}</thead>,
   th: ({ children }) => (
-    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-neutral-400">{children}</th>
+    <th className="bg-slate-800/80 px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider text-slate-200 border-b border-slate-700/60">
+      {children}
+    </th>
   ),
   td: ({ children }) => (
-    <td className="border-b border-neutral-800/60 px-3 py-2 text-neutral-300">{children}</td>
+    <td className="border-b border-slate-800/50 px-4 py-3 text-slate-300 hover:bg-slate-800/30 transition-colors">
+      {children}
+    </td>
   ),
   p: ({ children }) => {
     if (typeof children === 'string') {
