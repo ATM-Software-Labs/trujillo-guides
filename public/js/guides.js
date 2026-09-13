@@ -533,6 +533,9 @@
     var body = document.getElementById('guide-body');
     if (body) {
       enhanceTickers(body);
+      if (typeof initBrkCalculator === 'function') {
+        initBrkCalculator(body);
+      }
     }
   });
 
@@ -776,6 +779,7 @@
     recalculate();
   }
   window.initBrkCalculator = initBrkCalculator;
+  window.initSotpCalculator = initBrkCalculator;
 
   function enhance(root) {
     linkifyTickers(root);
