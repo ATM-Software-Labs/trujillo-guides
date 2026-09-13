@@ -11,6 +11,7 @@
   function applyTheme(next) {
     next = next === 'light' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
+    document.documentElement.classList.toggle('dark', next === 'dark');
     try {
       localStorage.setItem('trujillo_theme', next);
       localStorage.setItem('atm_theme', next);
@@ -717,6 +718,7 @@
       if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
     });
     document.addEventListener('atm:me', paintAccount);
+    document.addEventListener('atm:lang', paintAccount);
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         closeAuth();

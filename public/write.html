@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark" data-theme="dark">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,17 +21,17 @@
     <div class="topbar-actions"></div>
   </header>
   <main class="guide-container write-main">
-    <a href="/" class="back-nav">← Índice</a>
+    <a href="/" class="back-nav" data-i18n="backIndex">← Índice</a>
     <div class="studio-header-bar">
       <div class="studio-heading-group">
         <p class="kicker" data-i18n="publishKicker">Studio Enterprise · ATM Guides</p>
-        <h1 class="page-title" id="write-heading" data-i18n="newGuide">Nueva publicación</h1>
+        <h1 class="page-title" id="write-heading" data-i18n="writeHeadingNew">Nueva publicación</h1>
         <p class="lede" data-i18n="writeHint">Guías, posts, opiniones, análisis financieros, briefs y notas técnicas.</p>
       </div>
       <div class="studio-draft-box" id="draft-box" hidden>
-        <span class="draft-indicator-text" id="draft-status-text">Borrador guardado localmente</span>
-        <button type="button" class="studio-btn-subtle" id="draft-restore-btn">Restaurar</button>
-        <button type="button" class="studio-btn-subtle btn-danger" id="draft-discard-btn">Descartar</button>
+        <span class="draft-indicator-text" id="draft-status-text" data-i18n="draftSaved">Borrador guardado localmente</span>
+        <button type="button" class="studio-btn-subtle" id="draft-restore-btn" data-i18n="restore">Restaurar</button>
+        <button type="button" class="studio-btn-subtle btn-danger" id="draft-discard-btn" data-i18n="discard">Descartar</button>
       </div>
     </div>
     <form id="write-form" class="write-form">
@@ -42,10 +42,10 @@
       </fieldset>
       <label>
         <span data-i18n="writeTitle">Título</span>
-        <input type="text" id="write-title" name="title" maxlength="120" required placeholder="Título de la publicación (ej. Análisis de Microsoft ($MSFT))">
+        <input type="text" id="write-title" name="title" maxlength="120" required placeholder="Título de la publicación (ej. Análisis de Microsoft ($MSFT))" data-i18n-placeholder="writeTitlePlaceholder">
       </label>
       <label>
-        <span>Enlace canónico permanente (Slug)</span>
+        <span data-i18n="canonicalSlug">Enlace canónico permanente (Slug)</span>
         <div class="slug-bar-wrap">
           <span class="slug-prefix">https://guides.trujillomingorance.com/g/</span>
           <input type="text" id="write-slug" name="slug" maxlength="48" placeholder="titulo-de-la-publicacion">
@@ -53,34 +53,34 @@
       </label>
       <label>
         <span data-i18n="writeSummary">Resumen / Portada</span>
-        <input type="text" id="write-summary" name="summary" maxlength="220" placeholder="Una línea ejecutiva para portada y feeds (opcional)">
+        <input type="text" id="write-summary" name="summary" maxlength="220" placeholder="Una línea ejecutiva para portada y feeds (opcional)" data-i18n-placeholder="writeSummaryPlaceholder">
       </label>
       <input type="hidden" name="lang" id="write-lang" value="markdown">
 
       <div class="studio-editor-box">
         <div class="studio-toolbar editor-toolbar">
           <div class="studio-tool-group">
-            <button type="button" class="studio-tool-btn" data-tool="bold" data-action="bold" title="Negrita (Ctrl+B)"><strong>B</strong></button>
-            <button type="button" class="studio-tool-btn" data-tool="italic" data-action="italic" title="Cursiva (Ctrl+I)"><em>I</em></button>
-            <button type="button" class="studio-tool-btn" data-tool="h2" data-action="h2" title="Encabezado H2">H2</button>
-            <button type="button" class="studio-tool-btn" data-tool="h3" data-action="h3" title="Encabezado H3">H3</button>
-            <button type="button" class="studio-tool-btn" data-tool="link" data-action="link" title="Enlace">
+            <button type="button" class="studio-tool-btn" data-tool="bold" data-action="bold" data-i18n-title="toolBold" title="Negrita (Ctrl+B)"><strong>B</strong></button>
+            <button type="button" class="studio-tool-btn" data-tool="italic" data-action="italic" data-i18n-title="toolItalic" title="Cursiva (Ctrl+I)"><em>I</em></button>
+            <button type="button" class="studio-tool-btn" data-tool="h2" data-action="h2" data-i18n-title="toolH2" title="Encabezado H2">H2</button>
+            <button type="button" class="studio-tool-btn" data-tool="h3" data-action="h3" data-i18n-title="toolH3" title="Encabezado H3">H3</button>
+            <button type="button" class="studio-tool-btn" data-tool="link" data-action="link" data-i18n-title="toolLink" title="Enlace">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
             </button>
-            <button type="button" class="studio-tool-btn btn-ticker" data-tool="ticker" data-action="ticker" title="Ticker bursátil (ej. $MSFT)">$ Ticker</button>
-            <button type="button" class="studio-tool-btn" data-tool="table" data-action="table" title="Tabla financiera/métrica">Tabla</button>
-            <button type="button" class="studio-tool-btn" data-tool="callout" data-action="callout" title="Callout destacado">Callout</button>
-            <button type="button" class="studio-tool-btn" data-tool="code" data-action="code" title="Bloque de código">Code</button>
+            <button type="button" class="studio-tool-btn btn-ticker" data-tool="ticker" data-action="ticker" data-i18n-title="toolTicker" title="Ticker bursátil (ej. $MSFT)">$ Ticker</button>
+            <button type="button" class="studio-tool-btn" data-tool="table" data-action="table" data-i18n-title="toolTable" title="Tabla financiera/métrica"><span data-i18n="toolTableLabel">Tabla</span></button>
+            <button type="button" class="studio-tool-btn" data-tool="callout" data-action="callout" data-i18n-title="toolCallout" title="Callout destacado"><span data-i18n="toolCalloutLabel">Callout</span></button>
+            <button type="button" class="studio-tool-btn" data-tool="code" data-action="code" data-i18n-title="toolCode" title="Bloque de código"><span data-i18n="toolCodeLabel">Code</span></button>
           </div>
           <div class="studio-tool-group" style="margin-left: auto;">
             <div class="metrics-pill" id="metrics-pill">0 palabras · ~0 min lectura · 0 caracteres</div>
             <div class="studio-tabs editor-tabs">
-              <button type="button" class="studio-tab-btn is-active active" id="tab-write">Escribir</button>
-              <button type="button" class="studio-tab-btn" id="tab-preview">Vista previa</button>
+              <button type="button" class="studio-tab-btn is-active active" id="tab-write" data-i18n="tabWrite">Escribir</button>
+              <button type="button" class="studio-tab-btn" id="tab-preview" data-i18n="tabPreview">Vista previa</button>
             </div>
           </div>
         </div>
-        <textarea name="content" id="write-textarea" class="write-textarea" rows="22" required placeholder="Escribe tu artículo en Markdown… Soporta $TICKERS, tablas, código, citas y callouts."></textarea>
+        <textarea name="content" id="write-textarea" class="write-textarea" rows="22" required placeholder="Escribe tu artículo en Markdown… Soporta $TICKERS, tablas, código, citas y callouts." data-i18n-placeholder="writeBodyPlaceholder"></textarea>
         <div id="editor-preview-container" class="write-preview guide-body editor-preview-container" hidden></div>
       </div>
 
@@ -93,17 +93,17 @@
           </svg>
         </div>
         <div>
-          <p class="drop-text-primary">Arrastra archivos aquí (.md, .txt, .json, .csv) o adjuntos (PDF, imágenes)</p>
-          <p class="drop-text-secondary">El contenido de texto se importará al editor; imágenes y documentos se adjuntarán a la entrega.</p>
+          <p class="drop-text-primary" data-i18n="dropPrimary">Arrastra archivos aquí (.md, .txt, .json, .csv) o adjuntos (PDF, imágenes)</p>
+          <p class="drop-text-secondary" data-i18n="dropSecondary">El contenido de texto se importará al editor; imágenes y documentos se adjuntarán a la entrega.</p>
         </div>
         <div class="drop-actions-row">
           <button type="button" class="studio-btn-flat" id="btn-import-file">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            Importar cuerpo
+            <span data-i18n="importBody">Importar cuerpo</span>
           </button>
           <button type="button" class="studio-btn-flat" id="btn-attach-files">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-            Adjuntar archivos
+            <span data-i18n="attachFiles">Adjuntar archivos</span>
           </button>
         </div>
         <input type="file" id="import-file" style="display: none;" accept=".md,.markdown,.html,.htm,.txt,.json,.csv,.tsv,.svg,.xml,.yml,.yaml,.js,.mjs,.ts,.py,.sql,.css,.mmd,.mermaid,.toml,.go,.rs,.java">
@@ -114,12 +114,12 @@
       <section class="studio-section" id="references-section">
         <div class="studio-section-header">
           <div>
-            <h3 class="studio-section-title">Fuentes y Referencias Técnicas</h3>
-            <p class="studio-section-desc">Cita SEC filings, repositorios de GitHub, papers de ArXiv o documentación oficial vinculada.</p>
+            <h3 class="studio-section-title" data-i18n="refTitle">Fuentes y Referencias Técnicas</h3>
+            <p class="studio-section-desc" data-i18n="refDesc">Cita SEC filings, repositorios de GitHub, papers de ArXiv o documentación oficial vinculada.</p>
           </div>
           <button type="button" class="studio-btn-flat btn-add-ref" id="btn-add-ref">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Añadir referencia
+            <span data-i18n="addRef">Añadir referencia</span>
           </button>
         </div>
         <div id="references-list"></div>
@@ -127,10 +127,10 @@
 
       <div class="metadata-grid">
         <label for="guide-lang" class="form-label">
-          Idioma del contingut
+          <span data-i18n="contentLang">Idioma del contenido</span>
           <span id="auto-lang-indicator" style="font-size: 11px; color: #0284c7; margin-left: 6px; font-weight: 500;"></span>
           <select id="guide-lang" name="langDoc" class="form-input">
-            <option value="auto" selected>✨ Detecció automàtica</option>
+            <option value="auto" selected data-i18n="autoDetect">✨ Detección automática</option>
             <option value="ca">🇦🇩 Català (CA)</option>
             <option value="es">🇪🇸 Español (ES)</option>
             <option value="en">🇬🇧 English (EN)</option>
@@ -150,33 +150,33 @@
           </select>
         </label>
         <label>
-          <span>Nivel técnico</span>
+          <span data-i18n="techLevel">Nivel técnico</span>
           <select name="level" id="write-level" class="form-input">
-            <option value="overview">Overview / Introductorio</option>
-            <option value="intermediate" selected>Intermedio</option>
-            <option value="deep-dive">Deep Dive / Avanzado</option>
+            <option value="overview" data-i18n="levelOverview">Overview / Introductorio</option>
+            <option value="intermediate" selected data-i18n="levelIntermediate">Intermedio</option>
+            <option value="deep-dive" data-i18n="levelDeepDive">Deep Dive / Avanzado</option>
           </select>
         </label>
         <label class="studio-toggle">
           <input type="checkbox" id="write-pinned" name="pinned" style="display:none;">
           <span class="switch-track"><span class="switch-thumb"></span></span>
-          <span class="switch-label">Fijar publicación en cabecera</span>
+          <span class="switch-label" data-i18n="pinGuide">Fijar publicación en cabecera</span>
         </label>
       </div>
 
       <p class="write-status" id="write-status" hidden></p>
       <div class="write-actions">
-        <button type="submit" id="publish-btn" class="btn-publish" data-i18n="publish">
+        <button type="submit" id="publish-btn" class="btn-publish">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-          Publicar
+          <span data-i18n="publish">Publicar</span>
         </button>
-        <a class="studio-btn-flat" id="open-ai" href="https://ai.trujillomingorance.com/" rel="noopener" target="_blank" data-i18n="openAi">
+        <a class="studio-btn-flat" id="open-ai" href="https://ai.trujillomingorance.com/" rel="noopener" target="_blank">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
-          Abrir a Trujillo AI Studio
+          <span data-i18n="openAi">Abrir en Trujillo AI Studio</span>
         </a>
-        <button type="button" class="studio-btn-subtle btn-danger" id="delete-guide" hidden data-i18n="delete">
+        <button type="button" class="studio-btn-subtle btn-danger" id="delete-guide" hidden>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          Borrar
+          <span data-i18n="delete">Borrar</span>
         </button>
       </div>
     </form>

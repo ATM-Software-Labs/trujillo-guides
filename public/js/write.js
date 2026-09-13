@@ -286,7 +286,7 @@
     var chars = text.length;
     var words = (text.trim().match(/\S+/g) || []).length;
     var mins = words === 0 ? 0 : Math.max(1, Math.ceil(words / 200));
-    pill.textContent = words + ' palabras · ~' + mins + ' min lectura · ' + chars + ' caracteres';
+    pill.textContent = words + ' ' + t('metricWords') + ' · ~' + mins + ' ' + t('metricReadTime') + ' · ' + chars + ' ' + t('metricChars');
   }
 
   // --- Textarea Text Manipulation Logic ---
@@ -463,10 +463,10 @@
     }).join('');
 
     row.innerHTML =
-      '<input type="text" class="ref-title" placeholder="Título / Fuente (ej. SEC 10-K FY24)" value="' + tVal.replace(/"/g, '&quot;') + '">' +
+      '<input type="text" class="ref-title" placeholder="' + t('refTitlePlaceholder').replace(/"/g, '&quot;') + '" value="' + tVal.replace(/"/g, '&quot;') + '">' +
       '<input type="url" class="ref-url" placeholder="https://..." value="' + uVal.replace(/"/g, '&quot;') + '">' +
       '<select class="ref-type">' + optionsHtml + '</select>' +
-      '<button type="button" class="ref-delete-btn" title="Eliminar fila">' +
+      '<button type="button" class="ref-delete-btn" title="' + t('deleteRow').replace(/"/g, '&quot;') + '" aria-label="' + t('deleteRow').replace(/"/g, '&quot;') + '">' +
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>' +
       '</button>';
 
@@ -584,7 +584,7 @@
     var d = time ? new Date(time) : new Date();
     var hh = String(d.getHours()).padStart(2, '0');
     var mm = String(d.getMinutes()).padStart(2, '0');
-    txt.textContent = 'Borrador guardado (' + hh + ':' + mm + ')';
+    txt.textContent = t('draftSaved') + ' (' + hh + ':' + mm + ')';
   }
 
   function restoreDraft() {
@@ -673,6 +673,7 @@
         }
       } catch (e) {}
       updateAutoLanguage();
+      if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
       return;
     }
 
@@ -735,9 +736,13 @@
     bindEditorEvents();
     updateAutoLanguage();
 
-    if (heading) heading.textContent = t('editGuide');
+    if (heading) {
+      heading.textContent = t('editGuide');
+      heading.setAttribute('data-i18n', 'editGuide');
+    }
     if (del) del.hidden = false;
     if (ai) ai.href = studioUrl(data.title || '');
+    if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
   }
 
   function bindEditorEvents() {
@@ -1140,7 +1145,31 @@
   });
 
   document.addEventListener('atm:lang', function () {
-    paintKinds((document.getElementById('write-kind') || {}).value);
+    var currentKind = (document.getElementById('write-kind') || {}).value;
+    paintKinds(currentKind);
+    updateMetrics();
+    var slug = slugFromQuery();
+    var heading = document.getElementById('write-heading');
+    if (heading) {
+      heading.textContent = slug ? t('editGuide') : t('writeHeadingNew');
+    }
+    document.querySelectorAll('.ref-row').forEach(function (row) {
+      var titleInput = row.querySelector('.ref-title');
+      if (titleInput) titleInput.setAttribute('placeholder', t('refTitlePlaceholder'));
+      var delBtn = row.querySelector('.ref-delete-btn');
+      if (delBtn) {
+        delBtn.setAttribute('title', t('deleteRow'));
+        delBtn.setAttribute('aria-label', t('deleteRow'));
+      }
+    });
+    var draftBox = document.getElementById('draft-box');
+    if (draftBox && !draftBox.hidden) {
+      try {
+        var savedDraft = JSON.parse(localStorage.getItem('atm_write_draft') || '{}');
+        if (savedDraft && savedDraft.savedAt) showDraftStatus(savedDraft.savedAt);
+      } catch (e) {}
+    }
+    updateAutoLanguage();
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);

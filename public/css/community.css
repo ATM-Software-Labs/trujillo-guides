@@ -2991,26 +2991,30 @@ select.form-input:focus {
 [id*="account-menu"] button,
 [id*="account-menu"] a,
 [class*="lang-dropdown"] button,
-[class*="language-menu"] button {
+[class*="lang-dropdown"] a,
+[class*="language-menu"] button,
+[class*="language-menu"] a {
   appearance: none !important;
   -webkit-appearance: none !important;
   display: flex !important;
   align-items: center !important;
   width: 100% !important;
   gap: 10px !important;
-  padding: 7px 12px !important;
+  padding: 8px 12px !important;
   border: none !important;
   border-radius: 6px !important;
   background: transparent !important;
   background-color: transparent !important;
-  color: #0f172a !important;
+  color: #1e293b !important;
   font-size: 13px !important;
   font-weight: 500 !important;
   box-shadow: none !important;
   cursor: pointer !important;
+  text-decoration: none !important;
   transition: background 0.15s ease, color 0.15s ease !important;
   text-align: left !important;
   line-height: 1.4 !important;
+  box-sizing: border-box !important;
 }
 
 .dropdown-menu button:hover,
@@ -3026,9 +3030,13 @@ select.form-input:focus {
 [role="listbox"] button:hover,
 [role="listbox"] a:hover,
 [id*="lang-menu"] button:hover,
+[id*="lang-menu"] a:hover,
 [id*="account-menu"] button:hover,
+[id*="account-menu"] a:hover,
 [class*="lang-dropdown"] button:hover,
-[class*="language-menu"] button:hover {
+[class*="lang-dropdown"] a:hover,
+[class*="language-menu"] button:hover,
+[class*="language-menu"] a:hover {
   background: #f1f5f9 !important;
   color: #0284c7 !important;
 }
@@ -3062,40 +3070,95 @@ select.form-input:focus {
 .dark .dropdown-menu button,
 .dark .dropdown-menu a,
 .dark .lang-menu button,
+.dark .lang-menu a,
 .dark .account-menu button,
+.dark .account-menu a,
 .dark [role="menu"] button,
+.dark [role="menu"] a,
 .dark [role="listbox"] button,
+.dark [role="listbox"] a,
 .dark [id*="lang-menu"] button,
+.dark [id*="lang-menu"] a,
+.dark [id*="account-menu"] button,
+.dark [id*="account-menu"] a,
 .dark [class*="lang-dropdown"] button,
+.dark [class*="lang-dropdown"] a,
+.dark [class*="language-menu"] button,
+.dark [class*="language-menu"] a,
 [data-theme="dark"] .dropdown-menu button,
 [data-theme="dark"] .dropdown-menu a,
 [data-theme="dark"] .lang-menu button,
+[data-theme="dark"] .lang-menu a,
 [data-theme="dark"] .account-menu button,
+[data-theme="dark"] .account-menu a,
 [data-theme="dark"] [role="menu"] button,
+[data-theme="dark"] [role="menu"] a,
 [data-theme="dark"] [role="listbox"] button,
+[data-theme="dark"] [role="listbox"] a,
 [data-theme="dark"] [id*="lang-menu"] button,
-[data-theme="dark"] [class*="lang-dropdown"] button {
+[data-theme="dark"] [id*="lang-menu"] a,
+[data-theme="dark"] [id*="account-menu"] button,
+[data-theme="dark"] [id*="account-menu"] a,
+[data-theme="dark"] [class*="lang-dropdown"] button,
+[data-theme="dark"] [class*="lang-dropdown"] a,
+[data-theme="dark"] [class*="language-menu"] button,
+[data-theme="dark"] [class*="language-menu"] a {
   color: #e2e8f0 !important;
 }
 
 .dark .dropdown-menu button:hover,
 .dark .dropdown-menu a:hover,
 .dark .lang-menu button:hover,
+.dark .lang-menu a:hover,
 .dark .account-menu button:hover,
+.dark .account-menu a:hover,
 .dark [role="menu"] button:hover,
+.dark [role="menu"] a:hover,
 .dark [role="listbox"] button:hover,
+.dark [role="listbox"] a:hover,
 .dark [id*="lang-menu"] button:hover,
+.dark [id*="lang-menu"] a:hover,
+.dark [id*="account-menu"] button:hover,
+.dark [id*="account-menu"] a:hover,
 .dark [class*="lang-dropdown"] button:hover,
+.dark [class*="lang-dropdown"] a:hover,
+.dark [class*="language-menu"] button:hover,
+.dark [class*="language-menu"] a:hover,
 [data-theme="dark"] .dropdown-menu button:hover,
 [data-theme="dark"] .dropdown-menu a:hover,
 [data-theme="dark"] .lang-menu button:hover,
+[data-theme="dark"] .lang-menu a:hover,
 [data-theme="dark"] .account-menu button:hover,
+[data-theme="dark"] .account-menu a:hover,
 [data-theme="dark"] [role="menu"] button:hover,
+[data-theme="dark"] [role="menu"] a:hover,
 [data-theme="dark"] [role="listbox"] button:hover,
+[data-theme="dark"] [role="listbox"] a:hover,
 [data-theme="dark"] [id*="lang-menu"] button:hover,
-[data-theme="dark"] [class*="lang-dropdown"] button:hover {
+[data-theme="dark"] [id*="lang-menu"] a:hover,
+[data-theme="dark"] [id*="account-menu"] button:hover,
+[data-theme="dark"] [id*="account-menu"] a:hover,
+[data-theme="dark"] [class*="lang-dropdown"] button:hover,
+[data-theme="dark"] [class*="lang-dropdown"] a:hover,
+[data-theme="dark"] [class*="language-menu"] button:hover,
+[data-theme="dark"] [class*="language-menu"] a:hover {
   background: #1e293b !important;
   color: #38bdf8 !important;
+}
+
+/* Logout button styling */
+.account-menu button[data-logout]:hover,
+.account-menu .menuitem-logout:hover {
+  background: #fee2e2 !important;
+  color: #ef4444 !important;
+}
+
+.dark .account-menu button[data-logout]:hover,
+.dark .account-menu .menuitem-logout:hover,
+[data-theme="dark"] .account-menu button[data-logout]:hover,
+[data-theme="dark"] .account-menu .menuitem-logout:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
 }
 
 /* Modo oscuro para controles y botones del editor */
