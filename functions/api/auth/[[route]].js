@@ -40,6 +40,10 @@ export async function onRequest(context) {
   // 1. REDIRECCIÓN A GOOGLE OAUTH
   // ==========================================
   if (path === '/api/auth/google' && request.method === 'GET') {
+    if (!env.GOOGLE_CLIENT_SECRET) {
+      const returnUrl = url.searchParams.get('returnTo') || url.origin;
+      return Response.redirect(`https://ai.trujillomingorance.com/login?redirect_to=${encodeURIComponent(returnUrl)}`, 302);
+    }
     const state = crypto.randomUUID();
     const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     googleAuthUrl.searchParams.set('client_id', googleClientId);
@@ -59,7 +63,7 @@ export async function onRequest(context) {
     });
   }
 
-  // Soporte adicional para verificación directa de ID token (Google Identity Services)
+  // Soporte para verificación directa de ID token (Google Identity Services - idéntico a Trujillo AI)
   if (path === '/api/auth/google' && request.method === 'POST') {
     try {
       const body = await request.json();
@@ -93,6 +97,16 @@ export async function onRequest(context) {
 
       const sessionToken = await signJwt(sessionPayload, jwtSecret);
 
+      if (env.BOT_MEMORY) {
+        const existing = await env.BOT_MEMORY.get(`user:email:${email}`);
+        if (!existing) {
+          await env.BOT_MEMORY.put(`user:email:${email}`, JSON.stringify(sessionPayload));
+          if (env.RESEND_API_KEY) {
+            context.waitUntil(sendWelcomeEmail({ to: email, name: googleUser.name, provider: 'google' }, env.RESEND_API_KEY));
+          }
+        }
+      }
+
       const headers = new Headers(NO_CACHE_HEADERS);
       headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
       headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
@@ -100,6 +114,7 @@ export async function onRequest(context) {
 
       return new Response(JSON.stringify({
         authenticated: true,
+        token: sessionToken,
         user: {
           id: sessionPayload.id,
           name: sessionPayload.name,

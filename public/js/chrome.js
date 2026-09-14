@@ -249,6 +249,7 @@
       '<button type="button" class="auth-tab" id="tab-auth-register">Crear cuenta</button>' +
       '</div>' +
       '<div class="auth-social-buttons">' +
+      '<div class="btn-social-google-wrap">' +
       '<button type="button" class="auth-social-btn" id="btn-login-google" data-oauth="google">' +
       '<svg width="18" height="18" viewBox="0 0 24 24">' +
       '<path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>' +
@@ -258,6 +259,8 @@
       '</svg>' +
       '<span>Continuar con Google</span>' +
       '</button>' +
+      '<div id="google-btn-overlay" class="google-btn-overlay"></div>' +
+      '</div>' +
       '<button type="button" class="auth-social-btn" id="btn-login-x" data-oauth="x">' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">' +
       '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>' +
@@ -296,6 +299,83 @@
       '</div>' +
       '</div>' +
       '</div>';
+  }
+
+  var GOOGLE_CLIENT_ID = '161745150528-5pb84k9upvamvlvnc7lg6nr1ku74vc4a.apps.googleusercontent.com';
+
+  function ensureGoogleGsi() {
+    if (window.google && window.google.accounts && window.google.accounts.id) return Promise.resolve();
+    return new Promise(function (resolve) {
+      var existing = document.getElementById('google-gsi-script');
+      if (existing) {
+        var interval = setInterval(function () {
+          if (window.google && window.google.accounts && window.google.accounts.id) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 50);
+        setTimeout(function () { clearInterval(interval); resolve(); }, 3000);
+        return;
+      }
+      var s = document.createElement('script');
+      s.id = 'google-gsi-script';
+      s.src = 'https://accounts.google.com/gsi/client';
+      s.async = true;
+      s.defer = true;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { resolve(); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function mountGoogle() {
+    ensureGoogleGsi().then(function () {
+      if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+      try {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCredential,
+          auto_select: false,
+          ux_mode: 'popup'
+        });
+        var slot = document.getElementById('google-btn-overlay');
+        if (slot && !slot.getAttribute('data-ready')) {
+          window.google.accounts.id.renderButton(slot, {
+            type: 'standard',
+            theme: 'outline',
+            size: 'large',
+            width: Math.max(slot.parentElement ? slot.parentElement.offsetWidth : 350, 280),
+            text: 'continue_with'
+          });
+          slot.setAttribute('data-ready', '1');
+        }
+      } catch (err) {
+        console.warn('Google GSI mount error:', err);
+      }
+    });
+  }
+
+  async function handleGoogleCredential(response) {
+    if (!response || !response.credential) return;
+    try {
+      var res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ credential: response.credential })
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al iniciar sesión con Google');
+      if (data.token) {
+        setSharedToken(data.token, data.user);
+      }
+      window.__taMe = data.user;
+      closeAuth();
+      paintAccount();
+      location.reload();
+    } catch (err) {
+      alert(err.message || 'No se pudo iniciar sesión con Google');
+    }
   }
 
   function bindAuthModal() {
@@ -353,11 +433,19 @@
       });
     }
 
+    mountGoogle();
+
     var googleBtn = document.getElementById('btn-login-google') || document.getElementById('btn-oauth-google');
     if (googleBtn) {
       googleBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        window.location.href = '/api/auth/google';
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          try {
+            window.google.accounts.id.prompt();
+            return;
+          } catch (err) {}
+        }
+        openStudioLogin();
       });
     }
 
@@ -464,6 +552,7 @@
     modal.style.display = 'flex';
     modal.removeAttribute('hidden');
     bindAuthModal();
+    mountGoogle();
     var emailInput = document.getElementById('auth-email-input');
     if (emailInput) {
       setTimeout(function () { emailInput.focus(); }, 50);

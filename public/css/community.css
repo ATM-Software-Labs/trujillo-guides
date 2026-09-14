@@ -362,6 +362,28 @@
   border-color: #334155 !important;
 }
 
+.btn-social-google-wrap {
+  position: relative;
+  width: 100%;
+}
+.google-btn-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.001;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.google-btn-overlay iframe,
+.google-btn-overlay > div {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 42px !important;
+}
+
 /* Divisor */
 .auth-divider {
   position: relative;
