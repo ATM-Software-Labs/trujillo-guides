@@ -2575,3 +2575,34 @@ h1 .ticker-badge,
   pointer-events: auto !important;
 }
 
+/* Achievements Grid & SVG Sizing Shield */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.achievement-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.achievement-icon-wrap,
+.achievement-card svg {
+  width: 48px;
+  height: 48px;
+  max-width: 48px;
+  max-height: 48px;
+  flex-shrink: 0;
+}
+
+.achievement-card svg {
+  display: block;
+  margin: 0 auto 0.75rem auto;
+}
+
+

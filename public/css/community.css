@@ -5352,18 +5352,19 @@ select.form-input:focus {
 
 .achievements-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
 }
 
 .achievement-card {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px;
+  flex-direction: column;
+  padding: 1rem;
   background: #0b0f17;
   border: 1px solid #1e293b;
-  border-radius: 10px;
+  border-radius: 8px;
+  overflow: hidden;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
@@ -5390,9 +5391,25 @@ select.form-input:focus {
 .achievement-card.tier-gold.is-unlocked { border-color: rgba(245, 158, 11, 0.45); box-shadow: 0 0 18px rgba(245, 158, 11, 0.12); }
 .achievement-card.tier-diamond.is-unlocked { border-color: rgba(56, 189, 248, 0.55); box-shadow: 0 0 20px rgba(56, 189, 248, 0.18); }
 
+.achievement-icon-wrap,
+.achievement-card svg {
+  width: 48px;
+  height: 48px;
+  max-width: 48px;
+  max-height: 48px;
+  flex-shrink: 0;
+}
+
+.achievement-card svg {
+  display: block;
+  margin: 0 auto 0.75rem auto;
+}
+
 .ach-icon-box {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  max-width: 48px;
+  max-height: 48px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -5400,11 +5417,18 @@ select.form-input:focus {
   flex-shrink: 0;
   background: #1e293b;
   color: #cbd5e1;
+  margin: 0 auto 0.75rem auto;
 }
 
-.ach-icon-box svg {
-  width: 20px;
-  height: 20px;
+.ach-icon-box svg,
+.achievement-icon-wrap svg {
+  width: 28px;
+  height: 28px;
+  max-width: 28px;
+  max-height: 28px;
+  flex-shrink: 0;
+  display: block;
+  margin: 0 auto;
 }
 
 .ach-icon-box.tier-bronze { background: rgba(217, 119, 6, 0.15); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.3); }
@@ -5413,13 +5437,17 @@ select.form-input:focus {
 .ach-icon-box.tier-diamond { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
 
 .ach-question {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 800;
   color: #64748b;
+  line-height: 1;
 }
 
 .ach-info {
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  width: 100%;
   min-width: 0;
 }
 

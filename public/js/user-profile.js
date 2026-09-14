@@ -99,49 +99,96 @@
     });
   }
 
+  function isInvalidHandle(h) {
+    if (!h) return true;
+    var clean = String(h).trim().toLowerCase().replace(/^@+/, '');
+    return (
+      !clean ||
+      clean === ':splat' ||
+      clean === 'splat' ||
+      clean === '%3asplat' ||
+      clean === 'null' ||
+      clean === 'undefined' ||
+      clean === 'index' ||
+      clean === 'index.html' ||
+      clean === '[username]' ||
+      clean === ':username' ||
+      clean.indexOf(':') !== -1 ||
+      clean.indexOf('*') !== -1
+    );
+  }
+
   function sanitizeUsername(raw) {
     if (!raw) return '';
     try {
       raw = decodeURIComponent(raw);
     } catch (e) {}
-    return String(raw)
+    var s = String(raw)
       .replace(/^@+/, '')
       .replace(/\/+$/, '')
       .trim()
       .toLowerCase();
+    if (isInvalidHandle(s)) return '';
+    return s;
   }
 
   function getTargetHandle() {
     var p = window.location.pathname || '';
     try { p = decodeURIComponent(p); } catch (e) {}
-    var m = p.match(/\/u\/(?:@)?([a-z0-9_.-]+)/i);
+    var m = p.match(/\/u\/(?:@)?([a-z0-9_.:*-]+)/i);
     var candidate = '';
     if (m && m[1]) {
-      candidate = sanitizeUsername(m[1]);
-    }
-    if (!candidate) {
-      var params = new URLSearchParams(window.location.search);
-      var q = params.get('u') || params.get('user') || params.get('author') || params.get('handle');
-      if (q) candidate = sanitizeUsername(q);
-    }
-    if (!candidate) {
-      var me = window.__taMe;
-      if (me && (me.handle || me.username)) {
-        candidate = sanitizeUsername(me.handle || me.username);
+      var parsed = sanitizeUsername(m[1]);
+      if (!isInvalidHandle(parsed)) {
+        candidate = parsed;
       }
     }
-    if (!candidate) candidate = 'atrumin16';
+    if (!candidate || isInvalidHandle(candidate)) {
+      var params = new URLSearchParams(window.location.search);
+      var q = params.get('u') || params.get('user') || params.get('author') || params.get('handle');
+      if (q) {
+        var parsedQ = sanitizeUsername(q);
+        if (!isInvalidHandle(parsedQ)) {
+          candidate = parsedQ;
+        }
+      }
+    }
+    if (!candidate || isInvalidHandle(candidate)) {
+      var me = window.__taMe;
+      if (me && (me.handle || me.username)) {
+        var parsedMe = sanitizeUsername(me.handle || me.username);
+        if (!isInvalidHandle(parsedMe)) {
+          candidate = parsedMe;
+        }
+      }
+    }
+    // Fallback: Read initial values already present in the static DOM
+    if (!candidate || isInvalidHandle(candidate)) {
+      var domHandle = document.getElementById('author-handle');
+      if (domHandle && domHandle.textContent) {
+        var parsedDom = sanitizeUsername(domHandle.textContent);
+        if (!isInvalidHandle(parsedDom)) {
+          candidate = parsedDom;
+        }
+      }
+    }
+    // Strict default fallback to @atrumin16
+    if (!candidate || isInvalidHandle(candidate)) {
+      candidate = 'atrumin16';
+    }
 
     // Check alias redirection map (301-equivalent client router)
     try {
       var aliases = JSON.parse(localStorage.getItem('atm_handle_aliases') || '{}');
       if (aliases[candidate] && aliases[candidate] !== candidate) {
         var activeH = sanitizeUsername(aliases[candidate]);
-        window.__atmRedirectedFrom = candidate;
-        try {
-          history.replaceState(null, '', '/u/@' + encodeURIComponent(activeH));
-        } catch (e) {}
-        return activeH;
+        if (activeH && !isInvalidHandle(activeH)) {
+          window.__atmRedirectedFrom = candidate;
+          try {
+            history.replaceState(null, '', '/u/@' + encodeURIComponent(activeH));
+          } catch (e) {}
+          return activeH;
+        }
       }
     } catch (e) {}
 
@@ -151,13 +198,23 @@
       if (saved && saved.author && Array.isArray(saved.author.previous_handles)) {
         if (saved.author.previous_handles.indexOf(candidate) !== -1 && saved.author.handle) {
           var canonH = sanitizeUsername(saved.author.handle);
-          if (canonH && canonH !== candidate) {
+          if (canonH && canonH !== candidate && !isInvalidHandle(canonH)) {
             window.__atmRedirectedFrom = candidate;
             try {
               history.replaceState(null, '', '/u/@' + encodeURIComponent(canonH));
             } catch (e) {}
             return canonH;
           }
+        }
+      }
+    } catch (e) {}
+
+    // Ensure URL bar shows valid clean canonical handle (and never /u/@:splat)
+    try {
+      if (candidate && !isInvalidHandle(candidate)) {
+        var currentPath = window.location.pathname || '';
+        if (currentPath.indexOf('/u/@' + candidate) === -1) {
+          history.replaceState(null, '', '/u/@' + encodeURIComponent(candidate));
         }
       }
     } catch (e) {}
@@ -188,6 +245,9 @@
 
   function getAuthorMeta(handle, guides) {
     var cleanHandle = sanitizeUsername(handle);
+    if (!cleanHandle || isInvalidHandle(cleanHandle)) {
+      cleanHandle = 'atrumin16';
+    }
 
     // 1. Check custom settings saved by user
     try {
@@ -640,21 +700,36 @@
     });
   }
 
+  function fetchAuthorPublications(handle, guidesList) {
+    var cleanH = sanitizeUsername(handle);
+    if (!cleanH || isInvalidHandle(cleanH)) {
+      cleanH = 'atrumin16';
+    }
+    var list = Array.isArray(guidesList) && guidesList.length ? guidesList : STATIC_CATALOG.slice();
+    if (cleanH === 'atrumin16' || cleanH === 'alberto') {
+      var filtered = list.filter(function (g) {
+        var gh = sanitizeUsername(g.handle || 'atrumin16');
+        return gh === 'atrumin16' || gh === 'alberto' || !g.handle || isInvalidHandle(gh);
+      });
+      return (filtered && filtered.length) ? filtered : STATIC_CATALOG.slice();
+    }
+    return list.filter(function (g) {
+      return sanitizeUsername(g.handle || '') === cleanH;
+    });
+  }
+
   function initProfile() {
     activeExperienceMode = localStorage.getItem('atm_experience_mode') || 'simple';
     var targetHandle = getTargetHandle();
+    if (!targetHandle || isInvalidHandle(targetHandle)) {
+      targetHandle = 'atrumin16';
+    }
     var allGuides = loadAllGuides();
 
     // Filter guides matching this author:
-    if (targetHandle === 'atrumin16' || targetHandle === 'alberto') {
-      authorPublications = allGuides.filter(function (g) {
-        var gh = sanitizeUsername(g.handle || 'atrumin16');
-        return gh === 'atrumin16' || gh === 'alberto' || !g.handle;
-      });
-    } else {
-      authorPublications = allGuides.filter(function (g) {
-        return sanitizeUsername(g.handle || '') === targetHandle;
-      });
+    authorPublications = fetchAuthorPublications(targetHandle, allGuides);
+    if ((targetHandle === 'atrumin16' || targetHandle === 'alberto') && (!authorPublications || authorPublications.length === 0)) {
+      authorPublications = STATIC_CATALOG.slice();
     }
 
     var totalUpvotes = authorPublications.reduce(function (sum, g) { return sum + (Number(g.up || g.likes) || 0); }, 0);
@@ -678,17 +753,11 @@
         if (!cdnData) return;
         var items = cdnData.guides || cdnData.items || (Array.isArray(cdnData) ? cdnData : []);
         if (items && items.length) {
-          if (targetHandle === 'atrumin16' || targetHandle === 'alberto') {
-            authorPublications = items.filter(function (g) {
-              var gh = sanitizeUsername(g.handle || 'atrumin16');
-              return gh === 'atrumin16' || gh === 'alberto' || !g.handle;
-            });
-          } else {
-            authorPublications = items.filter(function (g) {
-              return sanitizeUsername(g.handle || '') === targetHandle;
-            });
+          var updated = fetchAuthorPublications(targetHandle, items);
+          if (updated && updated.length) {
+            authorPublications = updated;
+            renderPublications();
           }
-          renderPublications();
         }
       })
       .catch(function () {});

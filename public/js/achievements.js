@@ -466,7 +466,7 @@
       '<div class="achievement-modal-card tier-' + ach.tier + (unlocked ? ' is-unlocked' : ' is-locked') + '">' +
       '  <button type="button" class="modal-close-btn" aria-label="Cerrar">&times;</button>' +
       '  <div class="modal-header-visual">' +
-      '    <div class="modal-icon-badge tier-' + ach.tier + '">' + ach.icon + '</div>' +
+      '    <div class="modal-icon-badge achievement-icon-wrap tier-' + ach.tier + '">' + ach.icon + '</div>' +
       '    <div class="modal-tier-tag tier-' + ach.tier + '">' + TIERS[ach.tier].name.toUpperCase() + '</div>' +
       '  </div>' +
       '  <h3 class="modal-ach-title">' + (ach.secret && !unlocked ? '??? [Logro Secreto]' : ach.title) + '</h3>' +
@@ -547,7 +547,7 @@
       var secretClass = a.secret ? 'is-secret' : '';
 
       return '<div class="achievement-card tier-' + a.tier + ' ' + statusClass + ' ' + secretClass + '" data-ach-id="' + a.id + '" role="button" tabindex="0">' +
-        '  <div class="ach-icon-box tier-' + a.tier + '">' +
+        '  <div class="achievement-icon-wrap ach-icon-box tier-' + a.tier + '">' +
              (isSecretLocked ? '<span class="ach-question">?</span>' : a.icon) +
         '  </div>' +
         '  <div class="ach-info">' +
