@@ -187,11 +187,21 @@
       localStorage.removeItem('trujillo_ai_user');
       localStorage.removeItem('auth_user');
       localStorage.removeItem('atm_studio_session');
+      // Purge all user achievements keys and cached progress to avoid session leaks
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var k = localStorage.key(i);
+        if (k && (k.indexOf('achievements_') === 0 || k.indexOf('atm_achievements') === 0 || k.indexOf('atm_used_langs') === 0 || k === 'achievements_guest')) {
+          localStorage.removeItem(k);
+        }
+      }
     } catch (e) {}
     try {
       fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {}
     window.__taMe = null;
+    if (window.ATM_ACHIEVEMENTS && window.ATM_ACHIEVEMENTS.clearUserAchievements) {
+      window.ATM_ACHIEVEMENTS.clearUserAchievements();
+    }
     setSharedCookie('atm_session', '', 0);
     setSharedCookie('ta_session', '', 0);
     setSharedCookie('auth_token', '', 0);

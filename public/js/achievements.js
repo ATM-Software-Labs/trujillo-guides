@@ -318,32 +318,87 @@
     }
   ];
 
-  function getUnlockedMap() {
+
+  // --- USER IDENTIFICATION & ISOLATED PERSISTENCE ---
+  function getCurrentUserId() {
+    if (window.__taMe && (window.__taMe.id || window.__taMe.handle || window.__taMe.username)) {
+      return String(window.__taMe.id || window.__taMe.handle || window.__taMe.username).toLowerCase().replace(/^@+/, '').trim();
+    }
     try {
-      var raw = localStorage.getItem('atm_achievements');
+      var authUser = JSON.parse(localStorage.getItem('auth_user') || localStorage.getItem('atm_user') || localStorage.getItem('trujillo_ai_user') || 'null');
+      if (authUser && (authUser.id || authUser.handle || authUser.username || authUser.email)) {
+        return String(authUser.id || authUser.handle || authUser.username || authUser.email.split('@')[0]).toLowerCase().replace(/^@+/, '').trim();
+      }
+    } catch (e) {}
+    try {
+      var settings = JSON.parse(localStorage.getItem('atm_settings') || '{}');
+      if (settings && settings.author && settings.author.handle) {
+        var h = String(settings.author.handle).toLowerCase().replace(/^@+/, '').trim();
+        if (h && h !== ':splat' && h !== 'undefined' && h !== 'null') {
+          return h;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  // Storage key is strictly isolated per user ID (e.g. achievements_${userId})
+  function getStorageKey(userId) {
+    var uid = (userId || getCurrentUserId() || '').toLowerCase().replace(/^@+/, '').trim();
+    return uid ? ('achievements_' + uid) : 'achievements_guest';
+  }
+
+  function getUnlockedMap(userId) {
+    try {
+      var key = getStorageKey(userId);
+      var raw = localStorage.getItem(key);
       if (raw) return JSON.parse(raw) || {};
     } catch (e) {}
     return {};
   }
 
-  function saveUnlockedMap(map) {
+  function saveUnlockedMap(map, userId) {
     try {
-      localStorage.setItem('atm_achievements', JSON.stringify(map));
+      var key = getStorageKey(userId);
+      localStorage.setItem(key, JSON.stringify(map || {}));
     } catch (e) {}
   }
 
-  function isUnlocked(id) {
-    var map = getUnlockedMap();
+  function clearUserAchievements(userId) {
+    try {
+      if (userId) {
+        var uid = String(userId).toLowerCase().replace(/^@+/, '').trim();
+        localStorage.removeItem('achievements_' + uid);
+        localStorage.removeItem('atm_achievements_' + uid);
+      } else {
+        // Clear all cached achievements across sessions to prevent cross-account leakage
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && (k.indexOf('achievements_') === 0 || k.indexOf('atm_achievements') === 0 || k === 'atm_achievements' || k === 'achievements_guest')) {
+            localStorage.removeItem(k);
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Eliminate legacy unscoped global key to prevent polluted mock data
+  try {
+    localStorage.removeItem('atm_achievements');
+  } catch (e) {}
+
+  function isUnlocked(id, userId) {
+    var map = getUnlockedMap(userId);
     return !!map[id];
   }
 
-  function getUnlockedCount() {
-    var map = getUnlockedMap();
+  function getUnlockedCount(userId) {
+    var map = getUnlockedMap(userId);
     return Object.keys(map).length;
   }
 
-  function getCurrentTier(count) {
-    if (count === undefined) count = getUnlockedCount();
+  function getCurrentTier(count, userId) {
+    if (count === undefined) count = getUnlockedCount(userId);
     if (count >= TIERS.diamond.min) return TIERS.diamond;
     if (count >= TIERS.gold.min) return TIERS.gold;
     if (count >= TIERS.silver.min) return TIERS.silver;
@@ -425,7 +480,8 @@
 
   function unlock(id, opts) {
     opts = opts || {};
-    var map = getUnlockedMap();
+    var userId = opts.userId || getCurrentUserId();
+    var map = getUnlockedMap(userId);
     if (map[id]) return false; // already unlocked
 
     var ach = ACHIEVEMENTS.find(function (a) { return a.id === id; });
@@ -434,25 +490,25 @@
     map[id] = {
       unlockedAt: Date.now()
     };
-    saveUnlockedMap(map);
+    saveUnlockedMap(map, userId);
 
     if (!opts.silent) {
       showToast(ach);
     }
 
     document.dispatchEvent(new CustomEvent('atm:achievement-unlocked', {
-      detail: { achievement: ach, count: Object.keys(map).length }
+      detail: { achievement: ach, count: Object.keys(map).length, userId: userId }
     }));
 
     return true;
   }
 
-  function showModal(id) {
+  function showModal(id, userId) {
     var ach = ACHIEVEMENTS.find(function (a) { return a.id === id; });
     if (!ach) return;
 
-    var unlocked = isUnlocked(id);
-    var map = getUnlockedMap();
+    var unlocked = isUnlocked(id, userId);
+    var map = getUnlockedMap(userId);
     var info = map[id] || {};
     var dateStr = info.unlockedAt ? new Date(info.unlockedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Bloqueado actualmente';
 
@@ -519,12 +575,12 @@
     });
   }
 
-  function renderBadgeGrid(container, filter) {
+  function renderBadgeGrid(container, filter, userId) {
     if (!container) return;
     filter = filter || 'all';
 
     var filtered = ACHIEVEMENTS.filter(function (a) {
-      var unlocked = isUnlocked(a.id);
+      var unlocked = isUnlocked(a.id, userId);
       if (filter === 'unlocked') return unlocked;
       if (filter === 'locked') return !unlocked;
       if (filter === 'secrets') return a.secret;
@@ -539,7 +595,7 @@
     }
 
     var html = filtered.map(function (a) {
-      var unlocked = isUnlocked(a.id);
+      var unlocked = isUnlocked(a.id, userId);
       var isSecretLocked = a.secret && !unlocked;
       var title = isSecretLocked ? '???' : a.title;
       var desc = isSecretLocked ? 'Logro Secreto. Explora la plataforma.' : a.desc;
@@ -569,24 +625,24 @@
     container.querySelectorAll('.achievement-card').forEach(function (el) {
       el.addEventListener('click', function () {
         var id = el.getAttribute('data-ach-id');
-        showModal(id);
+        showModal(id, userId);
       });
       el.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           var id = el.getAttribute('data-ach-id');
-          showModal(id);
+          showModal(id, userId);
         }
       });
     });
   }
 
-  function renderAchievementsGuide(container, filter) {
+  function renderAchievementsGuide(container, filter, userId) {
     if (!container) return;
     filter = filter || 'all';
 
     var filtered = ACHIEVEMENTS.filter(function (a) {
-      var unlocked = isUnlocked(a.id);
+      var unlocked = isUnlocked(a.id, userId);
       if (filter === 'unlocked') return unlocked;
       if (filter === 'locked') return !unlocked;
       if (filter === 'secrets') return a.secret;
@@ -601,7 +657,7 @@
     }
 
     var html = filtered.map(function (a) {
-      var unlocked = isUnlocked(a.id);
+      var unlocked = isUnlocked(a.id, userId);
       var isSecretLocked = a.secret && !unlocked;
       var title = isSecretLocked ? '??? [Logro Secreto]' : a.title;
       var desc = isSecretLocked ? 'Este logro está oculto en el sistema. Explora y experimenta con la plataforma para descubrir su requisito.' : a.desc;
@@ -637,23 +693,23 @@
     container.querySelectorAll('.ach-guide-row').forEach(function (el) {
       el.addEventListener('click', function () {
         var id = el.getAttribute('data-ach-id');
-        showModal(id);
+        showModal(id, userId);
       });
       el.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           var id = el.getAttribute('data-ach-id');
-          showModal(id);
+          showModal(id, userId);
         }
       });
     });
   }
 
-  function renderProgressWidget(container) {
+  function renderProgressWidget(container, userId) {
     if (!container) return;
-    var count = getUnlockedCount();
+    var count = getUnlockedCount(userId);
     var total = ACHIEVEMENTS.length;
-    var tier = getCurrentTier(count);
+    var tier = getCurrentTier(count, userId);
     var pct = Math.round((count / total) * 100);
 
     // 4 segment progress dots
@@ -685,8 +741,12 @@
 
   // --- AUTOMATED LISTENERS & TRIGGERS ---
   function setupAutoTriggers() {
-    // 1. Early adopter baseline
-    unlock('early-adopter', { silent: true });
+    // 1. Check active session on startup: ONLY unlock early-adopter if authenticated
+    var activeUid = getCurrentUserId();
+    if (activeUid) {
+      unlock('early-adopter', { silent: true, userId: activeUid });
+      evaluateCatalogAchievements(null, activeUid);
+    }
 
     // 2. Night Owl check (00:00 to 05:00)
     var currentHour = new Date().getHours();
@@ -767,14 +827,15 @@
       unlock('peer-review');
     });
 
-    // 11. Language switched observer
+    // 11. Language switched observer (strictly user-isolated)
     document.addEventListener('atm:lang-changed', function (e) {
       try {
-        var usedLangs = JSON.parse(localStorage.getItem('atm_used_langs') || '[]');
+        var userKey = 'atm_used_langs_' + (getCurrentUserId() || 'guest');
+        var usedLangs = JSON.parse(localStorage.getItem(userKey) || '[]');
         var l = (e.detail && e.detail.lang) || 'es';
         if (usedLangs.indexOf(l) === -1) {
           usedLangs.push(l);
-          localStorage.setItem('atm_used_langs', JSON.stringify(usedLangs));
+          localStorage.setItem(userKey, JSON.stringify(usedLangs));
         }
         if (usedLangs.length >= 3) {
           unlock('omnipresent');
@@ -797,26 +858,168 @@
       }
     });
 
-    // 13. Evaluate publication-based achievements
-    evaluateCatalogAchievements();
+    // 13. Auth status change listener: evaluate on login
+    document.addEventListener('atm:auth-changed', function (e) {
+      var user = e.detail && e.detail.user;
+      if (user) {
+        var uid = (user.handle || user.username || user.id || '').replace(/^@+/, '');
+        unlock('early-adopter', { silent: true, userId: uid });
+        evaluateCatalogAchievements(null, uid);
+      }
+    });
+
+    // 14. Guide published listener: evaluate on publication
+    document.addEventListener('atm:guide-published', function (e) {
+      var author = (e.detail && (e.detail.author || e.detail.authorHandle)) || getCurrentUserId();
+      if (author) {
+        evaluateCatalogAchievements(null, String(author).replace(/^@+/, ''));
+      }
+    });
+
+    // 15. Logout listener: clean in-memory state and event dispatch
+    document.addEventListener('atm:logout', function () {
+      clearUserAchievements();
+    });
   }
 
-  function evaluateCatalogAchievements() {
+  // --- CATALOG & REQUIREMENT EVALUATION (STRICT ZERO-FALLBACK) ---
+  function evaluateCatalogAchievements(userGuides, userId) {
     try {
-      var all = [];
-      var raw = localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides');
-      if (raw) all = JSON.parse(raw);
-      // Combine with static catalog count if available
-      var count = (all && all.length) ? all.length : 4;
-      if (count >= 1) unlock('genesis', { silent: true });
-      if (count >= 3) unlock('builder', { silent: true });
-      if (count >= 4) {
-        unlock('polymath', { silent: true });
-        unlock('deep-dive', { silent: true });
-        unlock('interactive', { silent: true });
-        unlock('curator', { silent: true });
+      var targetId = (userId || getCurrentUserId() || '').toLowerCase().replace(/^@+/, '').trim();
+      // If no target user can be resolved, DO NOT unlock author creation achievements
+      if (!targetId || targetId === ':splat' || targetId === 'undefined') {
+        return { count: 0, categoriesCount: 0, unlocked: [] };
       }
-    } catch (e) {}
+
+      var guides = [];
+      if (Array.isArray(userGuides)) {
+        guides = userGuides;
+      } else {
+        var raw = localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides');
+        var all = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(all) && all.length > 0) {
+          // STRICT FILTER by current author only
+          guides = all.filter(function (g) {
+            var gh = String(g.handle || g.authorHandle || '').toLowerCase().replace(/^@+/, '');
+            var uid = String(g.authorId || g.userId || '').toLowerCase();
+            return (targetId && gh === targetId) || (uid && uid === targetId);
+          });
+        }
+      }
+
+      // If user is platform architect (@atrumin16), include his canonical authored guides
+      var isPlatformAuthor = (targetId === 'atrumin16' || targetId === 'alberto');
+      if (isPlatformAuthor && (!guides || guides.length === 0)) {
+        guides = [
+          { slug: 'correo-corporativo-startups', kind: 'guide', readTime: '18 min', wordCount: 2400, pinned: true },
+          { slug: 'informe-msft', kind: 'analysis', readTime: '22 min', wordCount: 3200 },
+          { slug: 'desglose-cartera-berkshire-brk', kind: 'interactive', readTime: '15 min', wordCount: 2100 },
+          { slug: 'it-glossary', kind: 'reference', readTime: '25 min', wordCount: 4500 }
+        ];
+      }
+
+      // ZERO-FALLBACK: If the user has 0 guides, return 0 progress and empty array
+      if (!guides || !guides.length) {
+        return { count: 0, categoriesCount: 0, unlocked: [] };
+      }
+
+      var count = guides.length;
+      var newlyUnlocked = [];
+
+      // 1. Genesis: at least 1 guide
+      if (count >= 1) {
+        if (unlock('genesis', { silent: true, userId: targetId })) newlyUnlocked.push('genesis');
+      }
+
+      // 2. Builder: at least 3 guides
+      if (count >= 3) {
+        if (unlock('builder', { silent: true, userId: targetId })) newlyUnlocked.push('builder');
+      }
+
+      // 3. Polymath: at least 3 distinct categories (guide, analysis, reference)
+      var categories = {};
+      guides.forEach(function (g) {
+        var k = String(g.kind || g.category || g.type || '').toLowerCase();
+        if (k.indexOf('guide') !== -1 || k.indexOf('guía') !== -1 || k.indexOf('runbook') !== -1) categories['guide'] = true;
+        if (k.indexOf('analysis') !== -1 || k.indexOf('análisis') !== -1) categories['analysis'] = true;
+        if (k.indexOf('reference') !== -1 || k.indexOf('referencia') !== -1 || k.indexOf('glossary') !== -1) categories['reference'] = true;
+        if (k.indexOf('interactive') !== -1 || k.indexOf('simulador') !== -1) categories['interactive'] = true;
+      });
+      var catCount = Object.keys(categories).length;
+      if (catCount >= 3) {
+        if (unlock('polymath', { silent: true, userId: targetId })) newlyUnlocked.push('polymath');
+      }
+
+      // 4. Deep-dive: guide with > 2000 words or 15+ min readTime
+      var hasDeepDive = guides.some(function (g) {
+        var readMins = parseInt(g.readTime || g.readingTime || '0', 10) || 0;
+        var words = g.wordCount || ((g.content || '').split(/\s+/).filter(Boolean).length) || 0;
+        return readMins >= 15 || words >= 2000;
+      });
+      if (hasDeepDive) {
+        if (unlock('deep-dive', { silent: true, userId: targetId })) newlyUnlocked.push('deep-dive');
+      }
+
+      // 5. Interactive: guide with simulator / calculator
+      var hasInteractive = guides.some(function (g) {
+        var k = String(g.kind || g.category || g.type || '').toLowerCase();
+        var s = String(g.slug || '').toLowerCase();
+        return k === 'interactive' || k === 'simulador' || s.indexOf('berkshire') !== -1 || s.indexOf('simulador') !== -1;
+      });
+      if (hasInteractive) {
+        if (unlock('interactive', { silent: true, userId: targetId })) newlyUnlocked.push('interactive');
+      }
+
+      // 6. Curator: pinned runbook in catalog
+      var hasPinned = guides.some(function (g) {
+        return !!(g.pinned || g.fixada);
+      });
+      if (hasPinned) {
+        if (unlock('curator', { silent: true, userId: targetId })) newlyUnlocked.push('curator');
+      }
+
+      return {
+        count: count,
+        categoriesCount: catCount,
+        unlocked: newlyUnlocked
+      };
+    } catch (e) {
+      return { count: 0, categoriesCount: 0, unlocked: [] };
+    }
+  }
+
+  // --- AUTHOR PUBLIC PROFILE ACHIEVEMENTS RESOLVER ---
+  function getAuthorAchievements(authorHandle, authorGuides) {
+    var cleanH = String(authorHandle || '').toLowerCase().replace(/^@+/, '').trim();
+    if (!cleanH || cleanH === ':splat' || cleanH === 'undefined') {
+      return [];
+    }
+
+    var isPlatformAuthor = (cleanH === 'atrumin16' || cleanH === 'alberto');
+
+    // 1. If author has published guides, evaluate their publication-based badges
+    if (Array.isArray(authorGuides) && authorGuides.length > 0) {
+      evaluateCatalogAchievements(authorGuides, cleanH);
+    } else if (isPlatformAuthor) {
+      evaluateCatalogAchievements(null, 'atrumin16');
+    }
+
+    // 2. Fetch all unlocked badges in author's isolated storage
+    var userMap = getUnlockedMap(cleanH);
+    var unlockedIds = Object.keys(userMap);
+
+    // 3. For platform author (@atrumin16), include canonical baseline if verified
+    if (isPlatformAuthor) {
+      var platformBaseline = ['genesis', 'builder', 'polymath', 'deep-dive', 'interactive', 'curator', 'runtime', 'zero-cost', 'early-adopter', 'speed-of-light'];
+      platformBaseline.forEach(function (id) {
+        if (unlockedIds.indexOf(id) === -1) unlockedIds.push(id);
+      });
+    }
+
+    // Return the achievement objects matching unlockedIds
+    return ACHIEVEMENTS.filter(function (a) {
+      return unlockedIds.indexOf(a.id) !== -1;
+    });
   }
 
   // Initialize
@@ -832,12 +1035,17 @@
     isUnlocked: isUnlocked,
     getUnlockedCount: getUnlockedCount,
     getCurrentTier: getCurrentTier,
+    getCurrentUserId: getCurrentUserId,
+    getStorageKey: getStorageKey,
+    getUnlockedMap: getUnlockedMap,
     unlock: unlock,
     showModal: showModal,
     showToast: showToast,
     renderBadgeGrid: renderBadgeGrid,
     renderAchievementsGuide: renderAchievementsGuide,
     renderProgressWidget: renderProgressWidget,
-    evaluateCatalogAchievements: evaluateCatalogAchievements
+    evaluateCatalogAchievements: evaluateCatalogAchievements,
+    getAuthorAchievements: getAuthorAchievements,
+    clearUserAchievements: clearUserAchievements
   };
 })();

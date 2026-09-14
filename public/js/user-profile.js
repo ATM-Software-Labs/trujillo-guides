@@ -680,25 +680,23 @@
     if (!container || !window.ATM_ACHIEVEMENTS) return;
 
     var cleanH = sanitizeUsername(authorHandle || getTargetHandle());
-    var isPlatformAuthor = (cleanH === 'atrumin16' || cleanH === 'alberto');
+    var unlockedList = [];
+    if (window.ATM_ACHIEVEMENTS.getAuthorAchievements) {
+      unlockedList = window.ATM_ACHIEVEMENTS.getAuthorAchievements(cleanH, authorPublications);
+    } else {
+      var allAchievements = window.ATM_ACHIEVEMENTS.achievements || [];
+      unlockedList = allAchievements.filter(function (a) {
+        return window.ATM_ACHIEVEMENTS.isUnlocked(a.id, cleanH);
+      });
+    }
 
-    var allAchievements = window.ATM_ACHIEVEMENTS.achievements || [];
     var tiers = window.ATM_ACHIEVEMENTS.tiers || {};
 
-    // Filter only achievements unlocked by this specific author
-    var unlockedList = allAchievements.filter(function (a) {
-      if (window.ATM_ACHIEVEMENTS.isUnlocked(a.id)) return true;
-      if (isPlatformAuthor) {
-        var baseline = ['genesis', 'builder', 'polymath', 'deep-dive', 'interactive', 'curator', 'runtime', 'zero-cost', 'early-adopter', 'speed-of-light'];
-        return baseline.indexOf(a.id) !== -1;
-      }
-      return false;
-    });
-
-    if (!unlockedList.length) {
+    if (!unlockedList || !unlockedList.length) {
       container.innerHTML =
         '<div class="profile-achievements-header">' +
         '  <span class="profile-achievements-title">Logros</span>' +
+        '  <span class="profile-achievements-count">0 desbloqueados</span>' +
         '</div>' +
         '<p class="profile-achievements-empty">Sin insignias públicas aún</p>' +
         '<a href="/achievements" class="profile-achievements-link">Ver todas las insignias y requisitos &rarr;</a>';
@@ -727,7 +725,7 @@
       el.addEventListener('click', function () {
         var id = el.getAttribute('data-ach-id');
         if (window.ATM_ACHIEVEMENTS.showModal) {
-          window.ATM_ACHIEVEMENTS.showModal(id);
+          window.ATM_ACHIEVEMENTS.showModal(id, cleanH);
         }
       });
       el.addEventListener('keydown', function (e) {
@@ -735,7 +733,7 @@
           e.preventDefault();
           var id = el.getAttribute('data-ach-id');
           if (window.ATM_ACHIEVEMENTS.showModal) {
-            window.ATM_ACHIEVEMENTS.showModal(id);
+            window.ATM_ACHIEVEMENTS.showModal(id, cleanH);
           }
         }
       });

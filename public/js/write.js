@@ -1027,6 +1027,18 @@
       localStorage.removeItem('atm_write_draft');
     } catch (e) {}
 
+    // Dispatch guide published event and evaluate achievements for this specific author
+    try {
+      var authorHandle = (admin && (admin.handle || admin.username || admin.name || '')) || '';
+      var cleanAuth = authorHandle.replace(/^@+/, '');
+      document.dispatchEvent(new CustomEvent('atm:guide-published', {
+        detail: { guide: newGuide, author: cleanAuth }
+      }));
+      if (window.ATM_ACHIEVEMENTS && window.ATM_ACHIEVEMENTS.evaluateCatalogAchievements) {
+        window.ATM_ACHIEVEMENTS.evaluateCatalogAchievements(null, cleanAuth);
+      }
+    } catch (e) {}
+
     status(t('published') || 'Publicado con éxito', true);
     setTimeout(function () {
       window.location.href = '/g.html?id=' + encodeURIComponent(newGuide.id);

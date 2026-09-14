@@ -164,8 +164,20 @@
         localStorage.removeItem('trujillo_ai_user');
         localStorage.removeItem('auth_token');
         localStorage.removeItem('trujillo_ai_token');
+        // Purge all user achievements keys and cached progress to avoid session leaks
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && (k.indexOf('achievements_') === 0 || k.indexOf('atm_achievements') === 0 || k.indexOf('atm_used_langs') === 0 || k === 'achievements_guest')) {
+            localStorage.removeItem(k);
+          }
+        }
       } catch (e) {}
 
+      if (window.ATM_ACHIEVEMENTS && window.ATM_ACHIEVEMENTS.clearUserAchievements) {
+        window.ATM_ACHIEVEMENTS.clearUserAchievements();
+      }
+
+      document.dispatchEvent(new CustomEvent('atm:logout'));
       document.dispatchEvent(new CustomEvent('atm:auth-changed', { detail: { user: null } }));
       window.location.reload();
     },

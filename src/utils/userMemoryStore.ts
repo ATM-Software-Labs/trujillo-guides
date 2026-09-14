@@ -57,6 +57,12 @@ export function clearStoredUser(): void {
   try {
     localStorage.removeItem(GUEST_NAME_KEY);
     localStorage.removeItem(AUTH_TOKEN_KEY);
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && (k.startsWith('achievements_') || k.startsWith('atm_achievements') || k.startsWith('atm_used_langs') || k === 'achievements_guest')) {
+        localStorage.removeItem(k);
+      }
+    }
   } catch (e) {}
 }
 
