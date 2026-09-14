@@ -1,3 +1,3 @@
-/g/*        /g?id=:splat   302
-/guides/*   /g?id=:splat   302
-/u/*        /u?u=:splat    302
+/u/*        /u    200
+/g/*        /g    200
+/guides/*   /g    200
