@@ -1,2 +1,6 @@
-/g/*        /g.html    200
-/guides/*  /g.html    200
+/g/*        /g.html         200
+/guides/*   /g.html         200
+/u/*        /u.html         200
+/u          /u.html         200
+/settings   /settings.html  200
+/settings/* /settings.html  200

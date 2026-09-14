@@ -22,7 +22,7 @@ window.SUPPORTED_LANGUAGES = SUPPORTED_LANGUAGES;
 
 window.ATM_UI = {
   es: {
-    studio: 'Studio', profile: 'Perfil', index: 'Índice', home: 'Inicio',
+    studio: 'Studio', profile: 'Perfil', settings: 'Configuración', index: 'Índice', home: 'Inicio',
     kicker: 'Documentación técnica',
     'hero-title': 'Guías de ingeniería y runbooks',
     'hero-sub': 'Arquitecturas reales. En portada, las que sus autores fijan como mejores.',
@@ -84,7 +84,7 @@ window.ATM_UI = {
     needStudio: 'Entra con Studio para publicar.', cancel: 'Cancelar', confirm: 'Confirmar'
   },
   en: {
-    studio: 'Studio', profile: 'Profile', index: 'Index', home: 'Home',
+    studio: 'Studio', profile: 'Profile', settings: 'Settings', index: 'Index', home: 'Home',
     kicker: 'Technical documentation',
     'hero-title': 'Engineering guides and runbooks',
     'hero-sub': 'Real architectures. The homepage shows the ones authors pin as best.',
@@ -146,7 +146,7 @@ window.ATM_UI = {
     needStudio: 'Sign in with Studio to publish.', cancel: 'Cancel', confirm: 'Confirm'
   },
   ca: {
-    studio: 'Studio', profile: 'Perfil', index: 'Índex', home: 'Inici',
+    studio: 'Studio', profile: 'Perfil', settings: 'Configuració', index: 'Índex', home: 'Inici',
     kicker: 'Documentació tècnica',
     'hero-title': 'Guies d’enginyeria i runbooks',
     'hero-sub': 'Arquitectures reals. A la portada, les que els autors marquen com a millors.',
@@ -208,7 +208,7 @@ window.ATM_UI = {
     needStudio: 'Entra amb Studio per publicar.', cancel: 'Cancel·lar', confirm: 'Confirmar'
   },
   fr: {
-    studio: 'Studio', profile: 'Profil', index: 'Index', home: 'Accueil',
+    studio: 'Studio', profile: 'Profil', settings: 'Paramètres', index: 'Index', home: 'Accueil',
     kicker: 'Documentation technique',
     'hero-title': 'Guides d’ingénierie et runbooks',
     'hero-sub': 'Architectures réelles. La une montre celles que les auteurs épinglent.',

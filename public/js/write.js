@@ -494,55 +494,50 @@
 
   // --- Dual Mode Preview Compiler ---
   function updatePreview() {
-    var ta = document.getElementById('write-textarea');
+    var ta = document.getElementById('write-textarea') || document.querySelector('textarea');
+    if (!ta) return;
     var pv = document.getElementById('editor-preview-container') || document.getElementById('write-preview');
-    if (!ta || !pv) return;
-    var raw = ta.value || '';
-    var refs = getReferences();
-    var fullMarkdown = raw + formatReferencesMarkdown(refs);
-
-    var compiledHtml = '';
-    if (window.marked && typeof window.marked.parse === 'function') {
-      try {
-        compiledHtml = window.marked.parse(fullMarkdown, { gfm: true, breaks: true });
-      } catch (e) {
-        compiledHtml = '<p>' + fullMarkdown + '</p>';
-      }
-    } else {
-      compiledHtml = '<pre>' + fullMarkdown + '</pre>';
+    if (!pv && ta.parentNode) {
+      pv = document.createElement('div');
+      pv.id = 'editor-preview-container';
+      pv.className = 'write-preview guide-body editor-preview-container';
+      ta.parentNode.insertBefore(pv, ta.nextSibling);
     }
-
-    // Callout replacement
-    compiledHtml = compiledHtml.replace(/<blockquote>\s*<p>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](?:\s*<br>)?\s*([\s\S]*?)<\/p>\s*<\/blockquote>/gi, function (m, kind, body) {
-      var kindLower = kind.toLowerCase();
-      var cls = kindLower === 'tip' || kindLower === 'note' ? 'callout tip' : 'callout';
-      return '<div class="' + cls + '"><div class="callout-title">' + kind.toUpperCase() + '</div><p>' + body + '</p></div>';
-    });
-
-    // Universal ticker replacement
-    compiledHtml = formatTickersInHtml(compiledHtml);
-
-    pv.innerHTML = compiledHtml;
+    if (!pv) return;
+    pv.innerHTML = window.marked ? window.marked.parse(ta.value) : ta.value;
   }
 
   function setEditorTab(mode) {
-    var tabWrite = document.getElementById('tab-write');
-    var tabPreview = document.getElementById('tab-preview');
-    var ta = document.getElementById('write-textarea');
+    var tabWrite = document.getElementById('tab-write') || document.querySelector('.studio-tab-btn:first-child');
+    var tabPreview = document.getElementById('tab-preview') || document.querySelector('.studio-tab-btn:last-child');
+    var ta = document.getElementById('write-textarea') || document.querySelector('textarea');
+    if (!ta) return;
+
     var pv = document.getElementById('editor-preview-container') || document.getElementById('write-preview');
-    if (!tabWrite || !tabPreview || !ta || !pv) return;
+    if (!pv && ta.parentNode) {
+      pv = document.createElement('div');
+      pv.id = 'editor-preview-container';
+      pv.className = 'write-preview guide-body editor-preview-container';
+      ta.parentNode.insertBefore(pv, ta.nextSibling);
+    }
 
     if (mode === 'preview') {
-      tabPreview.classList.add('is-active', 'active');
-      tabWrite.classList.remove('is-active', 'active');
+      if (tabPreview) tabPreview.classList.add('is-active', 'active');
+      if (tabWrite) tabWrite.classList.remove('is-active', 'active');
       ta.style.display = 'none';
-      pv.hidden = false;
-      updatePreview();
+      if (pv) {
+        pv.style.display = 'block';
+        pv.hidden = false;
+        pv.innerHTML = window.marked ? window.marked.parse(ta.value) : ta.value;
+      }
     } else {
-      tabWrite.classList.add('is-active', 'active');
-      tabPreview.classList.remove('is-active', 'active');
-      pv.hidden = true;
-      ta.style.display = '';
+      if (tabWrite) tabWrite.classList.add('is-active', 'active');
+      if (tabPreview) tabPreview.classList.remove('is-active', 'active');
+      if (pv) {
+        pv.style.display = 'none';
+        pv.hidden = true;
+      }
+      ta.style.display = 'block';
       ta.focus();
     }
   }
@@ -794,7 +789,7 @@
       }
     });
 
-    var tabWrite = document.getElementById('tab-write');
+    var tabWrite = document.getElementById('tab-write') || document.querySelector('#tab-write, [data-i18n="tabWrite"]');
     if (tabWrite && !tabWrite._hasClickBound) {
       tabWrite.setAttribute('type', 'button');
       tabWrite._hasClickBound = true;
@@ -805,7 +800,7 @@
       });
     }
 
-    var tabPreview = document.getElementById('tab-preview');
+    var tabPreview = document.getElementById('tab-preview') || document.querySelector('#tab-preview, [data-i18n="tabPreview"]');
     if (tabPreview && !tabPreview._hasClickBound) {
       tabPreview.setAttribute('type', 'button');
       tabPreview._hasClickBound = true;
@@ -855,12 +850,12 @@
     }
 
     // Tabs
-    if (e.target.closest('#tab-write')) {
+    if (e.target.closest('#tab-write, [data-i18n="tabWrite"]')) {
       e.preventDefault();
       setEditorTab('write');
       return;
     }
-    if (e.target.closest('#tab-preview')) {
+    if (e.target.closest('#tab-preview, [data-i18n="tabPreview"]')) {
       e.preventDefault();
       setEditorTab('preview');
       return;

@@ -32,11 +32,20 @@
 
 /u/*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://translate.googleapis.com https://da.gd https://tinyurl.com https://api-ssl.bitly.com https://accounts.google.com; frame-src 'self' data: blob: https://s.tradingview.com https://www.tradingview.com https://accounts.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Cache-Control: public, max-age=60, s-maxage=1800, stale-while-revalidate=86400
+
+/settings
   Cache-Control: public, max-age=0, s-maxage=60, must-revalidate
+
+/settings/*
+  Cache-Control: public, max-age=0, s-maxage=60, must-revalidate
+
+/data/*
+  Cache-Control: public, max-age=60, s-maxage=1800, stale-while-revalidate=86400
 
 /guides/*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://translate.googleapis.com https://da.gd https://tinyurl.com https://api-ssl.bitly.com https://accounts.google.com; frame-src 'self' data: blob: https://s.tradingview.com https://www.tradingview.com https://accounts.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
-  Cache-Control: public, max-age=0, s-maxage=60, must-revalidate
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
 
 /s/*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://translate.googleapis.com https://da.gd https://tinyurl.com https://api-ssl.bitly.com https://accounts.google.com; frame-src 'self' data: blob: https://s.tradingview.com https://www.tradingview.com https://accounts.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
@@ -46,7 +55,7 @@
 
 /g/*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://translate.googleapis.com https://da.gd https://tinyurl.com https://api-ssl.bitly.com https://accounts.google.com; frame-src 'self' data: blob: https://s.tradingview.com https://www.tradingview.com https://accounts.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
-  Cache-Control: public, max-age=0, s-maxage=60, must-revalidate
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
 
 /avatar.png
   Cache-Control: public, max-age=86400
