@@ -757,7 +757,6 @@
   };
 
   function boot() {
-    checkUrlToken();
     applyTheme(themeNow());
     ensureHeader();
     ensureFooter();
