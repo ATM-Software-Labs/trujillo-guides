@@ -12,7 +12,7 @@ export async function onRequest(context) {
   const googleClientId = env.GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
   const xClientId = env.X_CLIENT_ID || env.TWITTER_CLIENT_ID || DEFAULT_X_CLIENT_ID;
   const jwtSecret = env.JWT_SECRET || DEFAULT_JWT_SECRET;
-  const appOrigin = env.APP_URL ? env.APP_URL.replace(/\/+$/, '') : url.origin;
+  const appOrigin = url.origin;
 
   const hostname = url.hostname;
   const isMainDomain = hostname.endsWith('trujillomingorance.com');
