@@ -28,23 +28,6 @@ export default defineConfig({
           fs.copyFileSync(faviconSrc, faviconDst);
           console.log('Copied favicon.ico to public/savings');
         }
-
-        // Ensure directory indexes for zero-redirect clean URLs on Cloudflare Pages
-        const cleanDirs = [
-          { src: 'public/u.html', dst: 'public/u/index.html', dir: 'public/u' },
-          { src: 'public/g.html', dst: 'public/g/index.html', dir: 'public/g' },
-          { src: 'public/settings.html', dst: 'public/settings/index.html', dir: 'public/settings' }
-        ];
-        cleanDirs.forEach(({ src, dst, dir }) => {
-          const srcPath = path.resolve(__dirname, src);
-          const dstPath = path.resolve(__dirname, dst);
-          const dirPath = path.resolve(__dirname, dir);
-          if (fs.existsSync(srcPath)) {
-            if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
-            fs.copyFileSync(srcPath, dstPath);
-            console.log(`Synchronized ${src} to ${dst}`);
-          }
-        });
       }
     }
   ],

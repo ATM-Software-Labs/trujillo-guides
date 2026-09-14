@@ -1,5 +1,3 @@
-/g/*        /g/index.html         200
-/guides/*   /g/index.html         200
-/u/*        /u/index.html         200
-/settings/* /settings/index.html  200
-
+/g/*        /g?id=:splat   302
+/guides/*   /g?id=:splat   302
+/u/*        /u?u=:splat    302
