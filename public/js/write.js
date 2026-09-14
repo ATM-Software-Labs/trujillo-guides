@@ -163,31 +163,17 @@
   }
 
   function getStudioSession() {
+    if (window.__taMe && (window.__taMe.email || window.__taMe.id || window.__taMe.handle)) {
+      return window.__taMe;
+    }
     var session = localStorage.getItem('atm_studio_session') || localStorage.getItem('atm_user');
     if (session) {
       try {
         var u = JSON.parse(session);
-        if (u) {
-          if (u.username === 'atrummin16') u.username = 'atrumin16';
-          if (u.handle === '@atrummin16') u.handle = '@atrumin16';
-          return u;
-        }
+        if (u && (u.email || u.id)) return u;
       } catch (e) {}
     }
-    // Sesión por defecto de administrador local si no existe
-    var defaultAdmin = {
-      username: 'atrumin16',
-      name: 'Alberto Trujillo Mingorance',
-      role: 'admin',
-      isStudio: true,
-      handle: '@atrumin16',
-      token: 'local-studio-bypass'
-    };
-    try {
-      localStorage.setItem('atm_studio_session', JSON.stringify(defaultAdmin));
-      localStorage.setItem('atm_user', JSON.stringify(defaultAdmin));
-    } catch (e) {}
-    return defaultAdmin;
+    return null;
   }
 
   function needLogin() {

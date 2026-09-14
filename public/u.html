@@ -74,6 +74,11 @@
             <span class="profile-tech-tag">TypeScript / Vanilla JS</span>
           </div>
 
+          <!-- GitHub-Style Compact Achievements Widget -->
+          <div class="profile-achievements-widget" id="profile-unlocked-achievements">
+            <!-- Injected by user-profile.js -->
+          </div>
+
           <div class="profile-stats-row">
             <div class="stat-item">
               <span class="stat-value" id="stat-count">4</span>
@@ -143,46 +148,11 @@
     <div class="profile-cards-grid" id="profile-feed">
       <!-- Injected by user-profile.js -->
     </div>
-
-    <!-- Gamification & Technical Achievements Section -->
-    <section class="achievements-section" id="achievements-section">
-      <div class="profile-section-heading">
-        <div>
-          <h2 class="profile-section-title">Logros Técnicos &amp; Gamificación</h2>
-          <p class="section-subtitle">25 insignias técnicas progresivas divididas en 4 niveles de maestría y secretos del sistema.</p>
-        </div>
-      </div>
-
-      <!-- 4-Tier Progress Bar Widget -->
-      <div id="achievement-progress-wrap">
-        <!-- Injected by achievements.js -->
-      </div>
-
-      <!-- Achievements Filter Tabs -->
-      <div class="achievement-tabs-wrap" role="tablist">
-        <button type="button" class="ach-tab-btn is-active" data-ach-tab="all">
-          <span>Todas (25)</span>
-        </button>
-        <button type="button" class="ach-tab-btn" data-ach-tab="unlocked">
-          <span>✓ Desbloqueadas</span>
-        </button>
-        <button type="button" class="ach-tab-btn" data-ach-tab="locked">
-          <span>🔒 Bloqueadas</span>
-        </button>
-        <button type="button" class="ach-tab-btn" data-ach-tab="secrets">
-          <span>✦ Secretas</span>
-        </button>
-      </div>
-
-      <!-- Badge Grid -->
-      <div class="achievements-grid" id="achievements-grid">
-        <!-- Injected by achievements.js -->
-      </div>
-    </section>
   </main>
 
   <script src="/js/i18n.js?v=v7"></script>
   <script src="/js/chrome.js?v=v7"></script>
+  <script src="/js/auth-modal.js?v=v7"></script>
   <script src="/js/avatars.js?v=v7"></script>
   <script src="/js/achievements.js?v=v7"></script>
   <script src="/js/user-profile.js?v=v7"></script>

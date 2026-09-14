@@ -1,5 +1,18 @@
 {
   "version": 1,
-  "include": [],
-  "exclude": ["/*"]
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/css/*",
+    "/js/*",
+    "/images/*",
+    "/savings/assets/*",
+    "/data/*",
+    "/favicon.ico",
+    "/favicon.svg",
+    "/avatar.png",
+    "/style.css",
+    "/app.js"
+  ]
 }

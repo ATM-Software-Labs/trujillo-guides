@@ -552,12 +552,12 @@
         '  </div>' +
         '  <div class="ach-info">' +
         '    <div class="ach-title-row">' +
-        '      <h4 class="ach-title">' + title + '</h4>' +
+        '      <h4 class="ach-title" title="' + title + '">' + title + '</h4>' +
         '      <span class="ach-tier-badge tier-' + a.tier + '">' + TIERS[a.tier].name + '</span>' +
         '    </div>' +
         '    <p class="ach-desc">' + desc + '</p>' +
         '    <div class="ach-footer">' +
-        '      <span class="ach-rarity">' + a.rarity + '% tienen esto</span>' +
+        '      <span class="ach-rarity">' + a.rarity + '%</span>' +
         '      <span class="ach-status-label">' + (unlocked ? '✓ Desbloqueado' : '🔒 Bloqueado') + '</span>' +
         '    </div>' +
         '  </div>' +
@@ -567,6 +567,74 @@
     container.innerHTML = html;
 
     container.querySelectorAll('.achievement-card').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var id = el.getAttribute('data-ach-id');
+        showModal(id);
+      });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          var id = el.getAttribute('data-ach-id');
+          showModal(id);
+        }
+      });
+    });
+  }
+
+  function renderAchievementsGuide(container, filter) {
+    if (!container) return;
+    filter = filter || 'all';
+
+    var filtered = ACHIEVEMENTS.filter(function (a) {
+      var unlocked = isUnlocked(a.id);
+      if (filter === 'unlocked') return unlocked;
+      if (filter === 'locked') return !unlocked;
+      if (filter === 'secrets') return a.secret;
+      return true;
+    });
+
+    if (!filtered.length) {
+      container.innerHTML = '<div class="profile-empty-state" style="padding: 32px 0; text-align: center;">' +
+        '<p style="color:#6e7681; margin:0;">No hay insignias que coincidan con este filtro.</p>' +
+        '</div>';
+      return;
+    }
+
+    var html = filtered.map(function (a) {
+      var unlocked = isUnlocked(a.id);
+      var isSecretLocked = a.secret && !unlocked;
+      var title = isSecretLocked ? '??? [Logro Secreto]' : a.title;
+      var desc = isSecretLocked ? 'Este logro está oculto en el sistema. Explora y experimenta con la plataforma para descubrir su requisito.' : a.desc;
+      var criteria = isSecretLocked ? 'Pista: Explora características avanzadas, atajos o configuraciones.' : a.criteria;
+      var statusClass = unlocked ? 'is-unlocked' : 'is-locked';
+      var statusLabel = unlocked ? '✓ Conseguido' : '🔒 Bloqueado';
+
+      return '<div class="ach-guide-row ' + statusClass + '" data-ach-id="' + a.id + '" role="button" tabindex="0">' +
+        '  <div class="ach-guide-icon tier-' + a.tier + '">' +
+             (isSecretLocked ? '<span class="ach-question">?</span>' : a.icon) +
+        '  </div>' +
+        '  <div class="ach-guide-info">' +
+        '    <div class="ach-guide-title-row">' +
+        '      <h3 class="ach-guide-title">' + title + '</h3>' +
+        '      <span class="ach-tier-badge tier-' + a.tier + '">' + TIERS[a.tier].name + '</span>' +
+        '      <span class="ach-guide-category">' + a.categoryLabel + '</span>' +
+        '    </div>' +
+        '    <p class="ach-guide-desc">' + desc + '</p>' +
+        '    <div class="ach-guide-criteria">' +
+        '      <span class="criteria-label">Cómo conseguirlo:</span>' +
+        '      <span>' + criteria + '</span>' +
+        '    </div>' +
+        '  </div>' +
+        '  <div class="ach-guide-meta">' +
+        '    <span class="ach-guide-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '    <span class="ach-guide-rarity">' + a.rarity + '% de autores</span>' +
+        '  </div>' +
+        '</div>';
+    }).join('');
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.ach-guide-row').forEach(function (el) {
       el.addEventListener('click', function () {
         var id = el.getAttribute('data-ach-id');
         showModal(id);
@@ -768,6 +836,7 @@
     showModal: showModal,
     showToast: showToast,
     renderBadgeGrid: renderBadgeGrid,
+    renderAchievementsGuide: renderAchievementsGuide,
     renderProgressWidget: renderProgressWidget,
     evaluateCatalogAchievements: evaluateCatalogAchievements
   };

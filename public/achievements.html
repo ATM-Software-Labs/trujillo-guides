@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Logros &amp; Requisitos Técnicos · ATM Docs</title>
+  <meta name="description" content="Catálogo completo de las 25 insignias técnicas, niveles de maestría y criterios de desbloqueo en ATM Docs.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="theme-color" content="#0b0f14">
+  <script src="/js/theme-boot.js?v=v7"></script>
+  <link rel="stylesheet" href="/css/tokens.css?v=v7">
+  <link rel="stylesheet" href="/style.css?v=v7">
+  <link rel="stylesheet" href="/css/community.css?v=v7">
+</head>
+<body class="docs-body">
+  <header class="docs-topbar">
+    <a href="/" class="brand">
+      <img src="/avatar.png" alt="" class="brand-avatar" width="28" height="28">
+      <span>ATM Docs</span>
+    </a>
+    <div class="topbar-actions"></div>
+  </header>
+
+  <main class="guide-container achievements-guide-container">
+    <a href="/" class="back-nav" data-i18n="backIndex">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      <span>← Volver al catálogo</span>
+    </a>
+
+    <div class="settings-heading-group achievements-guide-heading">
+      <p class="kicker">SISTEMA DE MAESTRÍA &amp; GAMIFICACIÓN TÉCNICA</p>
+      <h1>Catálogo de Logros &amp; Requisitos</h1>
+      <p class="lede">25 insignias progresivas de arquitectura, sistemas distribuidos, rendimiento y secretos del sistema. Conoce los requisitos y desbloquéalos explorando la plataforma.</p>
+    </div>
+
+    <!-- 4-Tier Progress Bar Widget -->
+    <div id="achievement-progress-wrap">
+      <!-- Injected by achievements.js -->
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="achievement-tabs-wrap" role="tablist">
+      <button type="button" class="ach-tab-btn is-active" data-ach-tab="all">
+        <span>Todas (25)</span>
+      </button>
+      <button type="button" class="ach-tab-btn" data-ach-tab="unlocked">
+        <span>✓ Desbloqueadas</span>
+      </button>
+      <button type="button" class="ach-tab-btn" data-ach-tab="locked">
+        <span>🔒 Bloqueadas</span>
+      </button>
+      <button type="button" class="ach-tab-btn" data-ach-tab="secrets">
+        <span>✦ Secretas</span>
+      </button>
+    </div>
+
+    <!-- Technical Guide Rows List -->
+    <div class="ach-guide-list" id="achievements-guide-list">
+      <!-- Injected by achievements.js -->
+    </div>
+  </main>
+
+  <script src="/js/i18n.js?v=v7"></script>
+  <script src="/js/chrome.js?v=v7"></script>
+  <script src="/js/achievements.js?v=v7"></script>
+  <script>
+    (function () {
+      function initAchievementsPage() {
+        if (!window.ATM_ACHIEVEMENTS) return;
+
+        var progressWrap = document.getElementById('achievement-progress-wrap');
+        var listWrap = document.getElementById('achievements-guide-list');
+        var currentTab = 'all';
+
+        function render() {
+          window.ATM_ACHIEVEMENTS.renderProgressWidget(progressWrap);
+          window.ATM_ACHIEVEMENTS.renderAchievementsGuide(listWrap, currentTab);
+        }
+
+        render();
+
+        var tabs = document.querySelectorAll('.ach-tab-btn');
+        tabs.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            tabs.forEach(function (t) { t.classList.remove('is-active'); });
+            btn.classList.add('is-active');
+            currentTab = btn.getAttribute('data-ach-tab') || 'all';
+            render();
+          });
+        });
+
+        document.addEventListener('atm:achievement-unlocked', render);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAchievementsPage);
+      } else {
+        initAchievementsPage();
+      }
+    })();
+  </script>
+</body>
+</html>

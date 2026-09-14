@@ -34,11 +34,58 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://translate.googleapis.com https://da.gd https://tinyurl.com https://api-ssl.bitly.com https://accounts.google.com; frame-src 'self' data: blob: https://s.tradingview.com https://www.tradingview.com https://accounts.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
   Cache-Control: public, max-age=60, s-maxage=1800, stale-while-revalidate=86400
 
+/api/*
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie, Authorization
+
+/api/auth/*
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie, Authorization
+
+/api/user/*
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie, Authorization
+
 /settings
-  Cache-Control: public, max-age=0, s-maxage=60, must-revalidate
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie
 
 /settings/*
-  Cache-Control: public, max-age=0, s-maxage=60, must-revalidate
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie
+
+/write
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie
+
+/write/*
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Vary: Cookie
+
+/login
+  Cache-Control: private, no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/achievements
+  Cache-Control: public, max-age=0, must-revalidate
+
+/achievements/*
+  Cache-Control: public, max-age=0, must-revalidate
 
 /data/*
   Cache-Control: public, max-age=60, s-maxage=1800, stale-while-revalidate=86400

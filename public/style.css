@@ -2575,34 +2575,42 @@ h1 .ticker-badge,
   pointer-events: auto !important;
 }
 
-/* Achievements Grid & SVG Sizing Shield */
+/* Achievements Grid & SVG Sizing Shield (Minimalist Compact System) */
 .achievements-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
   align-items: stretch;
 }
 
 .achievement-card {
   display: flex;
-  flex-direction: column;
-  padding: 1rem;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.85rem;
   border-radius: 8px;
   overflow: hidden;
 }
 
-.achievement-icon-wrap,
-.achievement-card svg {
-  width: 48px;
-  height: 48px;
-  max-width: 48px;
-  max-height: 48px;
+.achievement-card .ach-icon-box {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 36px;
+  max-height: 36px;
   flex-shrink: 0;
 }
 
-.achievement-card svg {
+.achievement-card .ach-icon-box svg {
+  width: 24px;
+  height: 24px;
+  max-width: 24px;
+  max-height: 24px;
   display: block;
-  margin: 0 auto 0.75rem auto;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 

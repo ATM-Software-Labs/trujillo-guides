@@ -85,10 +85,10 @@
   function accountHtml() {
     var t = typeof window.atmT === 'function' ? window.atmT : function (k) { return k; };
     var me = window.__taMe;
-    if (me && (me.handle || me.name || me.username)) {
-      var displayName = me.name || me.username || me.handle || 'Alberto Trujillo Mingorance';
+    if (me && (me.handle || me.name || me.username || me.email)) {
+      var displayName = me.name || me.username || me.handle || me.email || 'Usuario';
       var label = firstName(displayName);
-      var cleanHandle = (me.handle || me.username || '@atrumin16').replace(/^@+/, '');
+      var cleanHandle = (me.handle || me.username || 'user').replace(/^@+/, '');
       return '<div class="account-menu-wrap" id="account-menu-wrap" data-notranslate>' +
         '<button type="button" class="account-chip nav-profile-btn bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200" id="account-btn" aria-haspopup="menu" aria-expanded="false" title="' + esc(displayName) + '">' +
         avatarHtml(me.picture, displayName) +
@@ -186,8 +186,13 @@
       localStorage.removeItem('atm_user');
       localStorage.removeItem('trujillo_ai_user');
       localStorage.removeItem('auth_user');
+      localStorage.removeItem('atm_studio_session');
+    } catch (e) {}
+    try {
+      fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {}
     window.__taMe = null;
+    setSharedCookie('atm_session', '', 0);
     setSharedCookie('ta_session', '', 0);
     setSharedCookie('auth_token', '', 0);
     setSharedCookie('session_active', '', 0);
@@ -218,41 +223,6 @@
     setSharedCookie('session_active', '1');
   }
 
-  function setStudioSession(profile) {
-    var p = profile || {};
-    var session = {
-      username: p.username || p.handle || 'atrumin16',
-      name: p.name || 'Alberto Trujillo Mingorance',
-      handle: p.handle || p.username || '@atrumin16',
-      role: 'admin',
-      isStudio: true,
-      loggedIn: true,
-      email: p.email || 'alberto@trujillomingorance.com',
-      picture: p.picture || 'https://lh3.googleusercontent.com/a/ACg8ocLdgZZbUW1KzSg11REPuHungATAR_SeG52Na5yDYfOOXhpkXzs=s96-c'
-    };
-    if (session.handle && session.handle.charAt(0) !== '@') {
-      session.handle = '@' + session.handle;
-    }
-    if (session.username && session.username.charAt(0) === '@') {
-      session.username = session.username.slice(1);
-    }
-    try {
-      localStorage.setItem('atm_studio_session', JSON.stringify(session));
-      localStorage.setItem('atm_user', JSON.stringify(session));
-      localStorage.setItem('trujillo_ai_user', JSON.stringify(session));
-      localStorage.setItem('auth_user', JSON.stringify(session));
-      localStorage.setItem('atm_guest_name', session.name);
-      localStorage.setItem('trujillo_ai_token', 'local_studio_' + Date.now());
-      localStorage.setItem('auth_token', 'local_studio_' + Date.now());
-    } catch (e) {}
-    window.__taMe = session;
-    paintAccount();
-    document.dispatchEvent(new CustomEvent('atm:me'));
-    return session;
-  }
-  window.setStudioSession = setStudioSession;
-
-
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'AUTH_SUCCESS' && event.data.token) {
       setSharedToken(event.data.token, event.data.user);
@@ -277,9 +247,8 @@
       '<div class="auth-tabs">' +
       '<button type="button" class="auth-tab active" id="tab-auth-login">Acceder</button>' +
       '<button type="button" class="auth-tab" id="tab-auth-register">Crear cuenta</button>' +
-      '</div>' +
       '<div class="auth-social-buttons">' +
-      '<button type="button" class="auth-social-btn" id="btn-oauth-google">' +
+      '<button type="button" class="auth-social-btn" id="btn-login-google" data-oauth="google">' +
       '<svg width="18" height="18" viewBox="0 0 24 24">' +
       '<path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>' +
       '<path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>' +
@@ -288,7 +257,7 @@
       '</svg>' +
       '<span>Continuar con Google</span>' +
       '</button>' +
-      '<button type="button" class="auth-social-btn" id="btn-oauth-x">' +
+      '<button type="button" class="auth-social-btn" id="btn-login-x" data-oauth="x">' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">' +
       '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>' +
       '</svg>' +
@@ -372,92 +341,104 @@
     if (guestBtn) {
       guestBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        var guestUser = {
-          name: 'Alberto Trujillo Mingorance',
-          username: 'atrumin16',
-          handle: '@atrumin16',
-          role: 'admin',
-          isStudio: true,
-          loggedIn: true
-        };
-        setStudioSession(guestUser);
         closeAuth();
       });
     }
 
-    var googleBtn = document.getElementById('btn-oauth-google');
+    var googleBtn = document.getElementById('btn-login-google') || document.getElementById('btn-oauth-google');
     if (googleBtn) {
       googleBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        var gUser = {
-          name: 'Alberto Trujillo Mingorance',
-          email: 'alberto@trujillomingorance.com',
-          username: 'atrumin16',
-          handle: '@atrumin16',
-          role: 'admin',
-          isStudio: true,
-          loggedIn: true
-        };
-        setStudioSession(gUser);
-        closeAuth();
+        window.location.href = '/api/auth/google';
       });
     }
 
-    var xBtn = document.getElementById('btn-oauth-x');
+    var xBtn = document.getElementById('btn-login-x') || document.getElementById('btn-oauth-x');
     if (xBtn) {
       xBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        var xUser = {
-          name: 'Alberto Trujillo Mingorance',
-          email: 'alberto@trujillomingorance.com',
-          username: 'atrumin16',
-          handle: '@atrumin16',
-          role: 'admin',
-          isStudio: true,
-          loggedIn: true
-        };
-        setStudioSession(xUser);
-        closeAuth();
+        window.location.href = '/api/auth/x';
       });
     }
 
     var forgotBtn = document.getElementById('auth-forgot-pwd');
     if (forgotBtn) {
-      forgotBtn.addEventListener('click', function (e) {
+      forgotBtn.addEventListener('click', async function (e) {
         e.preventDefault();
-        alert('Si has olvidado tu contraseña, puedes continuar con Studio o registrarte con un nuevo correo.');
+        var emailInput = document.getElementById('auth-email-input');
+        var email = emailInput ? emailInput.value.trim() : '';
+        if (!email) {
+          alert('Por favor introduce tu correo electrónico para enviarte el enlace de recuperación.');
+          if (emailInput) emailInput.focus();
+          return;
+        }
+        try {
+          var res = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+          });
+          var data = await res.json();
+          alert(data.message || 'Si tu correo está registrado, recibirás un enlace de 15 minutos.');
+          closeAuth();
+        } catch (err) {
+          alert('Error al solicitar la recuperación de contraseña.');
+        }
       });
     }
 
     var form = document.getElementById('auth-form');
     if (form) {
-      form.addEventListener('submit', function (e) {
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
         var emailInput = document.getElementById('auth-email-input');
         var nameInput = document.getElementById('auth-name-input');
+        var pwdInput = document.getElementById('auth-pwd-input');
         var email = emailInput ? emailInput.value.trim() : '';
         var name = nameInput ? nameInput.value.trim() : '';
+        var pwd = pwdInput ? pwdInput.value : '';
 
         if (!email) {
           if (emailInput) emailInput.focus();
           return;
         }
 
-        var handle = (name || email.split('@')[0] || 'atrumin16').toLowerCase().replace(/[^a-z0-9_]/g, '');
-        var displayName = name || 'Alberto Trujillo Mingorance';
+        var isRegister = tabReg && tabReg.classList.contains('active');
 
-        var user = {
-          name: displayName,
-          email: email,
-          username: handle || 'atrumin16',
-          handle: handle ? (handle.charAt(0) === '@' ? handle : '@' + handle) : '@atrumin16',
-          role: 'admin',
-          isStudio: true,
-          loggedIn: true
-        };
-
-        setStudioSession(user);
-        closeAuth();
+        try {
+          if (isRegister) {
+            var regRes = await fetch('/api/auth/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: email, password: pwd, name: name })
+            });
+            var regData = await regRes.json();
+            if (!regRes.ok) {
+              alert(regData.error || 'Error al registrar la cuenta');
+              return;
+            }
+            alert(regData.message || 'Cuenta creada. Revisa tu correo de verificación.');
+            closeAuth();
+          } else {
+            var loginRes = await fetch('/api/auth/login', {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: email, password: pwd })
+            });
+            var loginData = await loginRes.json();
+            if (!loginRes.ok) {
+              alert(loginData.error || 'Credenciales inválidas');
+              return;
+            }
+            window.__taMe = loginData.user;
+            paintAccount();
+            closeAuth();
+            window.location.reload();
+          }
+        } catch (err) {
+          alert('Error de conexión con el servicio de autenticación.');
+        }
       });
     }
   }
@@ -489,77 +470,40 @@
     }
   }
 
-  (function checkSocialCallback() {
-    try {
-      var params = new URLSearchParams(window.location.search);
-      var state = params.get('state') || '';
-      var isX = params.get('auth') === 'x_callback' || state.indexOf('x_oauth_') === 0;
-      if (!isX) return;
-      var code = params.get('code');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      if (code) {
-        var xUser = {
-          name: 'Alberto Trujillo Mingorance',
-          email: 'alberto@trujillomingorance.com',
-          username: 'atrumin16',
-          handle: '@atrumin16',
-          role: 'admin',
-          isStudio: true,
-          loggedIn: true
-        };
-        setStudioSession(xUser);
-        location.reload();
-      }
-    } catch (e) {}
-  })();
-
-  function checkUrlToken() {
-    try {
-      var p = new URLSearchParams(location.search);
-      var tok = p.get('auth_token') || p.get('token');
-      if (tok) {
-        localStorage.setItem('trujillo_ai_token', tok);
-        localStorage.setItem('auth_token', tok);
-        setSharedCookie('auth_token', tok);
-        setSharedCookie('session_active', '1');
-        p.delete('auth_token');
-        p.delete('token');
-        var clean = location.pathname + (p.toString() ? '?' + p.toString() : '') + location.hash;
-        history.replaceState(null, '', clean);
-      }
-    } catch (e) {}
-  }
-
   async function checkSession() {
     try {
-      var rawUser = localStorage.getItem('atm_studio_session') || localStorage.getItem('atm_user') || localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user');
-      if (rawUser) {
-        var user = JSON.parse(rawUser);
-        if (user) {
-          if (user.isStudio === undefined || user.name === 'Usuario' || user.name === 'Usuario Google' || user.name === 'Usuario X') {
-            user.isStudio = true;
-            user.role = 'admin';
-            if (user.name === 'Usuario' || user.name === 'Usuario Google' || user.name === 'Usuario X') {
-              user.name = 'Alberto Trujillo Mingorance';
-              user.handle = '@atrumin16';
-              user.username = 'atrumin16';
-            }
-          }
-          window.__taMe = user;
+      var res = await fetch('/api/auth/me', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      });
+
+      if (res.ok) {
+        var data = await res.json();
+        if (data && data.authenticated && data.user) {
+          window.__taMe = data.user;
           paintAccount();
-          document.dispatchEvent(new CustomEvent('atm:me'));
+          document.dispatchEvent(new CustomEvent('atm:me', { detail: { user: data.user } }));
           return;
         }
       }
-      setStudioSession();
+
+      // Strictly evaluate to null if unauthenticated: NEVER mock Alberto
+      window.__taMe = null;
+      paintAccount();
+      document.dispatchEvent(new CustomEvent('atm:me', { detail: { user: null } }));
     } catch (e) {
-      setStudioSession();
+      window.__taMe = null;
+      paintAccount();
+      document.dispatchEvent(new CustomEvent('atm:me', { detail: { user: null } }));
     }
   }
 
   window.atmGuestName = guestName;
   window.atmOpenAuth = openAuth;
-  window.atmOpenStudioLogin = openStudioLogin;
+  window.atmOpenStudioLogin = openAuth;
   window.atmCheckSession = checkSession;
 
   function headerHtml() {

@@ -674,29 +674,71 @@
     });
   }
 
-  // --- GAMIFICATION & ACHIEVEMENTS BINDING ---
-  function initAchievementsSection() {
-    if (!window.ATM_ACHIEVEMENTS) return;
+  // --- GITHUB-STYLE ACHIEVEMENTS WIDGET ---
+  function initProfileAchievements(authorHandle) {
+    var container = document.getElementById('profile-unlocked-achievements');
+    if (!container || !window.ATM_ACHIEVEMENTS) return;
 
-    var progressWrap = document.getElementById('achievement-progress-wrap');
-    var gridWrap = document.getElementById('achievements-grid');
+    var cleanH = sanitizeUsername(authorHandle || getTargetHandle());
+    var isPlatformAuthor = (cleanH === 'atrumin16' || cleanH === 'alberto');
 
-    window.ATM_ACHIEVEMENTS.renderProgressWidget(progressWrap);
-    window.ATM_ACHIEVEMENTS.renderBadgeGrid(gridWrap, activeAchTab);
+    var allAchievements = window.ATM_ACHIEVEMENTS.achievements || [];
+    var tiers = window.ATM_ACHIEVEMENTS.tiers || {};
 
-    var tabs = document.querySelectorAll('.ach-tab-btn');
-    tabs.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        tabs.forEach(function (t) { t.classList.remove('is-active'); });
-        btn.classList.add('is-active');
-        activeAchTab = btn.getAttribute('data-ach-tab') || 'all';
-        window.ATM_ACHIEVEMENTS.renderBadgeGrid(gridWrap, activeAchTab);
-      });
+    // Filter only achievements unlocked by this specific author
+    var unlockedList = allAchievements.filter(function (a) {
+      if (window.ATM_ACHIEVEMENTS.isUnlocked(a.id)) return true;
+      if (isPlatformAuthor) {
+        var baseline = ['genesis', 'builder', 'polymath', 'deep-dive', 'interactive', 'curator', 'runtime', 'zero-cost', 'early-adopter', 'speed-of-light'];
+        return baseline.indexOf(a.id) !== -1;
+      }
+      return false;
     });
 
-    document.addEventListener('atm:achievement-unlocked', function () {
-      window.ATM_ACHIEVEMENTS.renderProgressWidget(progressWrap);
-      window.ATM_ACHIEVEMENTS.renderBadgeGrid(gridWrap, activeAchTab);
+    if (!unlockedList.length) {
+      container.innerHTML =
+        '<div class="profile-achievements-header">' +
+        '  <span class="profile-achievements-title">Logros</span>' +
+        '</div>' +
+        '<p class="profile-achievements-empty">Sin insignias públicas aún</p>' +
+        '<a href="/achievements" class="profile-achievements-link">Ver todas las insignias y requisitos &rarr;</a>';
+      return;
+    }
+
+    var badgesHtml = unlockedList.map(function (a) {
+      var tierName = tiers[a.tier] ? tiers[a.tier].name : a.tier;
+      var tooltip = a.title + ' (' + tierName + ')\n' + a.desc;
+      return '<div class="profile-achievement-badge tier-' + a.tier + '" data-ach-id="' + a.id + '" title="' + esc(tooltip) + '" role="button" tabindex="0" aria-label="' + esc(a.title) + '">' +
+        a.icon +
+        '</div>';
+    }).join('');
+
+    container.innerHTML =
+      '<div class="profile-achievements-header">' +
+      '  <span class="profile-achievements-title">Logros</span>' +
+      '  <span class="profile-achievements-count">' + unlockedList.length + ' desbloqueados</span>' +
+      '</div>' +
+      '<div class="profile-achievements-row">' +
+      badgesHtml +
+      '</div>' +
+      '<a href="/achievements" class="profile-achievements-link">Ver todas las insignias y requisitos &rarr;</a>';
+
+    container.querySelectorAll('.profile-achievement-badge').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var id = el.getAttribute('data-ach-id');
+        if (window.ATM_ACHIEVEMENTS.showModal) {
+          window.ATM_ACHIEVEMENTS.showModal(id);
+        }
+      });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          var id = el.getAttribute('data-ach-id');
+          if (window.ATM_ACHIEVEMENTS.showModal) {
+            window.ATM_ACHIEVEMENTS.showModal(id);
+          }
+        }
+      });
     });
   }
 
@@ -744,7 +786,10 @@
     bindFilterControls();
     bindCopyProfile();
     renderPublications();
-    initAchievementsSection();
+    initProfileAchievements(targetHandle);
+    document.addEventListener('atm:achievement-unlocked', function () {
+      initProfileAchievements(targetHandle);
+    });
 
     // Background stale-while-revalidate fetch from CDN
     fetch('/data/guides.json')

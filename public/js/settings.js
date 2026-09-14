@@ -68,12 +68,14 @@
       if (raw) data = JSON.parse(raw);
     } catch (e) {}
 
-    // Pull author defaults from existing studio session or platform defaults
-    var session = {};
-    try {
-      var rawSession = localStorage.getItem('atm_studio_session') || localStorage.getItem('atm_user');
-      if (rawSession) session = JSON.parse(rawSession);
-    } catch (e) {}
+    // Pull author defaults from active session (window.__taMe or valid session)
+    var session = window.__taMe || {};
+    if (!session.email && !session.id) {
+      try {
+        var rawSession = localStorage.getItem('atm_studio_session') || localStorage.getItem('atm_user');
+        if (rawSession) session = JSON.parse(rawSession);
+      } catch (e) {}
+    }
 
     var author = data.author || {};
     var nameInput = document.getElementById('setting-name');
@@ -85,13 +87,13 @@
     var langSelect = document.getElementById('setting-lang');
     var themeSelect = document.getElementById('setting-theme');
 
-    var cleanH = (author.handle || session.handle || 'atrumin16').replace(/^@+/, '');
-    if (nameInput) nameInput.value = author.name || session.name || 'Alberto Trujillo Mingorance';
+    var cleanH = (author.handle || session.handle || '').replace(/^@+/, '');
+    if (nameInput) nameInput.value = author.name || session.name || '';
     if (handleInput) handleInput.value = cleanH;
-    if (previewSlug) previewSlug.textContent = cleanH;
-    if (roleInput) roleInput.value = author.role || (session.role === 'admin' ? 'Lead Systems Architect' : 'Senior Infrastructure Engineer') || 'Lead Systems Architect';
-    if (avatarInput) avatarInput.value = author.avatar || session.picture || 'https://lh3.googleusercontent.com/a/ACg8ocLdgZZbUW1KzSg11REPuHungATAR_SeG52Na5yDYfOOXhpkXzs=s96-c';
-    if (bioInput) bioInput.value = author.bio || 'Arquitectura de sistemas distribuidos, infraestructura de correo corporativo a coste cero, análisis cuantitativo y optimización en Cloudflare Edge & Linux Kernel.';
+    if (previewSlug) previewSlug.textContent = cleanH || 'usuario';
+    if (roleInput) roleInput.value = author.role || (session.role === 'admin' ? 'Lead Systems Architect' : 'Autor') || '';
+    if (avatarInput) avatarInput.value = author.avatar || session.picture || session.avatar || '';
+    if (bioInput) bioInput.value = author.bio || '';
 
     // Historical aliases
     var prevHandles = author.previous_handles || [];
