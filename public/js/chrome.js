@@ -247,6 +247,7 @@
       '<div class="auth-tabs">' +
       '<button type="button" class="auth-tab active" id="tab-auth-login">Acceder</button>' +
       '<button type="button" class="auth-tab" id="tab-auth-register">Crear cuenta</button>' +
+      '</div>' +
       '<div class="auth-social-buttons">' +
       '<button type="button" class="auth-social-btn" id="btn-login-google" data-oauth="google">' +
       '<svg width="18" height="18" viewBox="0 0 24 24">' +
@@ -281,9 +282,9 @@
       '</div>' +
       '<input type="password" class="auth-input" placeholder="••••••••" id="auth-pwd-input" required>' +
       '</div>' +
-      '<button type="submit" class="auth-submit-btn" id="auth-submit-action">Continuar</button>' +
+      '<button type="submit" class="auth-submit-btn" id="auth-submit-action">Acceder</button>' +
       '</form>' +
-      '<div style="text-align: center; margin-top: 14px;">' +
+      '<div class="auth-guest-wrap" style="text-align: center; margin-top: 14px;">' +
       '<button type="button" class="auth-guest-btn" id="auth-guest-action">Continuar como invitado &rarr;</button>' +
       '</div>' +
       '<div class="auth-footer-links">' +
@@ -341,7 +342,14 @@
     if (guestBtn) {
       guestBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        var current = guestName();
+        if (!current) {
+          setGuestName('Invitado');
+        }
         closeAuth();
+        paintAccount();
+        document.dispatchEvent(new CustomEvent('atm:guest', { detail: { name: guestName() } }));
+        if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
       });
     }
 

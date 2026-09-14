@@ -420,15 +420,32 @@
 }
 .auth-submit-btn:hover { background: #e2e8f0 !important; }
 
-.auth-guest-btn {
-  background: transparent !important;
-  border: none !important;
-  color: #94a3b8 !important;
-  font-size: 12px !important;
-  cursor: pointer !important;
-  padding: 4px !important;
+.auth-guest-wrap {
+  margin-top: 10px;
+  width: 100%;
 }
-.auth-guest-btn:hover { color: #f8fafc !important; }
+.auth-guest-btn {
+  width: 100% !important;
+  background: transparent !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+  color: #94a3b8 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  padding: 9px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+.auth-guest-btn:hover {
+  color: #f8fafc !important;
+  background: #111827 !important;
+  border-color: #334155 !important;
+}
 
 .auth-footer-links {
   display: flex;
