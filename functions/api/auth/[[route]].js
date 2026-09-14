@@ -5,8 +5,18 @@ export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const path = url.pathname;
-  const origin = env.APP_URL ? env.APP_URL.replace(/\/+$/, '') : 'https://ai.trujillomingorance.com';
-  const jwtSecret = env.JWT_SECRET || 'atm_platform_jwt_secret_change_in_production_2026';
+  const DEFAULT_GOOGLE_CLIENT_ID = '161745150528-5pb84k9upvamvlvnc7lg6nr1ku74vc4a.apps.googleusercontent.com';
+  const DEFAULT_X_CLIENT_ID = 'NF94WVVIT1dzSXZNaTJuYjRXSEc6MTpjaQ';
+  const DEFAULT_JWT_SECRET = 'trujillo_jwt_secret_2026';
+
+  const googleClientId = env.GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
+  const xClientId = env.X_CLIENT_ID || env.TWITTER_CLIENT_ID || DEFAULT_X_CLIENT_ID;
+  const jwtSecret = env.JWT_SECRET || DEFAULT_JWT_SECRET;
+  const appOrigin = env.APP_URL ? env.APP_URL.replace(/\/+$/, '') : url.origin;
+
+  const hostname = url.hostname;
+  const isMainDomain = hostname.endsWith('trujillomingorance.com');
+  const domainAttr = isMainDomain ? '; Domain=.trujillomingorance.com' : '';
 
   const NO_CACHE_HEADERS = {
     'Content-Type': 'application/json; charset=utf-8',
@@ -29,18 +39,11 @@ export async function onRequest(context) {
   // ==========================================
   // 1. REDIRECCIÓN A GOOGLE OAUTH
   // ==========================================
-  if (path === '/api/auth/google') {
-    if (!env.GOOGLE_CLIENT_ID) {
-      return new Response(JSON.stringify({ error: 'GOOGLE_CLIENT_ID no configurado' }), {
-        status: 500,
-        headers: NO_CACHE_HEADERS
-      });
-    }
-
+  if (path === '/api/auth/google' && request.method === 'GET') {
     const state = crypto.randomUUID();
     const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-    googleAuthUrl.searchParams.set('client_id', env.GOOGLE_CLIENT_ID);
-    googleAuthUrl.searchParams.set('redirect_uri', `${origin}/api/auth/google/callback`);
+    googleAuthUrl.searchParams.set('client_id', googleClientId);
+    googleAuthUrl.searchParams.set('redirect_uri', `${appOrigin}/api/auth/google/callback`);
     googleAuthUrl.searchParams.set('response_type', 'code');
     googleAuthUrl.searchParams.set('scope', 'openid email profile');
     googleAuthUrl.searchParams.set('prompt', 'select_account');
@@ -50,10 +53,65 @@ export async function onRequest(context) {
       status: 302,
       headers: {
         'Location': googleAuthUrl.toString(),
-        'Set-Cookie': `oauth_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`,
+        'Set-Cookie': `oauth_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=600`,
         'Cache-Control': 'private, no-cache, no-store, must-revalidate',
       },
     });
+  }
+
+  // Soporte adicional para verificación directa de ID token (Google Identity Services)
+  if (path === '/api/auth/google' && request.method === 'POST') {
+    try {
+      const body = await request.json();
+      const credential = body.credential || '';
+      if (!credential) {
+        return new Response(JSON.stringify({ error: 'Falta la credencial de Google.' }), { status: 400, headers: NO_CACHE_HEADERS });
+      }
+
+      const verifyRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+      if (!verifyRes.ok) {
+        return new Response(JSON.stringify({ error: 'No se pudo verificar la cuenta de Google.' }), { status: 401, headers: NO_CACHE_HEADERS });
+      }
+
+      const googleUser = await verifyRes.json();
+      const email = String(googleUser.email || '').trim().toLowerCase();
+      if (!email) {
+        return new Response(JSON.stringify({ error: 'La sesión de Google no es válida.' }), { status: 401, headers: NO_CACHE_HEADERS });
+      }
+
+      const handle = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '');
+      const sessionPayload = {
+        id: googleUser.sub || googleUser.id,
+        email: email,
+        name: googleUser.name || handle,
+        avatar: googleUser.picture || '',
+        handle: handle,
+        role: (email === 'alberto@trujillomingorance.com' || email === 'atrumin16@gmail.com') ? 'admin' : 'author',
+        provider: 'google',
+        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7),
+      };
+
+      const sessionToken = await signJwt(sessionPayload, jwtSecret);
+
+      const headers = new Headers(NO_CACHE_HEADERS);
+      headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
+      headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
+      headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
+
+      return new Response(JSON.stringify({
+        authenticated: true,
+        user: {
+          id: sessionPayload.id,
+          name: sessionPayload.name,
+          email: sessionPayload.email,
+          avatar: sessionPayload.avatar,
+          handle: sessionPayload.handle,
+          role: sessionPayload.role
+        }
+      }), { status: 200, headers });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: e?.message || 'Error de autenticación con Google' }), { status: 500, headers: NO_CACHE_HEADERS });
+    }
   }
 
   // ==========================================
@@ -77,15 +135,16 @@ export async function onRequest(context) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         code,
-        client_id: env.GOOGLE_CLIENT_ID,
-        client_secret: env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${origin}/api/auth/google/callback`,
+        client_id: googleClientId,
+        ...(env.GOOGLE_CLIENT_SECRET ? { client_secret: env.GOOGLE_CLIENT_SECRET } : {}),
+        redirect_uri: `${appOrigin}/api/auth/google/callback`,
         grant_type: 'authorization_code',
       }),
     });
 
     if (!tokenRes.ok) {
-      return new Response('Fallo al obtener el token de Google', {
+      const errText = await tokenRes.text().catch(() => '');
+      return new Response(`Fallo al obtener el token de Google: ${errText}`, {
         status: 500,
         headers: NO_CACHE_HEADERS
       });
@@ -138,13 +197,17 @@ export async function onRequest(context) {
     const headers = new Headers();
     headers.append(
       'Set-Cookie',
-      `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`
+      `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`
     );
     headers.append(
       'Set-Cookie',
-      `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`
+      `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`
     );
-    headers.append('Set-Cookie', 'oauth_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+    headers.append(
+      'Set-Cookie',
+      `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`
+    );
+    headers.append('Set-Cookie', `oauth_state=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
     headers.append('Location', '/');
     headers.append('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 
@@ -155,11 +218,6 @@ export async function onRequest(context) {
   // 3. X (TWITTER) OAUTH 2.0 PKCE INITIATION
   // ==========================================
   if (path === '/api/auth/x') {
-    const clientId = env.X_CLIENT_ID || env.TWITTER_CLIENT_ID;
-    if (!clientId) {
-      return new Response(JSON.stringify({ error: 'X_CLIENT_ID no configurado' }), { status: 500, headers: NO_CACHE_HEADERS });
-    }
-
     const { codeVerifier, codeChallenge } = await generatePkce();
     const csrf = crypto.randomUUID();
     const returnTo = url.searchParams.get('returnTo') || '/';
@@ -167,8 +225,8 @@ export async function onRequest(context) {
 
     const twitterAuthUrl = new URL('https://twitter.com/i/oauth2/authorize');
     twitterAuthUrl.searchParams.set('response_type', 'code');
-    twitterAuthUrl.searchParams.set('client_id', clientId);
-    twitterAuthUrl.searchParams.set('redirect_uri', `${origin}/api/auth/x/callback`);
+    twitterAuthUrl.searchParams.set('client_id', xClientId);
+    twitterAuthUrl.searchParams.set('redirect_uri', `${appOrigin}/api/auth/x/callback`);
     twitterAuthUrl.searchParams.set('scope', 'tweet.read users.read offline.access');
     twitterAuthUrl.searchParams.set('state', statePayload);
     twitterAuthUrl.searchParams.set('code_challenge', codeChallenge);
@@ -180,7 +238,7 @@ export async function onRequest(context) {
       status: 302,
       headers: {
         'Location': twitterAuthUrl.toString(),
-        'Set-Cookie': `oauth_x_state=${cookiePayload}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`,
+        'Set-Cookie': `oauth_x_state=${cookiePayload}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=600`,
         'Cache-Control': 'private, no-cache, no-store, must-revalidate'
       }
     });
@@ -211,12 +269,11 @@ export async function onRequest(context) {
       return new Response('Fallo de validación CSRF en X OAuth.', { status: 403 });
     }
 
-    const clientId = env.X_CLIENT_ID || env.TWITTER_CLIENT_ID;
-    const clientSecret = env.X_CLIENT_SECRET || env.TWITTER_CLIENT_SECRET;
+    const clientSecret = env.X_CLIENT_SECRET || env.TWITTER_CLIENT_SECRET || '';
 
     const tokenHeaders = { 'Content-Type': 'application/x-www-form-urlencoded' };
     if (clientSecret) {
-      tokenHeaders['Authorization'] = `Basic ${btoa(`${clientId}:${clientSecret}`)}`;
+      tokenHeaders['Authorization'] = `Basic ${btoa(`${xClientId}:${clientSecret}`)}`;
     }
 
     const tokenRes = await fetch('https://api.twitter.com/2/oauth2/token', {
@@ -225,8 +282,8 @@ export async function onRequest(context) {
       body: new URLSearchParams({
         code,
         grant_type: 'authorization_code',
-        client_id: clientId,
-        redirect_uri: `${origin}/api/auth/x/callback`,
+        client_id: xClientId,
+        redirect_uri: `${appOrigin}/api/auth/x/callback`,
         code_verifier: cookieData.codeVerifier
       })
     });
@@ -239,17 +296,16 @@ export async function onRequest(context) {
     const userRes = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,description', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
+    const xUserData = await userRes.json();
+    const xUser = xUserData.data || {};
 
-    const xProfile = await userRes.json();
-    const xUser = xProfile.data || {};
-    const handle = (xUser.username || '').toLowerCase();
-
+    const handle = (xUser.username || '').toLowerCase().replace(/[^a-z0-9_]/g, '');
     const sessionPayload = {
       id: xUser.id,
+      email: `${handle}@x.com`,
       name: xUser.name || handle,
+      avatar: (xUser.profile_image_url || '').replace('_normal.', '_400x400.'),
       handle: handle,
-      avatar: (xUser.profile_image_url || '').replace('_normal.', '_bigger.'),
-      picture: (xUser.profile_image_url || '').replace('_normal.', '_bigger.'),
       role: handle === 'atrumin16' ? 'admin' : 'author',
       provider: 'x',
       exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
@@ -258,9 +314,10 @@ export async function onRequest(context) {
     const sessionToken = await signJwt(sessionPayload, jwtSecret);
 
     const headers = new Headers();
-    headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
-    headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
-    headers.append('Set-Cookie', 'oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+    headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
+    headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
+    headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
+    headers.append('Set-Cookie', `oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
     headers.append('Location', stateData.returnTo && stateData.returnTo.startsWith('/') ? stateData.returnTo : '/');
     headers.append('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 
@@ -271,7 +328,7 @@ export async function onRequest(context) {
   // 5. ENDPOINT DE ESTADO DE SESIÓN (/api/auth/me)
   // ==========================================
   if (path === '/api/auth/me') {
-    const rawToken = cookies.session_token || cookies.atm_session || (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    const rawToken = cookies.session_token || cookies.atm_session || cookies.ta_session || (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
 
     if (!rawToken) {
       return new Response(JSON.stringify({ authenticated: false, user: null }), {
@@ -322,6 +379,11 @@ export async function onRequest(context) {
   // ==========================================
   if (path === '/api/auth/logout') {
     const headers = new Headers(NO_CACHE_HEADERS);
+    headers.append('Set-Cookie', `session_token=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
+    headers.append('Set-Cookie', `atm_session=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
+    headers.append('Set-Cookie', `ta_session=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
+    headers.append('Set-Cookie', `auth_token=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
+    // Limpiar también cookies locales sin domainAttr por compatibilidad
     headers.append('Set-Cookie', 'session_token=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
     headers.append('Set-Cookie', 'atm_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
     headers.append('Set-Cookie', 'ta_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
