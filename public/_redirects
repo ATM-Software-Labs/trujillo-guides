@@ -1,3 +1,8 @@
+/terms        https://trujillomingorance.com/terms 301
+/terms-of-use https://trujillomingorance.com/terms 301
+/privacy      https://trujillomingorance.com/privacy 301
+/privacy-policy https://trujillomingorance.com/privacy 301
 /u/*        /u    200
 /g/*        /g    200
 /guides/*   /g    200
+
