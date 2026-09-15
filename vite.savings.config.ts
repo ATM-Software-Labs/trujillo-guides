@@ -28,6 +28,13 @@ export default defineConfig({
           fs.copyFileSync(faviconSrc, faviconDst);
           console.log('Copied favicon.ico to public/savings');
         }
+        // Mirror assets to public/assets for root domain serving
+        const assetsSrc = path.join(outDir, 'assets');
+        const assetsDst = path.resolve(__dirname, 'public/assets');
+        if (fs.existsSync(assetsSrc)) {
+          fs.cpSync(assetsSrc, assetsDst, { recursive: true });
+          console.log('Mirrored public/savings/assets to public/assets');
+        }
       }
     }
   ],

@@ -21,6 +21,45 @@ const SECURITY_HEADERS = {
 export async function onRequest(context) {
   const url = new URL(context.request.url);
   const path = url.pathname.toLowerCase();
+  const hostname = url.hostname.toLowerCase();
+
+  // Edge routing for savings subdomain (savings.trujillomingorance.com)
+  const isSavingsDomain = hostname === 'savings.trujillomingorance.com' || hostname.startsWith('savings.');
+
+  if (isSavingsDomain) {
+    // 1. Serve ATM Savings app at root (/) and /index.html instead of ATM Docs
+    if (path === '/' || path === '' || path === '/index.html') {
+      if (context.env && context.env.ASSETS && typeof context.env.ASSETS.fetch === 'function') {
+        const assetUrl = new URL('/savings/index.html', url);
+        const assetRes = await context.env.ASSETS.fetch(new Request(assetUrl, context.request));
+        if (assetRes.ok) {
+          const headers = new Headers(assetRes.headers);
+          for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
+            if (!headers.has(k)) headers.set(k, v);
+          }
+          return new Response(assetRes.body, {
+            status: assetRes.status,
+            statusText: assetRes.statusText,
+            headers
+          });
+        }
+      }
+      return Response.redirect(new URL('/savings/', url).toString() + url.search, 302);
+    }
+
+    // 2. Redirect /savings to / (clean root URL on savings subdomain)
+    if (path === '/savings') {
+      return Response.redirect(new URL('/', url).toString() + url.search, 302);
+    }
+
+    // 3. Fallback for /assets/* requests on savings domain
+    if (path.startsWith('/assets/')) {
+      if (context.env && context.env.ASSETS && typeof context.env.ASSETS.fetch === 'function') {
+        const assetUrl = new URL('/savings' + url.pathname, url);
+        return context.env.ASSETS.fetch(new Request(assetUrl, context.request));
+      }
+    }
+  }
 
   // Execute downstream handler
   const response = await context.next();

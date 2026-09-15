@@ -8,6 +8,7 @@
     "/js/*",
     "/images/*",
     "/savings/assets/*",
+    "/assets/*",
     "/data/*",
     "/favicon.ico",
     "/favicon.svg",

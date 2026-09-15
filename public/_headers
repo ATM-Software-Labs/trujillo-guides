@@ -24,6 +24,9 @@
 /savings/assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /images/*
   Cache-Control: public, max-age=604800, s-maxage=2592000
 
