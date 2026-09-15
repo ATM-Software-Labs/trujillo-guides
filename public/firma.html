@@ -1,26 +1,32 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Firma Corporativa Oficial | TrujilloMingorance Labs</title>
 <meta name="theme-color" content="#030712">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/style.css">
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
+  :root {
+    --color-bg: var(--bg);
+    --color-text: var(--text);
+  }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #030712;
-    color: #f8fafc;
+    font-family: var(--font-sans, var(--font, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif));
+    background-color: var(--bg, #0b0f14);
+    color: var(--text, #f8fafc);
     line-height: 1.6;
     padding: 36px 20px 60px;
     min-height: 100vh;
     background-image: 
-      radial-gradient(circle at 50% 8%, rgba(56, 189, 248, 0.08) 0%, transparent 55%),
-      radial-gradient(circle at 85% 90%, rgba(2, 132, 199, 0.06) 0%, transparent 45%);
+      radial-gradient(circle at 50% 8%, rgba(59, 130, 246, 0.08) 0%, transparent 55%),
+      radial-gradient(circle at 85% 90%, rgba(37, 99, 235, 0.06) 0%, transparent 45%);
     -webkit-font-smoothing: antialiased;
   }
   .container {
@@ -35,7 +41,7 @@
     align-items: center;
     justify-content: space-between;
     padding-bottom: 8px;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid var(--border, #1f2937);
     margin-bottom: 4px;
   }
   .brand {
@@ -44,26 +50,26 @@
     gap: 10px;
     font-size: 13.5px;
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--text, #f8fafc);
     letter-spacing: -0.02em;
   }
   .brand-avatar {
     border-radius: 6px;
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border, #1f2937);
     background: #000000;
   }
   .topbar-badge {
-    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+    font-family: var(--font-mono, var(--mono, ui-monospace, 'Cascadia Code', monospace));
     font-size: 11px;
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
-    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--accent, #3b82f6);
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: 9999px;
     padding: 3px 10px;
   }
   .card {
-    background: #0b1120;
-    border: 1px solid #1e293b;
+    background: var(--bg-card, #11161d);
+    border: 1px solid var(--border, #1f2937);
     border-radius: 14px;
     padding: 22px 24px;
     box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
@@ -73,7 +79,7 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 700;
-    color: #38bdf8;
+    color: var(--accent, #3b82f6);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -82,7 +88,7 @@
   .instrucciones ol {
     margin: 10px 0 0 18px;
     padding: 0;
-    color: #94a3b8;
+    color: var(--muted, #94a3b8);
     font-size: 13.5px;
     line-height: 1.65;
   }
@@ -90,16 +96,16 @@
     margin-bottom: 8px;
   }
   .instrucciones strong {
-    color: #f8fafc;
+    color: var(--text, #f8fafc);
   }
   .instrucciones code {
-    background: #030712;
-    border: 1px solid #1e293b;
-    color: #38bdf8;
+    background: var(--bg-code, #0e1319);
+    border: 1px solid var(--border, #1f2937);
+    color: var(--accent, #3b82f6);
     padding: 2px 6px;
     border-radius: 6px;
     font-size: 12px;
-    font-family: ui-monospace, monospace;
+    font-family: var(--font-mono, var(--mono, ui-monospace, monospace));
   }
   .role-chips {
     display: flex;
@@ -108,9 +114,9 @@
     margin-bottom: 14px;
   }
   .role-chip {
-    background: #030712;
-    color: #94a3b8;
-    border: 1px solid #1e293b;
+    background: var(--bg, #0b0f14);
+    color: var(--muted, #94a3b8);
+    border: 1px solid var(--border, #1f2937);
     padding: 6px 14px;
     border-radius: 9999px;
     font-size: 12.5px;
@@ -120,23 +126,23 @@
     font-family: inherit;
   }
   .role-chip:hover {
-    color: #f8fafc;
-    border-color: #38bdf8;
-    background: rgba(56, 189, 248, 0.06);
+    color: var(--text, #f8fafc);
+    border-color: var(--accent, #3b82f6);
+    background: rgba(59, 130, 246, 0.08);
   }
   .role-chip.active {
-    background: #0284c7;
-    color: #ffffff;
-    border-color: #38bdf8;
+    background: var(--accent-pill, #2563eb);
+    color: var(--accent-pill-text, #ffffff);
+    border-color: var(--accent, #3b82f6);
     font-weight: 600;
-    box-shadow: 0 0 14px rgba(2, 132, 199, 0.4);
+    box-shadow: 0 0 14px rgba(37, 99, 235, 0.4);
   }
   .role-input {
     width: 100%;
     box-sizing: border-box;
-    background: #030712;
-    border: 1px solid #1e293b;
-    color: #f8fafc;
+    background: var(--bg, #0b0f14);
+    border: 1px solid var(--border, #1f2937);
+    color: var(--text, #f8fafc);
     padding: 10px 14px;
     border-radius: 10px;
     font-size: 13.5px;
@@ -145,8 +151,8 @@
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .role-input:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+    border-color: var(--accent, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
   .actions-bar {
     display: flex;
@@ -156,9 +162,9 @@
     flex-wrap: wrap;
   }
   .btn-copy {
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    background: linear-gradient(135deg, var(--accent, #3b82f6) 0%, var(--accent-pill, #2563eb) 100%);
     color: #ffffff;
-    border: 1px solid rgba(56, 189, 248, 0.4);
+    border: 1px solid rgba(59, 130, 246, 0.4);
     padding: 11px 22px;
     border-radius: 10px;
     font-weight: 600;
@@ -169,7 +175,7 @@
     align-items: center;
     gap: 8px;
     font-family: inherit;
-    box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
   }
   .btn-copy:hover {
     filter: brightness(1.1);
@@ -189,8 +195,8 @@
     gap: 6px;
   }
   .preview-card {
-    background: #0b1120;
-    border: 1px solid #1e293b;
+    background: var(--bg-card, #11161d);
+    border: 1px solid var(--border, #1f2937);
     border-radius: 14px;
     padding: 20px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
@@ -205,15 +211,15 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #38bdf8;
-    font-family: ui-monospace, monospace;
+    color: var(--accent, #3b82f6);
+    font-family: var(--font-mono, var(--mono, ui-monospace, monospace));
     font-weight: 700;
   }
   .preview-pill {
     font-size: 11px;
-    color: #94a3b8;
-    background: #030712;
-    border: 1px solid #1e293b;
+    color: var(--muted, #94a3b8);
+    background: var(--bg, #0b0f14);
+    border: 1px solid var(--border, #1f2937);
     border-radius: 9999px;
     padding: 2px 10px;
   }
@@ -221,13 +227,13 @@
     background: #ffffff;
     padding: 28px 26px;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-subtle, #e2e8f0);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   }
   .footer-note {
     text-align: center;
     font-size: 12px;
-    color: #64748b;
+    color: var(--dim, #64748b);
     margin-top: 10px;
   }
 </style>
@@ -299,13 +305,17 @@
               <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                 <tr>
                   <td style="vertical-align: middle; padding-right: 8px; line-height: 1;">
-                    <a href="https://www.linkedin.com/in/albertotrujillomingorance/" target="_blank" rel="noopener" style="text-decoration: none; display: inline-block; line-height: 0;">
-                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAAlCAYAAADfosCNAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJOSURBVFhH1Zc9aBNhGMd/FUU0Jm0UNNJLMSURwVYLKhhpiosRwcl0ERSkFKSTpFOpY6uOCqWDi6BLlzq4WBCRqmARP2nxI6LGIYK2EmslBkvScyt5n7skh9xH+tve//sQfnnu3o9r0nVdp8FZJ4NGpKmyk5lvRQYnPjL9flGtcomje1q4ejrK7tAmJVcke6685sWX30qB2xyK+Jke6lIy5XF7LQjwLGt0WBPvpCXJ4x1B0kmNE/u2yilXUN5J3/nH6izwcKiLgxH/6nguV+DwyEulxm4K1xPKuGYnu2PNiiBAp+ZzvaM1Jdu2bZQRAFrQPHeKmpK5n39lBMCn+aKMHKWm5KPML8OWMPl8gQfv3N3s6y4cgOTeIJ3hLbv9WmBqLi+nbUcuHEuSbiMlaz5uOziwy086qTF8so2+RIgdgQ2ypC51Oyn/FaJOzk/N5ukdf0NfIsTIqQgtm9cr8wAXb2e5di8n41Xkb9reSR041x1i7EzMVBDgUirChWOajKtiu2Q8GmD8bEzGBi73RgxXsmrYLhms0j0z+nt2ysgU2yUBlopl+m9kCA/O0JqeYeDmB5aKZVnGkVizjExxRHJ48jMTT+fJF0os/ilx68l3xu4bF0qrxePVEck7r37IiLuzxkNgu9/aduSIZL5QkhHZhf8/7x2RNGO5bPxyXjFGprgmacaKRUtPJa0pei1p0dJbSRlUwVtJi630VNLiuvFW0mIj698nvcDx+6QTrD3J/WFf5dATzBwUydFUO/FooDJylXg0wGiqXcbqwmlU/gGPwL2vG29NtgAAAABJRU5ErkJggg==" width="18" height="18" alt="LinkedIn" style="display: block; width: 18px; height: 18px; border: 0; border-radius: 3px;">
+                    <a href="https://www.linkedin.com/in/albertotrujillomingorance/" target="_blank" rel="noopener" aria-label="LinkedIn" style="text-decoration: none; display: inline-block; line-height: 0; color: #0a66c2;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display: block;">
+                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                      </svg>
                     </a>
                   </td>
                   <td style="vertical-align: middle; padding-right: 12px; line-height: 1;">
-                    <a href="https://github.com/atrumin16" target="_blank" rel="noopener" style="text-decoration: none; display: inline-block; line-height: 0;">
-                      <img src="data:image/png;base64,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" width="18" height="18" alt="GitHub" style="display: block; width: 18px; height: 18px; border: 0; border-radius: 3px;">
+                    <a href="https://github.com/atrumin16" target="_blank" rel="noopener" aria-label="GitHub" style="text-decoration: none; display: inline-block; line-height: 0; color: #24292f;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display: block;">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                      </svg>
                     </a>
                   </td>
                   <td style="vertical-align: middle; padding-right: 6px; line-height: 1; color: #cbd5e1; font-size: 12px;">
