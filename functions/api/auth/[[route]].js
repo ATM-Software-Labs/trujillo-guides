@@ -249,26 +249,54 @@ export async function onRequest(context) {
 
     const cookiePayload = btoa(JSON.stringify({ csrf, codeVerifier }));
 
-    return new Response(null, {
-      status: 302,
-      headers: {
-        'Location': twitterAuthUrl.toString(),
-        'Set-Cookie': `oauth_x_state=${cookiePayload}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=600`,
-        'Cache-Control': 'private, no-cache, no-store, must-revalidate'
-      }
-    });
+    const headers = new Headers();
+    headers.set('Location', twitterAuthUrl.toString());
+    headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+
+    // Cookie de dominio compartido y cookie local (evita que navegadores como Safari pierdan la cookie PKCE al redirigir de vuelta)
+    if (domainAttr) {
+      headers.append('Set-Cookie', `oauth_x_state=${cookiePayload}; HttpOnly; Secure; SameSite=Lax; Path=/; Domain=.trujillomingorance.com; Max-Age=600`);
+    }
+    headers.append('Set-Cookie', `oauth_x_state_local=${cookiePayload}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`);
+
+    return new Response(null, { status: 302, headers });
   }
 
   // ==========================================
   // 4. X (TWITTER) OAUTH 2.0 PKCE CALLBACK
   // ==========================================
   if (path === '/api/auth/x/callback') {
+    // 1. Manejar errores directos devueltos por X
+    const oauthError = url.searchParams.get('error');
+    if (oauthError) {
+      const errDesc = url.searchParams.get('error_description') || oauthError;
+      return new Response(
+        `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error X OAuth</title></head>
+        <body style="font-family:system-ui,-apple-system,sans-serif;padding:2.5rem;background:#0b0f14;color:#f8fafc;max-width:640px;margin:0 auto;line-height:1.6;">
+          <h2 style="color:#ef4444;margin-top:0;">Autorización en X cancelada o denegada</h2>
+          <p>La plataforma X devolvió el siguiente mensaje de error:</p>
+          <pre style="background:#1e293b;padding:1rem;border-radius:8px;color:#fca5a5;overflow-x:auto;">${errDesc}</pre>
+          <p><a href="/" style="display:inline-block;margin-top:1rem;background:#38bdf8;color:#0b0f14;font-weight:600;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;">← Volver al inicio</a></p>
+        </body></html>`,
+        { status: 400, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+      );
+    }
+
     const code = url.searchParams.get('code');
     const stateRaw = url.searchParams.get('state');
-    const cookieRaw = cookies.oauth_x_state;
+    const cookieRaw = cookies.oauth_x_state || cookies.oauth_x_state_local;
 
     if (!code || !stateRaw || !cookieRaw) {
-      return new Response('Parámetros ausentes o estado expirado en X OAuth.', { status: 400 });
+      return new Response(
+        `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error de Sesión X</title></head>
+        <body style="font-family:system-ui,-apple-system,sans-serif;padding:2.5rem;background:#0b0f14;color:#f8fafc;max-width:640px;margin:0 auto;line-height:1.6;">
+          <h2 style="color:#f59e0b;margin-top:0;">Estado de autorización expirado o ausente</h2>
+          <p>No se encontró la cookie de verificación PKCE o el código de autorización en la solicitud de retorno.</p>
+          <p>Causa común: Han pasado más de 10 minutos entre el inicio de sesión y la confirmación, o el navegador bloqueó cookies de terceros durante la redirección.</p>
+          <p><a href="/api/auth/x" style="display:inline-block;margin-top:1rem;background:#38bdf8;color:#0b0f14;font-weight:600;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;">Reintentar inicio de sesión con X</a></p>
+        </body></html>`,
+        { status: 400, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+      );
     }
 
     let cookieData = {};
@@ -281,31 +309,63 @@ export async function onRequest(context) {
     }
 
     if (!cookieData.csrf || cookieData.csrf !== stateData.csrf || !cookieData.codeVerifier) {
-      return new Response('Fallo de validación CSRF en X OAuth.', { status: 403 });
+      return new Response('Fallo de validación CSRF en X OAuth. Por favor reintenta.', { status: 403 });
     }
 
-    const clientSecret = env.X_CLIENT_SECRET || env.TWITTER_CLIENT_SECRET || '';
+    const clientSecret = (env.X_CLIENT_SECRET || env.TWITTER_CLIENT_SECRET || '').trim();
 
-    const tokenHeaders = { 'Content-Type': 'application/x-www-form-urlencoded' };
+    const tokenHeaders = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json'
+    };
+
+    const tokenBodyParams = {
+      code,
+      grant_type: 'authorization_code',
+      redirect_uri: `${appOrigin}/api/auth/x/callback`,
+      code_verifier: cookieData.codeVerifier
+    };
+
     if (clientSecret) {
+      // Modo Confidential Client: HTTP Basic Auth
       tokenHeaders['Authorization'] = `Basic ${btoa(`${xClientId}:${clientSecret}`)}`;
+    } else {
+      // Modo Public Client (PKCE): client_id en el cuerpo
+      tokenBodyParams.client_id = xClientId;
     }
 
     const tokenRes = await fetch('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: tokenHeaders,
-      body: new URLSearchParams({
-        code,
-        grant_type: 'authorization_code',
-        client_id: xClientId,
-        redirect_uri: `${appOrigin}/api/auth/x/callback`,
-        code_verifier: cookieData.codeVerifier
-      })
+      body: new URLSearchParams(tokenBodyParams)
     });
 
-    const tokenData = await tokenRes.json();
+    const tokenText = await tokenRes.text();
+    let tokenData = {};
+    try {
+      tokenData = JSON.parse(tokenText);
+    } catch (e) {}
+
     if (!tokenRes.ok || !tokenData.access_token) {
-      return new Response('Fallo al intercambiar token de X.', { status: 500 });
+      const detail = tokenData.error_description || tokenData.error || tokenText || 'Error desconocido al intercambiar código';
+      console.error('[X OAuth Error]', detail);
+      return new Response(
+        `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error al intercambiar token con X</title></head>
+        <body style="font-family:system-ui,-apple-system,sans-serif;padding:2.5rem;background:#0b0f14;color:#f8fafc;max-width:680px;margin:0 auto;line-height:1.6;">
+          <h2 style="color:#ef4444;margin-top:0;">Error en el intercambio de credenciales con X (Twitter)</h2>
+          <p><strong>Detalle devuelto por la API de X:</strong></p>
+          <pre style="background:#1e293b;padding:1rem;border-radius:8px;color:#fca5a5;overflow-x:auto;">${detail}</pre>
+          <hr style="border:0;border-top:1px solid #334155;margin:1.5rem 0;" />
+          <h3 style="color:#38bdf8;font-size:1.1rem;">Verificación requerida en X Developer Portal:</h3>
+          <ul style="padding-left:1.25rem;">
+            <li><strong>Callback URI / Redirect URL en X:</strong> <code>${appOrigin}/api/auth/x/callback</code></li>
+            <li><strong>Client ID en uso:</strong> <code>${xClientId}</code></li>
+            <li><strong>Client Secret:</strong> ${clientSecret ? 'Configurado en variables de entorno' : 'No configurado (Modo Public Client / Native App). Si en X configuraste "Web App", debes añadir <code>X_CLIENT_SECRET</code> en Cloudflare Pages.'}</li>
+          </ul>
+          <p><a href="/" style="display:inline-block;margin-top:1rem;background:#38bdf8;color:#0b0f14;font-weight:600;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;">← Volver al inicio</a></p>
+        </body></html>`,
+        { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+      );
     }
 
     const userRes = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,description', {
@@ -328,12 +388,28 @@ export async function onRequest(context) {
 
     const sessionToken = await signJwt(sessionPayload, jwtSecret);
 
+    if (env.BOT_MEMORY) {
+      try {
+        await env.BOT_MEMORY.put(`user:id:${xUser.id}`, JSON.stringify(sessionPayload));
+        await env.BOT_MEMORY.put(`user:handle:${handle}`, JSON.stringify(sessionPayload));
+      } catch (e) {}
+    }
+
     const headers = new Headers();
-    headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
-    headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
-    headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
-    headers.append('Set-Cookie', `oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=0`);
-    headers.append('Location', stateData.returnTo && stateData.returnTo.startsWith('/') ? stateData.returnTo : '/');
+    if (domainAttr) {
+      headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Domain=.trujillomingorance.com; Max-Age=604800`);
+      headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Domain=.trujillomingorance.com; Max-Age=604800`);
+      headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Domain=.trujillomingorance.com; Max-Age=604800`);
+      headers.append('Set-Cookie', `oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Domain=.trujillomingorance.com; Max-Age=0`);
+    }
+    headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
+    headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
+    headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
+    headers.append('Set-Cookie', 'oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+    headers.append('Set-Cookie', 'oauth_x_state_local=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+
+    const redirectTarget = stateData.returnTo && stateData.returnTo.startsWith('/') ? stateData.returnTo : '/';
+    headers.append('Location', redirectTarget);
     headers.append('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 
     return new Response(null, { status: 302, headers });

@@ -124,30 +124,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   }, [isOpen, activeTab]);
 
-  // X Callback listener
+  // Session check listener when returning or on mount
   useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const state = params.get('state') || '';
-      const isX = params.get('auth') === 'x_callback' || state.startsWith('x_oauth_');
-      if (!isX) return;
-      const code = params.get('code');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      if (code) {
-        const user = { name: 'Usuario X', email: 'usuario.x@x.com', handle: 'x_user', loggedIn: true };
-        const token = 'local_x_' + Date.now();
-        applyAuthSuccess(token, user);
-      }
-    } catch (e) {}
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.authenticated && data.user) {
+          applyAuthSuccess('session_active', data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const handleXLogin = () => {
     setLoadingX(true);
     setAuthError(null);
-    const state = 'x_oauth_' + Math.random().toString(36).slice(2, 10);
-    try { localStorage.setItem('trujillo_x_oauth_state', state); } catch (e) {}
-    const redirectUri = encodeURIComponent(window.location.origin + '/?auth=x_callback');
-    window.location.href = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${X_CLIENT_ID}&redirect_uri=${redirectUri}&scope=users.read%20tweet.read&state=${state}&code_challenge=challenge&code_challenge_method=plain`;
+    const returnTo = window.location.pathname + window.location.search;
+    window.location.href = '/api/auth/x?returnTo=' + encodeURIComponent(returnTo);
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
