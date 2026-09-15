@@ -29,27 +29,45 @@ export async function onRequest(context) {
   if (isSavingsDomain) {
     // 1. Serve ATM Savings app at root (/) and /index.html instead of ATM Docs
     if (path === '/' || path === '' || path === '/index.html') {
-      if (context.env && context.env.ASSETS && typeof context.env.ASSETS.fetch === 'function') {
-        const assetUrl = new URL('/savings/index.html', url);
-        const assetRes = await context.env.ASSETS.fetch(new Request(assetUrl, context.request));
-        if (assetRes.ok) {
-          const headers = new Headers(assetRes.headers);
+      try {
+        const rewrittenRequest = new Request(new URL('/savings/index.html', url), context.request);
+        const nextRes = await context.next(rewrittenRequest);
+        if (nextRes.status === 200) {
+          const headers = new Headers(nextRes.headers);
           for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
             if (!headers.has(k)) headers.set(k, v);
           }
-          return new Response(assetRes.body, {
-            status: assetRes.status,
-            statusText: assetRes.statusText,
+          return new Response(nextRes.body, {
+            status: 200,
+            statusText: nextRes.statusText,
             headers
           });
         }
-      }
+      } catch (e) {}
+
+      try {
+        if (context.env && context.env.ASSETS && typeof context.env.ASSETS.fetch === 'function') {
+          const assetRes = await context.env.ASSETS.fetch(new URL('/savings/index.html', url.origin));
+          if (assetRes.ok) {
+            const headers = new Headers(assetRes.headers);
+            for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
+              if (!headers.has(k)) headers.set(k, v);
+            }
+            return new Response(assetRes.body, {
+              status: assetRes.status,
+              statusText: assetRes.statusText,
+              headers
+            });
+          }
+        }
+      } catch (e) {}
+
       return Response.redirect(new URL('/savings/', url).toString() + url.search, 302);
     }
 
-    // 2. Redirect /savings to / (clean root URL on savings subdomain)
+    // 2. Ensure /savings redirects cleanly to /savings/
     if (path === '/savings') {
-      return Response.redirect(new URL('/', url).toString() + url.search, 302);
+      return Response.redirect(new URL('/savings/', url).toString() + url.search, 301);
     }
 
     // 3. Fallback for /assets/* requests on savings domain
