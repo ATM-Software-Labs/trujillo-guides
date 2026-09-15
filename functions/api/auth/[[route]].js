@@ -322,6 +322,7 @@ export async function onRequest(context) {
     const tokenBodyParams = {
       code,
       grant_type: 'authorization_code',
+      client_id: xClientId,
       redirect_uri: `${appOrigin}/api/auth/x/callback`,
       code_verifier: cookieData.codeVerifier
     };
@@ -329,9 +330,6 @@ export async function onRequest(context) {
     if (clientSecret) {
       // Modo Confidential Client: HTTP Basic Auth
       tokenHeaders['Authorization'] = `Basic ${btoa(`${xClientId}:${clientSecret}`)}`;
-    } else {
-      // Modo Public Client (PKCE): client_id en el cuerpo
-      tokenBodyParams.client_id = xClientId;
     }
 
     const tokenRes = await fetch('https://api.twitter.com/2/oauth2/token', {
