@@ -16,14 +16,14 @@
       up: 3,
       pinned: true,
       fixada: true,
-      summary: 'Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.',
+      summary: 'Correo corporativo para startups sin Google Workspace: enrutamiento con Cloudflare, DKIM y avatares verificados.',
       date: '11 sep 2026',
       updatedAt: 1789222141213,
       static: true,
       translations: {
         es: {
           title: 'Infraestructura de Correo Corporativo para Startups a Coste 0 €',
-          summary: 'Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.'
+          summary: 'Correo corporativo para startups sin Google Workspace: enrutamiento con Cloudflare, DKIM y avatares verificados.'
         },
         ca: {
           title: 'Infraestructura de Correu Corporatiu per a Startups a Cost 0 €',

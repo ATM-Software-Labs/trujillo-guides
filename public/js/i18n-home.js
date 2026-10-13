@@ -1,8 +1,8 @@
 window.GUIDE_STRINGS = {
   es: {
     eyebrow: 'Documentación técnica · ATM Software Labs',
-    'hero-title': 'Guías de ingeniería y runbooks de producción',
-    'hero-sub': 'Arquitecturas reales, especificaciones y runbooks verificados en producción.',
+    'hero-title': 'Guías técnicas y análisis',
+    'hero-sub': 'Guías prácticas probadas en proyectos reales.',
     'title-1': 'Arquitectura de Correo Empresarial a Coste 0 €',
     'desc-1': 'Pipelines transaccionales, MX en el edge, DKIM/SPF/DMARC y avatares verificados sin Google Workspace.',
     'title-glossary': 'Glosario Interactivo de Sistemas e Informática',
@@ -18,8 +18,8 @@ window.GUIDE_STRINGS = {
   },
   en: {
     eyebrow: 'Technical documentation · ATM Software Labs',
-    'hero-title': 'Engineering guides and production runbooks',
-    'hero-sub': 'Real architectures, specifications and runbooks verified in production.',
+    'hero-title': 'Technical guides and analysis',
+    'hero-sub': 'Practical guides tested on real projects.',
     'title-1': 'Zero-cost enterprise email architecture',
     'desc-1': 'Transactional pipelines, edge MX, DKIM/SPF/DMARC and verified avatars without Google Workspace.',
     'title-glossary': 'Interactive systems glossary',

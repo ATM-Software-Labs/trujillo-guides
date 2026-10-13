@@ -6,7 +6,7 @@ const escHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ 
 // Página de error breve y con el estilo de la web; el detalle técnico va plegado
 function authErrorPage({ title, message, detail = '', retryHref = '', status = 400 }) {
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escHtml(title)} · Trujillo Guides</title><link rel="stylesheet" href="/css/nutri.css?v=202610131420"><link rel="icon" href="/favicon.svg">
+<title>${escHtml(title)} · Trujillo Guides</title><link rel="stylesheet" href="/css/nutri.css?v=202610132030"><link rel="icon" href="/favicon.svg">
 <script src="/js/theme-boot.js"></script></head>
 <body class="auth-error-page"><main class="auth-error-card">
 <img src="/avatar.png" alt="" width="40" height="40" class="auth-error-logo">
@@ -433,7 +433,16 @@ export async function onRequest(context) {
     headers.append('Set-Cookie', 'oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
     headers.append('Set-Cookie', 'oauth_x_state_local=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
 
-    const redirectTarget = stateData.returnTo && stateData.returnTo.startsWith('/') && !stateData.returnTo.startsWith('//') ? stateData.returnTo : '/';
+    // Rutas propias o subdominios https de trujillomingorance.com (p. ej. rewrite.) — nunca dominios externos
+    const rt = stateData.returnTo || '/';
+    let redirectTarget = '/';
+    if (rt.startsWith('/') && !rt.startsWith('//')) redirectTarget = rt;
+    else {
+      try {
+        const u = new URL(rt);
+        if (u.protocol === 'https:' && (u.hostname === 'trujillomingorance.com' || u.hostname.endsWith('.trujillomingorance.com'))) redirectTarget = u.toString();
+      } catch (_) {}
+    }
     headers.append('Location', redirectTarget);
     headers.append('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 
