@@ -63,7 +63,7 @@
         var s = size || 88;
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
-          '  <radialGradient id="st-glow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.3"/><stop offset="100%" stop-color="#083344" stop-opacity="0"/></radialGradient>' +
+          '  <radialGradient id="st-glow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.3"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0"/></radialGradient>' +
           '  <linearGradient id="st-shield" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent, #10B981)"/><stop offset="50%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="#047857"/></linearGradient>' +
           '</defs>' +
           '<rect width="100" height="100" rx="22" fill="#060b13"/>' +
@@ -125,12 +125,12 @@
     {
       id: 'aurora',
       name: 'Aurora Flux',
-      desc: 'Malla degradada bio-lumínica en violeta cósmico y cyan ultra brillante.',
+      desc: 'Malla degradada bio-lumínica en violeta cósmico y menta suave.',
       render: function (size, name, handle) {
         var s = size || 88;
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
-          '  <linearGradient id="af-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="50%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="var(--accent, #10B981)"/></linearGradient>' +
+          '  <linearGradient id="af-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#065f46"/><stop offset="50%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="var(--accent, #10B981)"/></linearGradient>' +
           '  <radialGradient id="af-r1" cx="30%" cy="30%" r="60%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.8"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>' +
           '  <radialGradient id="af-r2" cx="70%" cy="70%" r="60%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.8"/><stop offset="100%" stop-color="var(--accent, #10B981)" stop-opacity="0"/></radialGradient>' +
           '</defs>' +

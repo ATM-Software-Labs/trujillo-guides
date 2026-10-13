@@ -489,62 +489,28 @@
     }
 
     if (activeExperienceMode === 'advanced') {
-      // --- MODO AVANZADO: DENSIDAD TÉCNICA & TELEMETRÍA MATRIX ---
+      // --- MODO AVANZADO: tabla compacta y sobria ---
       container.className = 'profile-matrix-wrap';
       var rowsHtml = guides.map(function (g) {
         var slug = g.slug || g.id || '';
         var href = '/g/' + encodeURIComponent(slug);
         var category = g.category || (g.kind === 'analysis' ? 'Análisis' : g.kind === 'interactive' ? 'Simulador' : g.kind === 'reference' ? 'Referencia' : 'Guía');
-        var catClass = 'cat-pill-' + (g.kind || 'guide');
         var titleHtml = formatTitleTickers(esc(g.title || g.slug));
-        var readTime = g.readTime || g.readingTime || '10 min';
-        var words = g.wordCount || 1800;
-        var upvotes = g.up || g.likes || 0;
-        var pinnedBadge = (g.pinned || g.fixada) ? '<span class="matrix-pinned-flag">📌 FIJADA</span>' : '';
-
-        return '<tr class="matrix-row">' +
-          '  <td class="matrix-col-kind">' +
-          '    <span class="matrix-cat-pill ' + catClass + '">' + esc(category) + '</span>' +
-          '  </td>' +
-          '  <td class="matrix-col-title">' +
-          '    <div class="matrix-title-main">' +
-          '      <a href="' + href + '" class="matrix-link">' + titleHtml + '</a>' +
-          '      ' + pinnedBadge +
-          '    </div>' +
-          '    <div class="matrix-slug-meta">/g/' + esc(slug) + '</div>' +
-          '  </td>' +
-          '  <td class="matrix-col-telemetry">' +
-          '    <div class="matrix-telemetry-tags">' +
-          '      <span class="telem-tag telem-time" title="Tiempo de lectura estimado">⏱ ' + esc(readTime) + '</span>' +
-          '      <span class="telem-tag telem-up" title="Votos técnicos">↑ ' + esc(upvotes) + '</span>' +
-          '      <span class="telem-tag telem-words" title="Palabras estimadas">~' + words + ' w</span>' +
-          '      <span class="telem-tag telem-cache" title="Estado de la caché en Edge de Cloudflare">L1 HIT (0ms)</span>' +
-          '    </div>' +
-          '  </td>' +
-          '  <td class="matrix-col-action">' +
-          '    <a href="' + href + '" class="matrix-action-btn">Inspeccionar →</a>' +
-          '  </td>' +
+        var mins = parseInt(g.readTime || g.readingTime || '10', 10) || 10;
+        var upvotes = Number(g.up || g.likes) || 0;
+        var pinned = (g.pinned || g.fixada) ? '<span class="gt-pin">Fijada</span>' : '';
+        return '<tr>' +
+          '<td class="gt-kind"><span class="gt-pill">' + esc(category) + '</span></td>' +
+          '<td class="gt-title"><a href="' + href + '">' + titleHtml + '</a>' + pinned + '<span class="gt-slug">' + esc(slug) + '</span></td>' +
+          '<td class="gt-num">' + mins + ' min</td>' +
+          '<td class="gt-num">' + upvotes + '</td>' +
+          '<td class="gt-act"><a href="' + href + '" class="gt-read">Leer →</a></td>' +
           '</tr>';
       }).join('');
-
       container.innerHTML =
-        '<div class="matrix-strip-header">' +
-        '  <span class="matrix-strip-dot"></span>' +
-        '  <span>TELEMETRÍA DE PRODUCCIÓN: Edge Cache L1 Activo · Protocolo HTTP/3 · Latencia estimada: &lt;35ms · ' + guides.length + ' Runbooks</span>' +
-        '</div>' +
-        '<div class="matrix-table-scroll">' +
-        '  <table class="matrix-table">' +
-        '    <thead>' +
-        '      <tr>' +
-        '        <th>TIPO</th>' +
-        '        <th>TÍTULO &amp; SLUG CANÓNICO</th>' +
-        '        <th>TELEMETRÍA &amp; EDGE CACHE</th>' +
-        '        <th>ACCIONES</th>' +
-        '      </tr>' +
-        '    </thead>' +
-        '    <tbody>' + rowsHtml + '</tbody>' +
-        '  </table>' +
-        '</div>';
+        '<div class="gt-scroll"><table class="gt-table">' +
+        '<thead><tr><th>Tipo</th><th>Guía</th><th class="gt-num">Lectura</th><th class="gt-num">Votos</th><th><span class="sr-only">Acción</span></th></tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody></table></div>';
     } else {
       // --- MODO SIMPLE: TARJETAS EDITORIALES LIMPIAS ---
       container.className = 'profile-cards-grid';
@@ -556,7 +522,7 @@
         var titleHtml = formatTitleTickers(esc(g.title || g.slug));
         var summaryText = esc(g.summary || g.description || '');
         var readTime = g.readTime || g.readingTime || '10 min';
-        var upvotes = g.up || g.likes || 0;
+        var upvotes = Number(g.up || g.likes) || 0;
         var date = g.date || 'Reciente';
         var pinnedFlag = (g.pinned || g.fixada) ? '<span class="card-pinned-flag">📌 Fijada</span>' : '';
 
