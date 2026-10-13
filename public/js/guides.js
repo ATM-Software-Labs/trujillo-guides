@@ -233,8 +233,8 @@
             style.id = 'oled-injected-style';
             style.textContent = [
               ':root, html, body {',
-              '  background-color: #030712 !important;',
-              '  color: #f8fafc !important;',
+              '  background-color: #09090b !important;',
+              '  color: #fafafa !important;',
               '  color-scheme: dark !important;',
               '  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif !important;',
               '  overflow: hidden !important;',
@@ -242,33 +242,33 @@
               '  padding: 16px !important;',
               '}',
               'table {',
-              '  background: #080c14 !important;',
-              '  border: 1px solid #1e293b !important;',
+              '  background: #09090b !important;',
+              '  border: 1px solid #27272a !important;',
               '  border-collapse: collapse !important;',
               '  width: 100% !important;',
               '  margin: 16px 0 !important;',
               '}',
               'th {',
-              '  background: #0f172a !important;',
-              '  color: #94a3b8 !important;',
+              '  background: #18181b !important;',
+              '  color: #a1a1aa !important;',
               '  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;',
               '  text-transform: uppercase !important;',
               '  font-size: 11px !important;',
               '  letter-spacing: 0.06em !important;',
-              '  border-bottom: 1px solid #1e293b !important;',
+              '  border-bottom: 1px solid #27272a !important;',
               '  padding: 10px 14px !important;',
               '  text-align: left !important;',
               '}',
               'td {',
               '  padding: 10px 14px !important;',
-              '  border-bottom: 1px solid #1e293b !important;',
-              '  color: #cbd5e1 !important;',
+              '  border-bottom: 1px solid #27272a !important;',
+              '  color: #d4d4d8 !important;',
               '  font-size: 13px !important;',
               '}',
               'tr:hover td { background: rgba(255, 255, 255, 0.02) !important; }',
-              'a { color: #38bdf8 !important; }',
+              'a { color: var(--accent, #10B981) !important; }',
               '::-webkit-scrollbar { width: 6px; height: 6px; }',
-              '::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }'
+              '::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }'
             ].join('\n');
             (doc.head || doc.body).appendChild(style);
           }
@@ -737,9 +737,9 @@
           marginBadge.style.borderColor = 'rgba(52, 211, 153, 0.3)';
         } else if (marginPct >= 0) {
           marginBadge.textContent = (lang === 'ca') ? 'Infravalorada' : (lang === 'en') ? 'Undervalued' : (lang === 'fr') ? 'Sous-évaluée' : 'Infravalorada';
-          marginBadge.style.color = '#38bdf8';
-          marginBadge.style.background = 'rgba(56, 189, 248, 0.12)';
-          marginBadge.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+          marginBadge.style.color = 'var(--accent, #10B981)';
+          marginBadge.style.background = 'rgba(16, 185, 129, 0.12)';
+          marginBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
         } else {
           marginBadge.textContent = (lang === 'ca') ? 'Sobrevalorada' : (lang === 'en') ? 'Overvalued' : (lang === 'fr') ? 'Surévaluée' : 'Sobrevalorada';
           marginBadge.style.color = '#f87171';

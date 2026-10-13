@@ -17,7 +17,7 @@
       up: 3,
       pinned: true,
       summary: 'Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.',
-      tags: ['Cloudflare Edge', 'DKIM', 'DNS', 'Zero-Trust'],
+      tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo'],
       date: '11 sep 2026'
     },
     {
@@ -35,7 +35,7 @@
       up: 2,
       pinned: false,
       summary: 'Análisis exhaustivo de Microsoft: Azure, Office 365, integración Copilot/OpenAI, valoración DCF y escenarios de crecimiento.',
-      tags: ['Financial DCF', 'Azure', 'Copilot', 'Valuation'],
+      tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo'],
       date: '10 sep 2026'
     },
     {
@@ -53,7 +53,7 @@
       up: 1,
       pinned: false,
       summary: 'Calculadora interactiva del balance: negocios privados, T-Bills y cartera cotizada según capital o acciones.',
-      tags: ['Interactive Engine', 'Berkshire', 'Quant Model'],
+      tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo'],
       date: '11 sep 2026'
     },
     {
@@ -71,7 +71,7 @@
       up: 0,
       pinned: false,
       summary: 'Terminología clave de redes, Cloud, DevOps, protocolos de seguridad y arquitectura de sistemas distribuidos.',
-      tags: ['Networking', 'Linux RFC', 'DevOps Terms'],
+      tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo'],
       date: '09 sep 2026'
     }
   ];
@@ -258,13 +258,13 @@
           return {
             name: savedSettings.author.name || 'Alberto Trujillo Mingorance',
             handle: '@' + (savedSettings.author.handle || cleanHandle),
-            role: savedSettings.author.role || 'Lead Systems Architect',
-            bio: savedSettings.author.bio || 'Arquitectura de sistemas distribuidos, infraestructura de correo corporativo a coste cero, análisis cuantitativo y optimización en Cloudflare Edge & Linux Kernel.',
+            role: savedSettings.author.role || 'Autor principal',
+            bio: savedSettings.author.bio || 'Técnico de sistemas en Barcelona. Guías prácticas de Cloudflare, DNS, correo e identidades.',
             picture: savedSettings.author.avatar || '/avatar.png',
             avatarPreset: savedSettings.author.avatarPreset || 'cyber-core',
             avatarType: savedSettings.author.avatarType || 'vector',
             previous_handles: savedSettings.author.previous_handles || [],
-            tags: ['Cloudflare Edge', 'Zero-Trust Mail', 'Financial DCF & SOTP', 'Linux Systems', 'TypeScript']
+            tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo']
           };
         }
       }
@@ -278,13 +278,13 @@
         return {
           name: me.name || me.username || 'Alberto Trujillo Mingorance',
           handle: '@' + (me.handle ? sanitizeUsername(me.handle) : cleanHandle),
-          role: me.role === 'admin' ? 'Lead Systems Architect' : 'Staff Engineer',
-          bio: me.bio || 'Arquitectura de sistemas distribuidos, infraestructura de correo corporativo a coste cero, análisis cuantitativo y optimización en Cloudflare Edge & Linux Kernel.',
+          role: me.role === 'admin' ? 'Autor principal' : 'Miembro',
+          bio: me.bio || 'Técnico de sistemas en Barcelona. Guías prácticas de Cloudflare, DNS, correo e identidades.',
           picture: me.picture || '/avatar.png',
           avatarPreset: 'cyber-core',
           avatarType: 'vector',
           previous_handles: [],
-          tags: ['Cloudflare Edge', 'Zero-Trust Mail', 'Distributed Systems', 'Linux Systems']
+          tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo']
         };
       }
     }
@@ -294,13 +294,13 @@
       return {
         name: 'Alberto Trujillo Mingorance',
         handle: '@atrumin16',
-        role: 'Lead Systems Architect',
-        bio: 'Especialista en arquitectura cloud sin servidor, enrutamiento en Edge, seguridad criptográfica y modelos financieros cuantitativos. Creador de Trujillo AI y ATM Docs.',
+        role: 'Autor principal',
+        bio: 'Técnico de sistemas en Barcelona. Guías prácticas de Cloudflare, DNS, correo e identidades.',
         picture: '/avatar.png',
         avatarPreset: 'cyber-core',
         avatarType: 'vector',
         previous_handles: [],
-        tags: ['Cloudflare Edge', 'Zero-Trust Mail', 'Financial DCF & SOTP', 'Linux Systems', 'TypeScript / Vanilla JS']
+        tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo']
       };
     }
 
@@ -317,7 +317,7 @@
       avatarPreset: 'initials',
       avatarType: 'vector',
       previous_handles: [],
-      tags: ['Engineering', 'Architecture', 'Open Source']
+      tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo']
     };
   }
 
@@ -408,6 +408,10 @@
   // --- FILTER & SORT ENGINE ---
   function getFilteredAndSortedGuides() {
     var list = authorPublications.slice();
+    // Leer siempre el valor real del buscador (el autorrelleno del navegador no dispara «input»
+    // y dejaba la lista vacía con el contador a 5)
+    var liveInput = document.getElementById('filter-search-input');
+    activeSearchQuery = liveInput ? liveInput.value.trim() : activeSearchQuery;
 
     // 1. Text Search Filter
     if (activeSearchQuery) {
@@ -477,7 +481,7 @@
     if (!guides || !guides.length) {
       container.className = 'profile-cards-grid';
       container.innerHTML = '<div class="profile-empty-state">' +
-        '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:#64748b;margin:0 auto 8px auto;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>' +
+        '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:#71717a;margin:0 auto 8px auto;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>' +
         '<h3>No se encontraron publicaciones</h3>' +
         '<p>Ajusta el filtro de búsqueda o cambia la categoría para ver más piezas.</p>' +
         '</div>';

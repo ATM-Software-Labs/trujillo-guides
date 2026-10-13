@@ -17,7 +17,7 @@
       localStorage.setItem('atm_theme', next);
     } catch (e) {}
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', next === 'light' ? '#ffffff' : '#080c14');
+    if (meta) meta.setAttribute('content', next === 'light' ? '#ffffff' : '#09090b');
   }
 
   function themeButtonHtml() {

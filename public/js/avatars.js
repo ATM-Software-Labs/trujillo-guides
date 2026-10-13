@@ -38,20 +38,20 @@
         var s = size || 88;
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
-          '  <radialGradient id="cc-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/><stop offset="100%" stop-color="#0284c7" stop-opacity="0"/></radialGradient>' +
-          '  <linearGradient id="cc-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="50%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>' +
-          '  <linearGradient id="cc-ring" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1e293b"/><stop offset="100%" stop-color="#475569"/></linearGradient>' +
+          '  <radialGradient id="cc-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.35"/><stop offset="100%" stop-color="var(--accent, #10B981)" stop-opacity="0"/></radialGradient>' +
+          '  <linearGradient id="cc-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent, #10B981)"/><stop offset="50%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="var(--accent, #10B981)"/></linearGradient>' +
+          '  <linearGradient id="cc-ring" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#27272a"/><stop offset="100%" stop-color="#52525b"/></linearGradient>' +
           '</defs>' +
           '<rect width="100" height="100" rx="22" fill="#090d16"/>' +
           '<circle cx="50" cy="50" r="44" fill="url(#cc-glow)"/>' +
           '<polygon points="50,14 82,32 82,68 50,86 18,68 18,32" stroke="url(#cc-ring)" stroke-width="2" fill="none"/>' +
-          '<polygon points="50,22 75,37 75,63 50,78 25,63 25,37" stroke="url(#cc-grad)" stroke-width="3.5" fill="#0f172a" fill-opacity="0.8"/>' +
+          '<polygon points="50,22 75,37 75,63 50,78 25,63 25,37" stroke="url(#cc-grad)" stroke-width="3.5" fill="#18181b" fill-opacity="0.8"/>' +
           '<circle cx="50" cy="50" r="12" fill="url(#cc-grad)"/>' +
-          '<circle cx="50" cy="50" r="6" fill="#f8fafc"/>' +
-          '<line x1="50" y1="22" x2="50" y2="38" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>' +
-          '<line x1="50" y1="62" x2="50" y2="78" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>' +
-          '<line x1="25" y1="50" x2="38" y2="50" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>' +
-          '<line x1="62" y1="50" x2="75" y2="50" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>' +
+          '<circle cx="50" cy="50" r="6" fill="#fafafa"/>' +
+          '<line x1="50" y1="22" x2="50" y2="38" stroke="var(--accent, #10B981)" stroke-width="2" stroke-linecap="round"/>' +
+          '<line x1="50" y1="62" x2="50" y2="78" stroke="var(--accent, #10B981)" stroke-width="2" stroke-linecap="round"/>' +
+          '<line x1="25" y1="50" x2="38" y2="50" stroke="var(--accent, #10B981)" stroke-width="2" stroke-linecap="round"/>' +
+          '<line x1="62" y1="50" x2="75" y2="50" stroke="var(--accent, #10B981)" stroke-width="2" stroke-linecap="round"/>' +
           '</svg>';
       }
     },
@@ -63,12 +63,12 @@
         var s = size || 88;
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
-          '  <radialGradient id="st-glow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#06b6d4" stop-opacity="0.3"/><stop offset="100%" stop-color="#083344" stop-opacity="0"/></radialGradient>' +
-          '  <linearGradient id="st-shield" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#22d3ee"/><stop offset="50%" stop-color="#0891b2"/><stop offset="100%" stop-color="#0e7490"/></linearGradient>' +
+          '  <radialGradient id="st-glow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.3"/><stop offset="100%" stop-color="#083344" stop-opacity="0"/></radialGradient>' +
+          '  <linearGradient id="st-shield" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent, #10B981)"/><stop offset="50%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="#047857"/></linearGradient>' +
           '</defs>' +
           '<rect width="100" height="100" rx="22" fill="#060b13"/>' +
           '<circle cx="50" cy="50" r="44" fill="url(#st-glow)"/>' +
-          '<path d="M50 15 L80 26 C80 56 65 74 50 85 C35 74 20 56 20 26 Z" stroke="#334155" stroke-width="2" fill="#0f172a"/>' +
+          '<path d="M50 15 L80 26 C80 56 65 74 50 85 C35 74 20 56 20 26 Z" stroke="#3f3f46" stroke-width="2" fill="#18181b"/>' +
           '<path d="M50 22 L74 31 C74 54 62 68 50 78 C38 68 26 54 26 31 Z" stroke="url(#st-shield)" stroke-width="3" fill="none"/>' +
           '<path d="M50 32 L66 38 C66 52 57 62 50 69 C43 62 34 52 34 38 Z" fill="url(#st-shield)" fill-opacity="0.18"/>' +
           '<circle cx="50" cy="48" r="7" fill="url(#st-shield)"/>' +
@@ -85,7 +85,7 @@
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
           '  <linearGradient id="qt-g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient>' +
-          '  <linearGradient id="qt-g2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>' +
+          '  <linearGradient id="qt-g2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>' +
           '  <radialGradient id="qt-bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0"/></radialGradient>' +
           '</defs>' +
           '<rect width="100" height="100" rx="22" fill="#06110f"/>' +
@@ -95,7 +95,7 @@
           '<ellipse cx="50" cy="50" rx="34" ry="14" stroke="#6ee7b7" stroke-width="1.8" stroke-dasharray="3 3" fill="none" transform="rotate(90 50 50)"/>' +
           '<circle cx="50" cy="50" r="9" fill="url(#qt-g1)"/>' +
           '<circle cx="50" cy="50" r="4" fill="#f0fdf4"/>' +
-          '<circle cx="68" cy="39" r="3.5" fill="#38bdf8"/>' +
+          '<circle cx="68" cy="39" r="3.5" fill="var(--accent, #10B981)"/>' +
           '<circle cx="32" cy="61" r="3" fill="#34d399"/>' +
           '</svg>';
       }
@@ -130,9 +130,9 @@
         var s = size || 88;
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
-          '  <linearGradient id="af-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>' +
+          '  <linearGradient id="af-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="50%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="var(--accent, #10B981)"/></linearGradient>' +
           '  <radialGradient id="af-r1" cx="30%" cy="30%" r="60%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.8"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>' +
-          '  <radialGradient id="af-r2" cx="70%" cy="70%" r="60%"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/><stop offset="100%" stop-color="#0284c7" stop-opacity="0"/></radialGradient>' +
+          '  <radialGradient id="af-r2" cx="70%" cy="70%" r="60%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.8"/><stop offset="100%" stop-color="var(--accent, #10B981)" stop-opacity="0"/></radialGradient>' +
           '</defs>' +
           '<rect width="100" height="100" rx="22" fill="#0c0a17"/>' +
           '<rect x="4" y="4" width="92" height="92" rx="18" fill="url(#af-g)" fill-opacity="0.2"/>' +
@@ -153,13 +153,13 @@
         var inits = getInitials(name, handle);
         return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">' +
           '<defs>' +
-          '  <linearGradient id="in-border" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>' +
-          '  <radialGradient id="in-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2563eb" stop-opacity="0.25"/><stop offset="100%" stop-color="#000000" stop-opacity="0"/></radialGradient>' +
+          '  <linearGradient id="in-border" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent, #10B981)"/><stop offset="100%" stop-color="var(--accent, #10B981)"/></linearGradient>' +
+          '  <radialGradient id="in-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="var(--accent, #10B981)" stop-opacity="0.25"/><stop offset="100%" stop-color="#000000" stop-opacity="0"/></radialGradient>' +
           '</defs>' +
           '<rect width="100" height="100" rx="22" fill="#0b0f17"/>' +
           '<rect x="2" y="2" width="96" height="96" rx="20" stroke="url(#in-border)" stroke-width="2" fill="none"/>' +
           '<circle cx="50" cy="50" r="38" fill="url(#in-glow)"/>' +
-          '<text x="50" y="62" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="34" fill="#f8fafc" text-anchor="middle" letter-spacing="0.05em">' + esc(inits) + '</text>' +
+          '<text x="50" y="62" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="34" fill="#fafafa" text-anchor="middle" letter-spacing="0.05em">' + esc(inits) + '</text>' +
           '</svg>';
       }
     }

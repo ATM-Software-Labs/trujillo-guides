@@ -6,12 +6,12 @@
   <title>ATM Docs · Trujillo Guides</title>
   <meta name="description" content="Technical engineering guides, financial analysis, and production architectures by Alberto Trujillo Mingorance.">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="theme-color" content="#030712">
+  <meta name="theme-color" content="#09090b">
   <script src="/js/theme-boot.js?v=v8"></script>
   <link rel="stylesheet" href="/css/tokens.css?v=v8">
   <link rel="stylesheet" href="/style.css?v=v8">
   <link rel="stylesheet" href="/css/community.css?v=v8">
-  <link rel="stylesheet" href="/css/nutri.css?v=v11">
+  <link rel="stylesheet" href="/css/nutri.css?v=v12">
   <script src="/js/i18n.js?v=v8"></script>
   <script src="/js/marked.min.js?v=v8"></script>
   <script src="/js/guides.js?v=v8"></script>
@@ -141,10 +141,10 @@
           if (sidebar) sidebar.style.display = 'none';
           var bodyEl = document.getElementById('guide-body');
           if (bodyEl) {
-            bodyEl.innerHTML = '<div style="padding: 60px 20px; text-align: center; color: #94a3b8;">' +
-              '<h1 style="color: #f8fafc; font-size: 24px; margin-bottom: 12px;">Pieza no encontrada</h1>' +
-              '<p style="margin-bottom: 24px;">No se encontró ningún artículo con el identificador: <code style="color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px;">' + (slug || 'desconocido') + '</code></p>' +
-              '<a href="/" style="color: #38bdf8; text-decoration: underline; font-weight: 500;">Volver al índice</a>' +
+            bodyEl.innerHTML = '<div style="padding: 60px 20px; text-align: center; color: #a1a1aa;">' +
+              '<h1 style="color: #fafafa; font-size: 24px; margin-bottom: 12px;">Pieza no encontrada</h1>' +
+              '<p style="margin-bottom: 24px;">No se encontró ningún artículo con el identificador: <code style="color: var(--accent, #10B981); background: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px;">' + (slug || 'desconocido') + '</code></p>' +
+              '<a href="/" style="color: var(--accent, #10B981); text-decoration: underline; font-weight: 500;">Volver al índice</a>' +
               '</div>';
           }
           return;

@@ -14,7 +14,21 @@
   function paint(p, isMe) {
     set('author-name', function (el) { el.textContent = p.name || ('@' + p.handle); });
     set('author-handle', function (el) { el.textContent = '@' + p.handle; });
-    set('author-avatar', function (el) { if (p.avatar) { el.src = p.avatar; el.referrerPolicy = 'no-referrer'; } });
+    if (p.avatar) {
+      set('avatar-wrap', function (wrap) {
+        var img = wrap.querySelector('img#author-avatar');
+        if (!img) {
+          wrap.innerHTML = '';
+          img = document.createElement('img');
+          img.id = 'author-avatar';
+          img.className = 'profile-large-avatar';
+          img.width = 88; img.height = 88; img.alt = '';
+          wrap.appendChild(img);
+        }
+        img.referrerPolicy = 'no-referrer';
+        img.src = p.avatar;
+      });
+    }
     set('author-role', function (el) {
       el.textContent = p.role === 'admin' ? 'Autor principal' : 'Miembro';
     });
