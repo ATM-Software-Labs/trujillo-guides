@@ -90,7 +90,7 @@
     var cleanH = (author.handle || session.handle || '').replace(/^@+/, '');
     if (nameInput) nameInput.value = author.name || session.name || '';
     if (handleInput) handleInput.value = cleanH;
-    if (previewSlug) previewSlug.textContent = cleanH || 'usuario';
+    if (previewSlug) previewSlug.textContent = cleanH || (window.atmTx ? window.atmTx('usuario') : 'usuario');
     if (roleInput) roleInput.value = author.role || (session.role === 'admin' ? 'Lead Systems Architect' : 'Autor') || '';
     if (avatarInput) avatarInput.value = author.avatar || session.picture || session.avatar || '';
     if (bioInput) bioInput.value = author.bio || '';
@@ -455,7 +455,7 @@
     if (handleInput) {
       handleInput.addEventListener('input', function () {
         var val = handleInput.value.trim().replace(/^@+/, '');
-        if (previewSlug) previewSlug.textContent = val || 'usuario';
+        if (previewSlug) previewSlug.textContent = val || (window.atmTx ? window.atmTx('usuario') : 'usuario');
         updateAvatarPreview();
       });
     }
@@ -544,31 +544,31 @@
 
     if (btnDrafts) {
       btnDrafts.addEventListener('click', function () {
-        if (confirm('¿Eliminar todos los borradores locales guardados del editor?')) {
+        if (confirm((window.atmTx || String)('¿Eliminar todos los borradores locales guardados del editor?'))) {
           try {
             localStorage.removeItem('atm_write_draft');
           } catch (e) {}
-          alert('Borradores eliminados correctamente.');
+          alert((window.atmTx || String)('Borradores eliminados correctamente.'));
         }
       });
     }
 
     if (btnReset) {
       btnReset.addEventListener('click', function () {
-        if (confirm('¿Restablecer toda la configuración a los valores de fábrica? Se perderán las claves y personalizaciones locales.')) {
+        if (confirm((window.atmTx || String)('¿Restablecer toda la configuración a los valores de fábrica? Se perderán las claves y personalizaciones locales.'))) {
           try {
             localStorage.removeItem('atm_settings');
             localStorage.removeItem('atm_experience_mode');
           } catch (e) {}
           loadSettings();
-          alert('Configuración restablecida.');
+          alert((window.atmTx || String)('Configuración restablecida.'));
         }
       });
     }
 
     if (btnLogout) {
       btnLogout.addEventListener('click', function () {
-        if (confirm('¿Cerrar todas las sesiones activas en este navegador?')) {
+        if (confirm((window.atmTx || String)('¿Cerrar todas las sesiones activas en este navegador?'))) {
           try {
             localStorage.removeItem('trujillo_ai_token');
             localStorage.removeItem('auth_token');

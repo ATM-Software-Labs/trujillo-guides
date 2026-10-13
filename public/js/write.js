@@ -158,7 +158,7 @@
     var el = document.getElementById('write-status');
     if (!el) return;
     el.hidden = !msg;
-    el.textContent = msg || '';
+    el.textContent = (window.atmTx ? window.atmTx(msg) : msg) || '';
     el.classList.toggle('ok', !!ok);
   }
 
@@ -274,6 +274,9 @@
     var mins = words === 0 ? 0 : Math.max(1, Math.ceil(words / 200));
     pill.textContent = words + ' ' + t('metricWords') + ' · ~' + mins + ' ' + t('metricReadTime') + ' · ' + chars + ' ' + t('metricChars');
   }
+
+  document.addEventListener('atm:lang', updateMetrics);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateMetrics); else setTimeout(updateMetrics, 0);
 
   // --- Textarea Text Manipulation Logic ---
   function wrapSelection(el, before, after, defaultText) {

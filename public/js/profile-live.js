@@ -9,6 +9,7 @@
   function T(k) { return typeof window.atmT === 'function' ? window.atmT(k) : k; }
   function set(id, fn) { var el = document.getElementById(id); if (el) fn(el); }
   var PROVIDERS = { google: 'Google', x: 'X', credenciales: 'Correo' };
+  function prov(p) { var v = PROVIDERS[p]; return p === 'credenciales' && window.atmTx ? window.atmTx(v) : v; }
   function fmtDate(iso) {
     try { return new Date(iso).toLocaleDateString((window.atmLang && window.atmLang()) || 'es', { month: 'long', year: 'numeric' }); } catch (e) { return ''; }
   }
@@ -35,7 +36,7 @@
     });
     set('author-bio', function (el) {
       var parts = [];
-      if (p.provider && PROVIDERS[p.provider]) parts.push(T('pl_account').replace('{p}', PROVIDERS[p.provider]));
+      if (p.provider && PROVIDERS[p.provider]) parts.push(T('pl_account').replace('{p}', prov(p.provider)));
       if (p.joinedAt) parts.push(T('pl_since').replace('{d}', fmtDate(p.joinedAt)));
       if (p.role !== 'admin') el.textContent = parts.join(' · ') || T('role_member');
       else if (parts.length) {

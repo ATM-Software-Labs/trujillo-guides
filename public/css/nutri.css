@@ -430,3 +430,4 @@ html body .achievement-toast .toast-icon-wrap { background: rgba(16,185,129,.12)
 html body .achievement-toast .toast-kicker { color: var(--accent, #10B981) !important; }
 html body .achievement-toast .toast-title { color: var(--text-primary) !important; }
 html body .achievement-toast .toast-tier-pill { background: transparent !important; color: var(--text-muted) !important; border: 0 !important; padding: 0 !important; }
+html body .ticker-badge { white-space: nowrap; display: inline-block; }
