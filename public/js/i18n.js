@@ -1,7 +1,7 @@
 const SUPPORTED_LANGUAGES = [
   { id: 'es', code: 'es', name: 'Español', flag: '🇪🇸' },
   { id: 'en', code: 'en', name: 'English', flag: '🇬🇧' },
-  { id: 'ca', code: 'ca', name: 'Català', flag: '🇦🇩' },
+  { id: 'ca', code: 'ca', name: 'Català', flag: '' },
   { id: 'fr', code: 'fr', name: 'Français', flag: '🇫🇷' },
   { id: 'de', code: 'de', name: 'Deutsch', flag: '🇩🇪' },
   { id: 'it', code: 'it', name: 'Italiano', flag: '🇮🇹' },
