@@ -247,9 +247,7 @@
       '<button type="button" class="auth-close-btn" id="auth-modal-close" data-close-auth aria-label="Cerrar">&times;</button>' +
       '<div class="auth-header">' +
       '<div class="auth-icon-badge">' +
-      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-      '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' +
-      '</svg>' +
+      '<img src="/avatar.png" alt="" width="28" height="28">' +
       '</div>' +
       '<h3 class="auth-title">Trujillo Guides</h3>' +
       '<p class="auth-subtitle">Entra para publicar, gestionar guías y sincronizar borradores.</p>' +
