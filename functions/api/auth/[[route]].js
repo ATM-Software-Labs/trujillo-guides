@@ -41,7 +41,9 @@ export async function onRequest(context) {
   // ==========================================
   if (path === '/api/auth/google' && request.method === 'GET') {
     if (!env.GOOGLE_CLIENT_SECRET) {
-      const returnUrl = url.searchParams.get('returnTo') || url.origin;
+      const rawReturn = url.searchParams.get('returnTo') || '/';
+      // Siempre URL absoluta del propio sitio: una ruta relativa haría volver al dominio de login
+      const returnUrl = rawReturn.startsWith('/') && !rawReturn.startsWith('//') ? url.origin + rawReturn : url.origin;
       return Response.redirect(`https://ai.trujillomingorance.com/login?redirect_to=${encodeURIComponent(returnUrl)}`, 302);
     }
     const state = crypto.randomUUID();
@@ -78,6 +80,10 @@ export async function onRequest(context) {
       }
 
       const googleUser = await verifyRes.json();
+      // El ID token debe haberse emitido para nuestro client_id y con email verificado
+      if (googleUser.aud !== googleClientId || String(googleUser.email_verified) !== 'true') {
+        return new Response(JSON.stringify({ error: 'La credencial de Google no es válida para este sitio.' }), { status: 401, headers: NO_CACHE_HEADERS });
+      }
       const email = String(googleUser.email || '').trim().toLowerCase();
       if (!email) {
         return new Response(JSON.stringify({ error: 'La sesión de Google no es válida.' }), { status: 401, headers: NO_CACHE_HEADERS });
@@ -406,7 +412,7 @@ export async function onRequest(context) {
     headers.append('Set-Cookie', 'oauth_x_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
     headers.append('Set-Cookie', 'oauth_x_state_local=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
 
-    const redirectTarget = stateData.returnTo && stateData.returnTo.startsWith('/') ? stateData.returnTo : '/';
+    const redirectTarget = stateData.returnTo && stateData.returnTo.startsWith('/') && !stateData.returnTo.startsWith('//') ? stateData.returnTo : '/';
     headers.append('Location', redirectTarget);
     headers.append('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 
@@ -430,10 +436,8 @@ export async function onRequest(context) {
       // Validar primero firma JWT con secret
       let user = await verifyJwt(rawToken, jwtSecret);
 
-      // Si no fue firmado con JWT estándar, decodificar de forma segura
-      if (!user) {
-        user = JSON.parse(atob(rawToken));
-      }
+      // Sin firma válida no hay sesión (antes se aceptaba JSON en base64 sin firmar,
+      // lo que permitía falsificar cualquier usuario, incluido admin)
 
       if (!user || (user.exp && user.exp < Math.floor(Date.now() / 1000))) {
         throw new Error('Token inválido o expirado');

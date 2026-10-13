@@ -449,9 +449,15 @@
     if (googleBtn) {
       googleBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        // One Tap (prompt) a menudo no se muestra (cookies de terceros, FedCM, cooldown)
+        // y el clic no hacía nada. Si no aparece, usamos el login por redirección.
         if (window.google && window.google.accounts && window.google.accounts.id) {
           try {
-            window.google.accounts.id.prompt();
+            window.google.accounts.id.prompt(function (n) {
+              if (n && ((n.isNotDisplayed && n.isNotDisplayed()) || (n.isSkippedMoment && n.isSkippedMoment()))) {
+                openStudioLogin();
+              }
+            });
             return;
           } catch (err) {}
         }
@@ -463,7 +469,7 @@
     if (xBtn) {
       xBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        window.location.href = '/api/auth/x';
+        window.location.href = '/api/auth/x?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search);
       });
     }
 

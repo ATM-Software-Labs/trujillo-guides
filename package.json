@@ -2,7 +2,7 @@
   "name": "trujillo-guides",
   "version": "1.2.0",
   "private": true,
-  "description": "Technical engineering guides and production architectures by Trujillo AI",
+  "description": "Technical engineering guides and production architectures by ATM Software Labs",
   "scripts": {
     "build:savings": "vite build --config vite.savings.config.ts",
     "build": "npm run build:savings",
