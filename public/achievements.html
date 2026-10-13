@@ -7,11 +7,11 @@
   <meta name="description" content="Las 25 insignias de ATM Docs y cómo conseguirlas en ATM Docs.">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="theme-color" content="#09090b">
-  <script src="/js/theme-boot.js?v=202610132155"></script>
-  <link rel="stylesheet" href="/css/tokens.css?v=202610132155">
-  <link rel="stylesheet" href="/style.css?v=202610132155">
-  <link rel="stylesheet" href="/css/community.css?v=202610132155">
-  <link rel="stylesheet" href="/css/nutri.css?v=202610132155">
+  <script src="/js/theme-boot.js?v=202610132330"></script>
+  <link rel="stylesheet" href="/css/tokens.css?v=202610132330">
+  <link rel="stylesheet" href="/style.css?v=202610132330">
+  <link rel="stylesheet" href="/css/community.css?v=202610132330">
+  <link rel="stylesheet" href="/css/nutri.css?v=202610132330">
 </head>
 <body class="docs-body">
   <header class="docs-topbar">
@@ -31,7 +31,7 @@
     <div class="settings-heading-group achievements-guide-heading">
       <p class="kicker">LOGROS</p>
       <h1>Logros</h1>
-      <p class="lede">25 insignias que se desbloquean publicando, leyendo y explorando ATM Docs. Aquí ves qué pide cada una.</p>
+      <p class="lede" data-i18n="ach_lede">25 insignias que se desbloquean publicando, leyendo y explorando ATM Docs. Aquí ves qué pide cada una.</p>
     </div>
 
     <!-- 4-Tier Progress Bar Widget -->
@@ -42,16 +42,16 @@
     <!-- Filter Tabs -->
     <div class="achievement-tabs-wrap" role="tablist">
       <button type="button" class="ach-tab-btn is-active" data-ach-tab="all">
-        <span>Todas (25)</span>
+        <span><span data-i18n="kind_all">Todas</span> (25)</span>
       </button>
       <button type="button" class="ach-tab-btn" data-ach-tab="unlocked">
-        <span>✓ Desbloqueadas</span>
+        <span data-i18n="tab_unlocked">✓ Desbloqueadas</span>
       </button>
       <button type="button" class="ach-tab-btn" data-ach-tab="locked">
-        <span>🔒 Bloqueadas</span>
+        <span data-i18n="tab_locked">🔒 Bloqueadas</span>
       </button>
       <button type="button" class="ach-tab-btn" data-ach-tab="secrets">
-        <span>✦ Secretas</span>
+        <span data-i18n="tab_secrets">✦ Secretas</span>
       </button>
     </div>
 
@@ -61,10 +61,10 @@
     </div>
   </main>
 
-  <script src="/js/i18n.js?v=202610132155"></script>
-  <script src="/js/flags.js?v=202610132155"></script>
-  <script src="/js/chrome.js?v=202610132155"></script>
-  <script src="/js/achievements.js?v=202610132155"></script>
+  <script src="/js/i18n.js?v=202610132330"></script>
+  <script src="/js/flags.js?v=202610132330"></script>
+  <script src="/js/chrome.js?v=202610132330"></script>
+  <script src="/js/achievements.js?v=202610132330"></script>
   <script>
     (function () {
       function initAchievementsPage() {
@@ -80,6 +80,7 @@
         }
 
         render();
+        document.addEventListener('atm:lang', render);
 
         var tabs = document.querySelectorAll('.ach-tab-btn');
         tabs.forEach(function (btn) {

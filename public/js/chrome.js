@@ -706,6 +706,7 @@
       '<nav class="docs-footer-nav">' +
       '<a href="/" data-i18n="index">' + t('index') + '</a>' +
       '<a href="https://ai.trujillomingorance.com" rel="noopener" data-i18n="studio">' + t('studio') + '</a>' +
+      '<a href="https://labs.trujillomingorance.com" rel="noopener" data-i18n="labs">' + (t('labs') === 'labs' ? 'Labs' : t('labs')) + '</a>' +
       '</nav>';
   }
 

@@ -1,6 +1,16 @@
 (function () {
   'use strict';
 
+  var ES_MON = { ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5, jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11 };
+  function fmtDate(v) {
+    if (!v) return T('recent');
+    var d = null, m = String(v).trim().match(/^(\d{1,2})\s+([a-zé]{3})\w*\.?\s+(\d{4})$/i);
+    if (m && ES_MON[m[2].toLowerCase()] !== undefined) d = new Date(+m[3], ES_MON[m[2].toLowerCase()], +m[1]);
+    else if (/^\d{4}-\d{2}-\d{2}/.test(v)) d = new Date(v);
+    if (!d || isNaN(d)) return String(v);
+    try { return new Intl.DateTimeFormat((window.atmLang && window.atmLang()) || 'es', { day: 'numeric', month: 'short', year: 'numeric' }).format(d); } catch (e) { return String(v); }
+  }
+  window.atmFmtDate = fmtDate;
   function T(k) { return typeof window.atmT === 'function' ? window.atmT(k) : k; }
   var STATIC_CATALOG = [
     {
@@ -338,7 +348,7 @@
     if (nameEl) nameEl.textContent = meta.name;
     if (handleEl) handleEl.textContent = meta.handle;
     if (roleEl) roleEl.textContent = meta.role === 'Autor principal' ? T('role_main') : meta.role === 'Miembro' ? T('role_member') : meta.role;
-    if (bioEl) bioEl.textContent = meta.bio;
+    if (bioEl) bioEl.textContent = (!meta.bio || meta.bio === 'Técnico de sistemas en Barcelona. Guías prácticas de Cloudflare, DNS, correo e identidades.') ? T('bio') : meta.bio;
     document.title = meta.name + ' (' + meta.handle + ') · Perfil | ATM Docs';
 
     // 301 Redirection Notice Banner
@@ -524,7 +534,7 @@
         var summaryText = esc(g.summary || g.description || '');
         var readTime = g.readTime || g.readingTime || '10 min';
         var upvotes = Number(g.up || g.likes) || 0;
-        var date = g.date || T('recent');
+        var date = fmtDate(g.date);
         var pinnedFlag = (g.pinned || g.fixada) ? '<span class="card-pinned-flag">📌 ' + T('pinned') + '</span>' : '';
 
         return '<a href="' + href + '" class="profile-card">' +

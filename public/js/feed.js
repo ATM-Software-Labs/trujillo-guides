@@ -316,7 +316,7 @@
     if (pinned) {
       metaHtml += '<span class="meta-badge-pinned">📌 ' + FT('pinned') + '</span>';
     }
-    metaHtml += '<span class="meta-author">' + FT('author_label') + ': ' + esc(handle) + '</span>' +
+    metaHtml += '<span class="meta-author">' + FT('author_label') + ': <bdi dir="ltr">' + esc(handle) + '</bdi></span>' +
       '<span class="meta-sep">·</span>' +
       '<span class="meta-read-time">' + esc(readTime) + '</span>' +
       '<span class="meta-sep">·</span>' +
@@ -423,7 +423,7 @@
     if (label) {
       var key = f.q ? 'results' : (f.scope === 'destacades' ? 'featured' : 'all');
       label.setAttribute('data-i18n', key);
-      label.textContent = f.scope === 'destacades' ? t('featured') : (f.q ? t('results') : 'Todas las guías');
+      label.textContent = f.scope === 'destacades' ? t('featured') : (f.q ? t('results') : (t('all_guides') === 'all_guides' ? 'Todas las guías' : t('all_guides')));
     }
 
     if (!shown.length) {
