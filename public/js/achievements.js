@@ -344,12 +344,12 @@
   // --- USER IDENTIFICATION & ISOLATED PERSISTENCE ---
   function getCurrentUserId() {
     if (window.__taMe && (window.__taMe.id || window.__taMe.handle || window.__taMe.username)) {
-      return String(window.__taMe.id || window.__taMe.handle || window.__taMe.username).toLowerCase().replace(/^@+/, '').trim();
+      return String(window.__taMe.handle || window.__taMe.username || window.__taMe.id).toLowerCase().replace(/^@+/, '').trim();
     }
     try {
       var authUser = JSON.parse(localStorage.getItem('auth_user') || localStorage.getItem('atm_user') || localStorage.getItem('trujillo_ai_user') || 'null');
       if (authUser && (authUser.id || authUser.handle || authUser.username || authUser.email)) {
-        return String(authUser.id || authUser.handle || authUser.username || authUser.email.split('@')[0]).toLowerCase().replace(/^@+/, '').trim();
+        return String(authUser.handle || authUser.username || authUser.id || authUser.email.split('@')[0]).toLowerCase().replace(/^@+/, '').trim();
       }
     } catch (e) {}
     try {
@@ -429,6 +429,8 @@
 
   // Web Audio chime synthesizer
   function playUnlockSound() {
+    // Sin sonido salvo que el usuario lo active (localStorage atm_ach_sound = '1')
+    try { if (localStorage.getItem('atm_ach_sound') !== '1') return; } catch (e) { return; }
     try {
       var AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
@@ -468,14 +470,13 @@
     toast.id = 'achievement-toast';
     toast.className = 'achievement-toast tier-' + achievement.tier;
     toast.innerHTML =
-      '<div class="toast-glow"></div>' +
       '<div class="toast-icon-wrap">' + achievement.icon + '</div>' +
       '<div class="toast-body">' +
       '  <div class="toast-kicker">✦ ' + AT('ach_toast','Logro desbloqueado').toUpperCase() + ' · ' + achievement.categoryLabel.toUpperCase() + '</div>' +
       '  <div class="toast-title">' + achievement.title + '</div>' +
       '  <div class="toast-tier-pill tier-' + achievement.tier + '">' + TIERS[achievement.tier].name + ' · ' + AT('ach_rar','Rareza') + ': ' + achievement.rarity + '%</div>' +
       '</div>' +
-      '<button type="button" class="toast-close-btn" aria-label="Cerrar">&times;</button>';
+      '<button type="button" class="toast-close-btn" aria-label="' + AT('close', 'Cerrar') + '">&times;</button>';
 
     document.body.appendChild(toast);
 
@@ -514,7 +515,12 @@
     };
     saveUnlockedMap(map, userId);
 
-    if (!opts.silent) {
+    // Aviso solo una vez por logro y navegador, aunque cambie la clave de usuario
+    var toasted = [];
+    try { toasted = JSON.parse(localStorage.getItem('atm_ach_toasted') || '[]'); } catch (e) {}
+    if (!opts.silent && toasted.indexOf(id) === -1) {
+      toasted.push(id);
+      try { localStorage.setItem('atm_ach_toasted', JSON.stringify(toasted)); } catch (e) {}
       showToast(ach);
     }
 

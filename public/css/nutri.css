@@ -422,3 +422,11 @@ html body .flag-svg { width: 20px; height: 14px; border-radius: 3px; box-shadow:
 [dir=rtl] input, [dir=rtl] textarea, [dir=rtl] select { text-align: start; }
 [dir=rtl] input[type=email], [dir=rtl] input[type=url] { direction: ltr; text-align: end; }
 [dir=rtl] .profile-status-dot { right: auto; left: 4px; }
+
+/* Aviso de logro discreto: neutro + verde, sin brillos ni colores por nivel */
+html body .achievement-toast { background: var(--bg-card, #111113) !important; border: 1px solid var(--border, #27272a) !important; box-shadow: 0 8px 24px rgba(0,0,0,.25) !important; }
+html body .achievement-toast .toast-glow { display: none !important; }
+html body .achievement-toast .toast-icon-wrap { background: rgba(16,185,129,.12) !important; color: var(--accent, #10B981) !important; box-shadow: none !important; }
+html body .achievement-toast .toast-kicker { color: var(--accent, #10B981) !important; }
+html body .achievement-toast .toast-title { color: var(--text-primary) !important; }
+html body .achievement-toast .toast-tier-pill { background: transparent !important; color: var(--text-muted) !important; border: 0 !important; padding: 0 !important; }
