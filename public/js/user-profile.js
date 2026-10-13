@@ -377,7 +377,7 @@
           handle: meta.handle,
           size: 88
         });
-        avatarWrap.insertAdjacentHTML('beforeend', '<span class="profile-status-dot" title="Autor verificado y activo"></span>');
+        avatarWrap.insertAdjacentHTML('beforeend', '<span class="profile-status-dot" title="Autor verificado y activo" data-i18n-title="verified"></span>');
       } else {
         avatarWrap.innerHTML = '<span class="profile-large-initials">' + esc(meta.name.slice(0, 2).toUpperCase()) + '</span><span class="profile-status-dot"></span>';
       }
