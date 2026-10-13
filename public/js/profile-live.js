@@ -6,10 +6,11 @@
     var m = (location.pathname || '').match(/\/u\/@?([^/?#]+)/);
     return m ? decodeURIComponent(m[1]).replace(/^@+/, '').toLowerCase() : '';
   }
+  function T(k) { return typeof window.atmT === 'function' ? window.atmT(k) : k; }
   function set(id, fn) { var el = document.getElementById(id); if (el) fn(el); }
   var PROVIDERS = { google: 'Google', x: 'X', credenciales: 'Correo' };
   function fmtDate(iso) {
-    try { return new Date(iso).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); } catch (e) { return ''; }
+    try { return new Date(iso).toLocaleDateString((window.atmLang && window.atmLang()) || 'es', { month: 'long', year: 'numeric' }); } catch (e) { return ''; }
   }
   function paint(p, isMe) {
     set('author-name', function (el) { el.textContent = p.name || ('@' + p.handle); });
@@ -30,14 +31,15 @@
       });
     }
     set('author-role', function (el) {
-      el.textContent = p.role === 'admin' ? 'Autor principal' : 'Miembro';
+      el.textContent = p.role === 'admin' ? T('role_main') : T('role_member');
     });
     set('author-bio', function (el) {
       var parts = [];
-      if (p.provider && PROVIDERS[p.provider]) parts.push('Cuenta de ' + PROVIDERS[p.provider]);
-      if (p.joinedAt) parts.push('miembro desde ' + fmtDate(p.joinedAt));
-      if (p.role !== 'admin') el.textContent = parts.join(' · ') || 'Miembro de Trujillo Guides';
+      if (p.provider && PROVIDERS[p.provider]) parts.push(T('pl_account').replace('{p}', PROVIDERS[p.provider]));
+      if (p.joinedAt) parts.push(T('pl_since').replace('{d}', fmtDate(p.joinedAt)));
+      if (p.role !== 'admin') el.textContent = parts.join(' · ') || T('role_member');
       else if (parts.length) {
+        var old = el.parentNode.querySelector('.profile-joined'); if (old) old.remove();
         var meta = document.createElement('span');
         meta.className = 'profile-joined';
         meta.textContent = parts.join(' · ');
@@ -58,6 +60,8 @@
         var me = window.__taMe;
         var isMe = !!(me && String(me.handle || '').replace(/^@+/, '').toLowerCase() === h);
         paint(d.profile, isMe);
+        document.addEventListener('atm:avatar', function (e) { if (isMe && e.detail && e.detail.avatar) d.profile.avatar = e.detail.avatar; });
+        document.addEventListener('atm:lang', function () { paint(d.profile, isMe); });
         // user-profile.js puede repintar al recibir la sesión: volver a aplicar
         document.addEventListener('atm:me', function () { setTimeout(function () { paint(d.profile, isMe); }, 0); });
       })

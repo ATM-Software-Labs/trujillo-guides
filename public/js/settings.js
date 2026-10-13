@@ -367,6 +367,41 @@
     }
 
     document.dispatchEvent(new CustomEvent('atm:settings-saved', { detail: settings }));
+    syncAvatar(activeAvatarUrl);
+  }
+
+  var lastSyncedAvatar = null;
+  function avStatus(msg, kind) {
+    var el = document.getElementById('avatar-upload-status');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.style.color = kind === 'err' ? '#f87171' : (kind === 'ok' ? 'var(--accent, #10B981)' : 'var(--text-muted)');
+  }
+  function syncAvatar(av) {
+    if (!window.atmAvatar || !av || av === lastSyncedAvatar || av === '/avatar.png') return Promise.resolve();
+    return window.atmAvatar.save(av).then(function (saved) {
+      lastSyncedAvatar = av; window.atmAvatar.apply(saved); avStatus(window.atmT('av_ok'), 'ok');
+    }, function (e) { avStatus(e.message, e.code === 'auth' ? '' : 'err'); });
+  }
+  function bindAvatarFile() {
+    var input = document.getElementById('avatar-file');
+    if (!input || !window.atmAvatar) return;
+    input.addEventListener('change', function () {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var label = input.closest('label');
+      if (label) label.style.opacity = '.6';
+      input.disabled = true;
+      avStatus(window.atmT('av_busy'));
+      window.atmAvatar.resize(file).then(function (dataUri) {
+        var urlIn = document.getElementById('setting-avatar');
+        if (urlIn) urlIn.value = dataUri;
+        currentAvatarType = 'custom';
+        try { updateAvatarPreview(); } catch (e) {}
+        return syncAvatar(dataUri);
+      }).catch(function (e) { avStatus(e.message || window.atmT('av_fail'), 'err'); })
+        .finally(function () { input.disabled = false; input.value = ''; if (label) label.style.opacity = ''; });
+    });
   }
 
   function bindAvatarControls() {
@@ -552,6 +587,7 @@
   function initSettings() {
     loadSettings();
     bindAvatarControls();
+    bindAvatarFile();
     bindTabs();
     bindSliders();
     bindPasswordToggles();
