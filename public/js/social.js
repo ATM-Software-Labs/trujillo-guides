@@ -253,10 +253,14 @@
         if (!b.getAttribute('data-slug')) b.setAttribute('data-slug', slug);
       });
     }
-    var me = null;
-    try {
-      me = JSON.parse(localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user') || 'null');
-    } catch (e) {}
+    // La sesión real (cookie verificada por /api/auth/me) manda; localStorage solo es respaldo.
+    // Antes se sobrescribía window.__taMe con null y la cabecera volvía a «Entrar» tras iniciar sesión.
+    var me = window.__taMe || null;
+    if (!me) {
+      try {
+        me = JSON.parse(localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user') || 'null');
+      } catch (e) {}
+    }
     window.__taFollowing = [];
     try {
       window.__taFollowing = JSON.parse(localStorage.getItem('atm_following') || '[]');

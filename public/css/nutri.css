@@ -294,3 +294,24 @@ html body.auth-error-page { min-height: 100dvh; display: grid; place-items: cent
 
 /* ---------- Firma ---------- */
 html body.firma-body, html body .firma-wrap { background: var(--bg) !important; }
+
+/* Menú de cuenta y perfil */
+html body .account-menu { background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 14px !important; box-shadow: var(--shadow-lift) !important; padding: 6px !important; min-width: 220px; }
+html body .account-menu a, html body .account-menu button { display: block; width: 100%; text-align: left; padding: 10px 12px !important; border-radius: 10px !important; color: var(--text-primary) !important; background: none !important; border: 0 !important; font: 500 .9rem var(--font) !important; text-decoration: none; }
+html body .account-menu a:hover, html body .account-menu button:hover { background: var(--bg-card-hover) !important; }
+html body .account-menu [data-logout] { color: #DC2626 !important; }
+html body .account-menu-head { padding: 10px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; display: grid; }
+html body .account-menu-head strong { font-weight: 600; color: var(--text-primary); }
+html body .account-menu-head span { font-size: .8rem; color: var(--text-muted); }
+html body .account-chip { background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 999px !important; color: var(--text-primary) !important; }
+html body .account-photo { border-radius: 999px; object-fit: cover; }
+html body .profile-header-card { background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 24px !important; box-shadow: var(--shadow-card) !important; background-image: none !important; }
+html body .profile-large-avatar { border-radius: 999px !important; object-fit: cover; }
+html body .profile-name { font-weight: 600 !important; letter-spacing: -.02em; color: var(--text-primary) !important; }
+html body .role-badge { background: var(--accent-soft) !important; color: var(--accent) !important; border: 0 !important; border-radius: 999px !important; }
+html body .profile-handle { color: var(--text-muted) !important; }
+html body .profile-joined { display: block; margin-top: 6px; font-size: .85rem; color: var(--text-muted); }
+html body .profile-action-btn { background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: var(--text-primary) !important; }
+html body .profile-empty-state { background: var(--bg-card) !important; border: 1px dashed var(--border) !important; border-radius: 20px !important; color: var(--text-secondary) !important; }
+html body .profile-empty-state h3 { color: var(--text-primary) !important; }
+html body .profile-handle, html body .stat-value { font-family: var(--font) !important; }

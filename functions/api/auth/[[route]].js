@@ -17,6 +17,24 @@ ${detail ? `<details><summary>Detalle técnico</summary><pre>${escHtml(detail)}<
   return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
+// Perfil público por handle (solo campos públicos; nunca email ni tokens)
+async function savePublicProfile(env, u) {
+  try {
+    if (!env.BOT_MEMORY || !u || !u.handle) return;
+    const key = `profile:${String(u.handle).toLowerCase()}`;
+    const prev = JSON.parse((await env.BOT_MEMORY.get(key)) || 'null') || {};
+    await env.BOT_MEMORY.put(key, JSON.stringify({
+      handle: String(u.handle).toLowerCase(),
+      name: u.name || prev.name || u.handle,
+      avatar: u.avatar || prev.avatar || '',
+      provider: u.provider || prev.provider || '',
+      role: u.role === 'admin' ? 'admin' : 'author',
+      joinedAt: prev.joinedAt || new Date().toISOString(),
+      lastSeenAt: new Date().toISOString(),
+    }));
+  } catch (e) {}
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -118,6 +136,7 @@ export async function onRequest(context) {
       };
 
       const sessionToken = await signJwt(sessionPayload, jwtSecret);
+    await savePublicProfile(env, sessionPayload);
 
       if (env.BOT_MEMORY) {
         const existing = await env.BOT_MEMORY.get(`user:email:${email}`);
@@ -222,6 +241,7 @@ export async function onRequest(context) {
 
     // Firmado criptográfico seguro con HMAC/JWT
     const sessionToken = await signJwt(sessionPayload, jwtSecret);
+    await savePublicProfile(env, sessionPayload);
 
     // Persistencia y correo de bienvenida si es nuevo usuario
     if (env.BOT_MEMORY) {
@@ -391,6 +411,7 @@ export async function onRequest(context) {
     };
 
     const sessionToken = await signJwt(sessionPayload, jwtSecret);
+    await savePublicProfile(env, sessionPayload);
 
     if (env.BOT_MEMORY) {
       try {
@@ -444,6 +465,13 @@ export async function onRequest(context) {
       }
 
       const cleanHandle = (user.handle || (user.email ? user.email.split('@')[0] : '') || '').replace(/^@+/, '');
+
+      // Sesiones creadas en ai.trujillomingorance.com no pasan por nuestros callbacks: crear su perfil público si falta
+      if (env.BOT_MEMORY && cleanHandle) {
+        context.waitUntil(env.BOT_MEMORY.get(`profile:${cleanHandle.toLowerCase()}`).then((v) => v ? null : savePublicProfile(env, {
+          handle: cleanHandle.toLowerCase().replace(/[^a-z0-9_]/g, ''), name: user.name, avatar: user.avatar || user.picture, provider: user.provider || 'trujillo-ai', role: user.role,
+        })).catch(() => {}));
+      }
 
       return new Response(JSON.stringify({
         authenticated: true,
@@ -534,6 +562,7 @@ export async function onRequest(context) {
     };
 
     const sessionToken = await signJwt(sessionPayload, jwtSecret);
+    await savePublicProfile(env, sessionPayload);
 
     const headers = new Headers(NO_CACHE_HEADERS);
     headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
