@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnGoogle) {
     btnGoogle.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = '/api/auth/google';
+      window.location.href = '/api/auth/google?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search);
     });
   }
 
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnX) {
     btnX.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = '/api/auth/x';
+      window.location.href = '/api/auth/x?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search);
     });
   }
 

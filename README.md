@@ -1,13 +1,13 @@
 # ATM Technical Guides and Production Runbooks
 
-[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://subdomain.yourdomain.com)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://guides.trujillomingorance.com)
 [![Status](https://img.shields.io/badge/Status-Operational-107c41?style=flat-square)](#)
 [![Design](https://img.shields.io/badge/Design_System-Mica_Corporate-0078d4?style=flat-square)](#)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](./LICENSE)
 
 Production Gateway: [guides.trujillomingorance.com](https://guides.trujillomingorance.com)
 
-A collection of technical documentation, architectural blueprints, and production runbooks maintained by Your Name under Your Organization.
+A collection of technical documentation, architectural blueprints, and production runbooks maintained by Alberto Trujillo Mingorance under ATM Software Labs.
 
 ---
 
@@ -76,7 +76,7 @@ npx wrangler pages deploy public --project-name trujillo-guides --commit-dirty=t
 
 ## Author
 
-Your Name  
+Alberto Trujillo Mingorance (ATM Software Labs)  
 - Website: [alberto.trujillomingorance.com](https://alberto.trujillomingorance.com)  
 - GitHub: [@atrumin16](https://github.com/atrumin16)
 
@@ -84,5 +84,5 @@ Your Name
 
 ## License
 
-Copyright (c) 2026 Your Name. Released under the MIT License.
+Copyright (c) 2026 Alberto Trujillo Mingorance. Released under the MIT License.
 

@@ -242,19 +242,18 @@
   });
 
   function authModalHtml() {
-    return '<div id="auth-modal" class="auth-backdrop" style="display: none;">' +
-      '<div class="auth-card">' +
-      '<button type="button" class="auth-close-btn" id="auth-modal-close" data-close-auth aria-label="Cerrar">&times;</button>' +
+    return '<div id="auth-modal" class="auth-backdrop" style="display: none;" hidden>' +
+      '<div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-describedby="auth-subtitle">' +
+      '<span class="auth-grabber" aria-hidden="true"></span>' +
+      '<button type="button" class="auth-close-btn" id="auth-modal-close" data-close-auth aria-label="Cerrar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
       '<div class="auth-header">' +
       '<div class="auth-icon-badge">' +
-      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-      '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' +
-      '</svg>' +
+      '<img src="/avatar.png" alt="" width="28" height="28">' +
       '</div>' +
-      '<h3 class="auth-title">Trujillo Guides</h3>' +
-      '<p class="auth-subtitle">Entra para publicar, gestionar guías y sincronizar borradores.</p>' +
+      '<h2 class="auth-title" id="auth-title">Entra en Trujillo Guides</h2>' +
+      '<p class="auth-subtitle" id="auth-subtitle">Publica guías, guarda favoritas y sincroniza borradores.</p>' +
       '</div>' +
-      '<div class="auth-tabs">' +
+      '<div class="auth-tabs" role="tablist" aria-label="Modo de acceso">' +
       '<button type="button" class="auth-tab active" id="tab-auth-login">Acceder</button>' +
       '<button type="button" class="auth-tab" id="tab-auth-register">Crear cuenta</button>' +
       '</div>' +
@@ -279,23 +278,29 @@
       '</button>' +
       '</div>' +
       '<div class="auth-divider"><span>o continúa con correo</span></div>' +
-      '<form id="auth-form" onsubmit="event.preventDefault();">' +
+      '<div id="auth-msg" class="auth-msg" role="alert" aria-live="polite" hidden></div>' +
+      '<form id="auth-form" novalidate onsubmit="event.preventDefault();">' +
       '<div id="auth-field-name" style="display: none; margin-bottom: 12px;">' +
-      '<label class="auth-input-label">Nombre</label>' +
+      '<label class="auth-input-label" for="auth-name-input">Nombre</label>' +
       '<input type="text" class="auth-input" placeholder="Tu nombre" id="auth-name-input">' +
       '</div>' +
       '<div style="margin-bottom: 12px;">' +
-      '<label class="auth-input-label">Correo</label>' +
-      '<input type="email" class="auth-input" placeholder="tu@correo.com" id="auth-email-input" required>' +
+      '<label class="auth-input-label" for="auth-email-input">Correo electrónico</label>' +
+      '<input type="email" class="auth-input" placeholder="tu@correo.com" id="auth-email-input" autocomplete="email" inputmode="email" required>' +
       '</div>' +
       '<div style="margin-bottom: 16px;">' +
       '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">' +
-      '<label class="auth-input-label">Contraseña</label>' +
+      '<label class="auth-input-label" for="auth-pwd-input">Contraseña</label>' +
       '<a href="#" class="auth-forgot-link" id="auth-forgot-pwd">¿Olvidaste la contraseña?</a>' +
       '</div>' +
-      '<input type="password" class="auth-input" placeholder="••••••••" id="auth-pwd-input" required>' +
+      '<div class="auth-pwd-wrap">' +
+      '<input type="password" class="auth-input" placeholder="Mínimo 8 caracteres" id="auth-pwd-input" autocomplete="current-password" minlength="8" required>' +
+      '<button type="button" class="auth-pwd-toggle" id="auth-pwd-toggle" aria-label="Mostrar contraseña" aria-pressed="false">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      '</button>' +
       '</div>' +
-      '<button type="submit" class="auth-submit-btn" id="auth-submit-action">Acceder</button>' +
+      '</div>' +
+      '<button type="submit" class="auth-submit-btn" id="auth-submit-action"><span class="auth-spinner" aria-hidden="true"></span><span class="auth-submit-label">Acceder</span></button>' +
       '</form>' +
       '<div class="auth-guest-wrap" style="text-align: center; margin-top: 14px;">' +
       '<button type="button" class="auth-guest-btn" id="auth-guest-action">Continuar como invitado &rarr;</button>' +
@@ -409,6 +414,16 @@
     var tabReg = document.getElementById('tab-auth-register');
     var fieldName = document.getElementById('auth-field-name');
     var submitBtn = document.getElementById('auth-submit-action');
+    var pwdEl = document.getElementById('auth-pwd-input');
+    var pwdToggle = document.getElementById('auth-pwd-toggle');
+    if (pwdToggle && pwdEl) {
+      pwdToggle.addEventListener('click', function () {
+        var show = pwdEl.type === 'password';
+        pwdEl.type = show ? 'text' : 'password';
+        pwdToggle.setAttribute('aria-pressed', show ? 'true' : 'false');
+        pwdToggle.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+      });
+    }
 
     if (tabLogin && tabReg) {
       tabLogin.addEventListener('click', function (e) {
@@ -416,7 +431,7 @@
         tabLogin.classList.add('active');
         tabReg.classList.remove('active');
         if (fieldName) fieldName.style.display = 'none';
-        if (submitBtn) submitBtn.textContent = 'Acceder';
+        if (submitBtn) submitBtn.querySelector('.auth-submit-label').textContent = 'Acceder'; if (pwdEl) pwdEl.setAttribute('autocomplete', 'current-password'); authMsg('');
       });
 
       tabReg.addEventListener('click', function (e) {
@@ -424,7 +439,7 @@
         tabReg.classList.add('active');
         tabLogin.classList.remove('active');
         if (fieldName) fieldName.style.display = 'block';
-        if (submitBtn) submitBtn.textContent = 'Crear cuenta';
+        if (submitBtn) submitBtn.querySelector('.auth-submit-label').textContent = 'Crear cuenta'; if (pwdEl) pwdEl.setAttribute('autocomplete', 'new-password'); authMsg('');
       });
     }
 
@@ -449,9 +464,15 @@
     if (googleBtn) {
       googleBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        // One Tap (prompt) a menudo no se muestra (cookies de terceros, FedCM, cooldown)
+        // y el clic no hacía nada. Si no aparece, usamos el login por redirección.
         if (window.google && window.google.accounts && window.google.accounts.id) {
           try {
-            window.google.accounts.id.prompt();
+            window.google.accounts.id.prompt(function (n) {
+              if (n && ((n.isNotDisplayed && n.isNotDisplayed()) || (n.isSkippedMoment && n.isSkippedMoment()))) {
+                openStudioLogin();
+              }
+            });
             return;
           } catch (err) {}
         }
@@ -463,7 +484,7 @@
     if (xBtn) {
       xBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        window.location.href = '/api/auth/x';
+        window.location.href = '/api/auth/x?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search);
       });
     }
 
@@ -474,8 +495,7 @@
         var emailInput = document.getElementById('auth-email-input');
         var email = emailInput ? emailInput.value.trim() : '';
         if (!email) {
-          alert('Por favor introduce tu correo electrónico para enviarte el enlace de recuperación.');
-          if (emailInput) emailInput.focus();
+          authMsg('Escribe tu correo y te enviaremos un enlace para restablecer la contraseña.', 'error', emailInput);
           return;
         }
         try {
@@ -485,10 +505,9 @@
             body: JSON.stringify({ email: email })
           });
           var data = await res.json();
-          alert(data.message || 'Si tu correo está registrado, recibirás un enlace de 15 minutos.');
-          closeAuth();
+          authMsg(data.message || 'Si tu correo está registrado, recibirás un enlace válido durante 15 minutos.', 'ok');
         } catch (err) {
-          alert('Error al solicitar la recuperación de contraseña.');
+          authMsg('No hemos podido enviar el enlace. Inténtalo de nuevo en un momento.', 'error');
         }
       });
     }
@@ -504,13 +523,19 @@
         var name = nameInput ? nameInput.value.trim() : '';
         var pwd = pwdInput ? pwdInput.value : '';
 
-        if (!email) {
-          if (emailInput) emailInput.focus();
+        authMsg('');
+        if (!email || (emailInput && !emailInput.checkValidity())) {
+          authMsg('Introduce un correo electrónico válido.', 'error', emailInput);
+          return;
+        }
+        if (!pwd || pwd.length < 8) {
+          authMsg('La contraseña debe tener al menos 8 caracteres.', 'error', pwdInput);
           return;
         }
 
         var isRegister = tabReg && tabReg.classList.contains('active');
 
+        authLoading(true);
         try {
           if (isRegister) {
             var regRes = await fetch('/api/auth/register', {
@@ -520,11 +545,10 @@
             });
             var regData = await regRes.json();
             if (!regRes.ok) {
-              alert(regData.error || 'Error al registrar la cuenta');
+              authMsg(regData.error || 'No se ha podido crear la cuenta.', 'error');
               return;
             }
-            alert(regData.message || 'Cuenta creada. Revisa tu correo de verificación.');
-            closeAuth();
+            authMsg(regData.message || 'Cuenta creada. Revisa tu correo para verificarla.', 'ok');
           } else {
             var loginRes = await fetch('/api/auth/login', {
               method: 'POST',
@@ -534,7 +558,7 @@
             });
             var loginData = await loginRes.json();
             if (!loginRes.ok) {
-              alert(loginData.error || 'Credenciales inválidas');
+              authMsg(loginData.error || 'Correo o contraseña incorrectos.', 'error', pwdInput);
               return;
             }
             window.__taMe = loginData.user;
@@ -543,10 +567,47 @@
             window.location.reload();
           }
         } catch (err) {
-          alert('Error de conexión con el servicio de autenticación.');
+          authMsg('No hay conexión con el servicio de acceso. Inténtalo de nuevo.', 'error');
+        } finally {
+          authLoading(false);
         }
       });
     }
+  }
+
+  function authMsg(text, type, field) {
+    var box = document.getElementById('auth-msg');
+    document.querySelectorAll('#auth-modal .auth-input[aria-invalid]').forEach(function (el) { el.removeAttribute('aria-invalid'); });
+    if (!box) return;
+    if (!text) { box.hidden = true; box.textContent = ''; return; }
+    box.textContent = text;
+    box.className = 'auth-msg ' + (type === 'ok' ? 'is-ok' : 'is-error');
+    box.hidden = false;
+    if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+  }
+
+  function authLoading(on) {
+    var btn = document.getElementById('auth-submit-action');
+    if (!btn) return;
+    btn.disabled = !!on;
+    btn.classList.toggle('is-loading', !!on);
+    btn.setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+
+  var authLastFocus = null;
+  function authTrap(e) {
+    var modal = document.getElementById('auth-modal');
+    if (!modal || modal.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeAuth(); return; }
+    if (e.key !== 'Tab') return;
+    var items = Array.prototype.filter.call(
+      modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
+      function (el) { return !el.disabled && el.offsetParent !== null; }
+    );
+    if (!items.length) return;
+    var first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
   function ensureAuthModal() {
@@ -559,8 +620,11 @@
     ensureAuthModal();
     var modal = document.getElementById('auth-modal');
     if (!modal) return;
+    authLastFocus = document.activeElement;
     modal.style.display = 'flex';
     modal.removeAttribute('hidden');
+    document.documentElement.classList.add('auth-open');
+    document.addEventListener('keydown', authTrap);
     bindAuthModal();
     mountGoogle();
     var emailInput = document.getElementById('auth-email-input');
@@ -575,6 +639,12 @@
       modal.style.display = 'none';
       modal.setAttribute('hidden', '');
     }
+    document.documentElement.classList.remove('auth-open');
+    document.removeEventListener('keydown', authTrap);
+    if (authLastFocus && typeof authLastFocus.focus === 'function') {
+      try { authLastFocus.focus(); } catch (e) {}
+    }
+    authLastFocus = null;
   }
 
   async function checkSession() {
