@@ -4,14 +4,27 @@ import { sendWelcomeEmail, sendVerificationEmail, sendPasswordResetEmail } from 
 const escHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 // Página de error breve y con el estilo de la web; el detalle técnico va plegado
-function authErrorPage({ title, message, detail = '', retryHref = '', status = 400 }) {
+// Destino de vuelta permitido: rutas propias o https://*.trujillomingorance.com
+function allowedReturn(raw) {
+  if (!raw) return '';
+  if (raw.startsWith('/') && !raw.startsWith('//')) return raw;
+  try {
+    const u = new URL(raw);
+    if (u.protocol === 'https:' && (u.hostname === 'trujillomingorance.com' || u.hostname.endsWith('.trujillomingorance.com'))) return u.toString();
+  } catch (_) {}
+  return '';
+}
+
+function authErrorPage({ title, message, detail = '', retryHref = '', status = 400, back = '' }) {
+  // Página neutra (trujillomingorance.com): también la ven usuarios de otros subdominios, p. ej. rewrite.
+  if (back && retryHref === '/api/auth/x') retryHref = '/api/auth/x?returnTo=' + encodeURIComponent(back);
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escHtml(title)} · Trujillo Guides</title><link rel="stylesheet" href="/css/nutri.css?v=202610132030"><link rel="icon" href="/favicon.svg">
+<title>${escHtml(title)} · trujillomingorance.com</title><link rel="stylesheet" href="/css/nutri.css?v=202610132030"><link rel="icon" href="/favicon.svg">
 <script src="/js/theme-boot.js"></script></head>
 <body class="auth-error-page"><main class="auth-error-card">
 <img src="/avatar.png" alt="" width="40" height="40" class="auth-error-logo">
 <h1>${escHtml(title)}</h1><p>${escHtml(message)}</p>
-<div class="auth-error-actions">${retryHref ? `<a class="auth-error-btn primary" href="${escHtml(retryHref)}">Reintentar</a>` : ''}<a class="auth-error-btn" href="/">Volver al inicio</a></div>
+<div class="auth-error-actions">${retryHref ? `<a class="auth-error-btn primary" href="${escHtml(retryHref)}">Reintentar</a>` : ''}<a class="auth-error-btn" href="${escHtml(back || '/')}">Volver</a></div>
 ${detail ? `<details><summary>Detalle técnico</summary><pre>${escHtml(detail)}</pre></details>` : ''}
 </main></body></html>`;
   return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
@@ -311,6 +324,8 @@ export async function onRequest(context) {
   // 4. X (TWITTER) OAUTH 2.0 PKCE CALLBACK
   // ==========================================
   if (path === '/api/auth/x/callback') {
+    let back = '';
+    try { back = allowedReturn(JSON.parse(atob((url.searchParams.get('state') || '').replace(/-/g, '+').replace(/_/g, '/'))).returnTo || ''); } catch (_) {}
     // 1. Manejar errores directos devueltos por X
     const oauthError = url.searchParams.get('error');
     if (oauthError) {
@@ -319,7 +334,7 @@ export async function onRequest(context) {
         title: 'Has cancelado el acceso con X',
         message: 'No se ha iniciado sesión. Puedes volver a intentarlo o entrar con Google o con tu correo.',
         detail: errDesc,
-        retryHref: '/api/auth/x',
+        retryHref: '/api/auth/x', back,
       });
     }
 
@@ -332,7 +347,7 @@ export async function onRequest(context) {
         title: 'La sesión con X ha caducado',
         message: 'Han pasado demasiados minutos o el navegador bloqueó una cookie durante la redirección. Vuelve a intentarlo.',
         detail: 'Falta el código de autorización, el parámetro state o la cookie PKCE (oauth_x_state).',
-        retryHref: '/api/auth/x',
+        retryHref: '/api/auth/x', back,
       });
     }
 
@@ -342,11 +357,11 @@ export async function onRequest(context) {
       cookieData = JSON.parse(atob(cookieRaw));
       stateData = JSON.parse(atob(stateRaw.replace(/-/g, '+').replace(/_/g, '/')));
     } catch (e) {
-      return authErrorPage({ title: 'No se ha podido completar el acceso con X', message: 'Los datos de vuelta de X no son válidos. Vuelve a intentarlo.', retryHref: '/api/auth/x', status: 400 });
+      return authErrorPage({ title: 'No se ha podido completar el acceso con X', message: 'Los datos de vuelta de X no son válidos. Vuelve a intentarlo.', retryHref: '/api/auth/x', back, status: 400 });
     }
 
     if (!cookieData.csrf || cookieData.csrf !== stateData.csrf || !cookieData.codeVerifier) {
-      return authErrorPage({ title: 'No se ha podido verificar el acceso con X', message: 'Por seguridad no hemos podido confirmar la petición. Vuelve a intentarlo.', retryHref: '/api/auth/x', status: 400 });
+      return authErrorPage({ title: 'No se ha podido verificar el acceso con X', message: 'Por seguridad no hemos podido confirmar la petición. Vuelve a intentarlo.', retryHref: '/api/auth/x', back, status: 400 });
     }
 
     const clientSecret = (env.X_CLIENT_SECRET || env.TWITTER_CLIENT_SECRET || '').trim();
