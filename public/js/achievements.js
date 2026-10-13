@@ -319,6 +319,28 @@
   ];
 
 
+  // --- Traducción: los textos se leen en el idioma activo ---
+  function AL() { try { return (window.atmLang && window.atmLang()) || document.documentElement.lang || 'es'; } catch (e) { return 'es'; } }
+  function AT(k, fb) { var v = window.atmT ? window.atmT(k) : null; return (v && v !== k) ? v : fb; }
+  var CAT_KEYS = { 'Creación': 'cat_creation', 'Exploración': 'cat_explore', 'Perfil y ajustes': 'cat_profile', 'Secretos & Easter Eggs': 'cat_secrets' };
+  ACHIEVEMENTS.forEach(function (a, i) {
+    var es = { title: a.title, desc: a.desc, criteria: a.criteria, categoryLabel: a.categoryLabel };
+    function pick(j) {
+      var l = AL().slice(0, 2); if (l === 'es') return null;
+      var row = window.ATM_ACH_I18N && window.ATM_ACH_I18N[l] && window.ATM_ACH_I18N[l][i];
+      if (!row) row = window.ATM_ACH_I18N && window.ATM_ACH_I18N.en && window.ATM_ACH_I18N.en[i];
+      return row ? (row[j] || row[1]) : null;
+    }
+    Object.defineProperty(a, 'title', { get: function () { return pick(0) || es.title; }, enumerable: true });
+    Object.defineProperty(a, 'desc', { get: function () { return pick(1) || es.desc; }, enumerable: true });
+    Object.defineProperty(a, 'criteria', { get: function () { return pick(2) || es.criteria; }, enumerable: true });
+    Object.defineProperty(a, 'categoryLabel', { get: function () { return AT(CAT_KEYS[es.categoryLabel], es.categoryLabel); }, enumerable: true });
+  });
+  Object.keys(TIERS).forEach(function (k) {
+    var es = TIERS[k].name;
+    Object.defineProperty(TIERS[k], 'name', { get: function () { return AT('tier_' + k, es); }, enumerable: true });
+  });
+
   // --- USER IDENTIFICATION & ISOLATED PERSISTENCE ---
   function getCurrentUserId() {
     if (window.__taMe && (window.__taMe.id || window.__taMe.handle || window.__taMe.username)) {
@@ -449,9 +471,9 @@
       '<div class="toast-glow"></div>' +
       '<div class="toast-icon-wrap">' + achievement.icon + '</div>' +
       '<div class="toast-body">' +
-      '  <div class="toast-kicker">✦ LOGRO DESBLOQUEADO · ' + achievement.categoryLabel.toUpperCase() + '</div>' +
+      '  <div class="toast-kicker">✦ ' + AT('ach_toast','Logro desbloqueado').toUpperCase() + ' · ' + achievement.categoryLabel.toUpperCase() + '</div>' +
       '  <div class="toast-title">' + achievement.title + '</div>' +
-      '  <div class="toast-tier-pill tier-' + achievement.tier + '">' + TIERS[achievement.tier].name + ' · Rareza: ' + achievement.rarity + '%</div>' +
+      '  <div class="toast-tier-pill tier-' + achievement.tier + '">' + TIERS[achievement.tier].name + ' · ' + AT('ach_rar','Rareza') + ': ' + achievement.rarity + '%</div>' +
       '</div>' +
       '<button type="button" class="toast-close-btn" aria-label="Cerrar">&times;</button>';
 
@@ -510,7 +532,7 @@
     var unlocked = isUnlocked(id, userId);
     var map = getUnlockedMap(userId);
     var info = map[id] || {};
-    var dateStr = info.unlockedAt ? new Date(info.unlockedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Bloqueado actualmente';
+    var dateStr = info.unlockedAt ? new Date(info.unlockedAt).toLocaleDateString(AL(), { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : AT('ach_locked_now','Bloqueado actualmente');
 
     var oldModal = document.getElementById('achievement-modal-overlay');
     if (oldModal) oldModal.remove();
@@ -525,25 +547,25 @@
       '    <div class="modal-icon-badge achievement-icon-wrap tier-' + ach.tier + '">' + ach.icon + '</div>' +
       '    <div class="modal-tier-tag tier-' + ach.tier + '">' + TIERS[ach.tier].name.toUpperCase() + '</div>' +
       '  </div>' +
-      '  <h3 class="modal-ach-title">' + (ach.secret && !unlocked ? '??? [Logro Secreto]' : ach.title) + '</h3>' +
-      '  <p class="modal-ach-desc">' + (ach.secret && !unlocked ? 'Este logro está oculto. Explora y experimenta con la plataforma para descubrir su requisito.' : ach.desc) + '</p>' +
+      '  <h3 class="modal-ach-title">' + (ach.secret && !unlocked ? AT('ach_secret_title','??? [Logro secreto]') : ach.title) + '</h3>' +
+      '  <p class="modal-ach-desc">' + (ach.secret && !unlocked ? AT('ach_secret_desc','Este logro está oculto.') : ach.desc) + '</p>' +
       '  <div class="modal-criteria-box">' +
-      '    <div class="criteria-label">Criterio de Desbloqueo:</div>' +
-      '    <div class="criteria-text">' + (ach.secret && !unlocked ? 'Pista: ' + ach.criteria.slice(0, 30) + '...' : ach.criteria) + '</div>' +
+      '    <div class="criteria-label">' + AT('ach_crit','Criterio de desbloqueo:') + '</div>' +
+      '    <div class="criteria-text">' + (ach.secret && !unlocked ? AT('ach_hint','Pista:') + ' ' + ach.criteria.slice(0, 30) + '...' : ach.criteria) + '</div>' +
       '  </div>' +
       '  <div class="modal-meta-grid">' +
       '    <div class="modal-meta-cell">' +
-      '      <span class="meta-label">Rareza Global</span>' +
+      '      <span class="meta-label">' + AT('ach_rar_g','Rareza global') + '</span>' +
       '      <span class="meta-val">' + ach.rarity + '%</span>' +
       '    </div>' +
       '    <div class="modal-meta-cell">' +
-      '      <span class="meta-label">Categoría</span>' +
+      '      <span class="meta-label">' + AT('ach_cat','Categoría') + '</span>' +
       '      <span class="meta-val">' + ach.categoryLabel + '</span>' +
       '    </div>' +
       '    <div class="modal-meta-cell full-width">' +
-      '      <span class="meta-label">Estado</span>' +
+      '      <span class="meta-label">' + AT('ach_state','Estado') + '</span>' +
       '      <span class="meta-val ' + (unlocked ? 'text-emerald' : 'text-muted') + '">' +
-               (unlocked ? '✓ Desbloqueado el ' + dateStr : '🔒 No desbloqueado aún') +
+               (unlocked ? AT('ach_unlocked_on','✓ Desbloqueado el') + ' ' + dateStr : AT('ach_not_yet','🔒 No desbloqueado aún')) +
       '      </span>' +
       '    </div>' +
       '  </div>' +
@@ -589,7 +611,7 @@
 
     if (!filtered.length) {
       container.innerHTML = '<div class="profile-empty-state" style="grid-column: 1/-1;">' +
-        '<p style="color:#71717a;">No hay logros en este filtro.</p>' +
+        '<p style="color:#71717a;">' + AT('ach_no_filter','No hay logros en este filtro.') + '</p>' +
         '</div>';
       return;
     }
@@ -598,7 +620,7 @@
       var unlocked = isUnlocked(a.id, userId);
       var isSecretLocked = a.secret && !unlocked;
       var title = isSecretLocked ? '???' : a.title;
-      var desc = isSecretLocked ? 'Logro Secreto. Explora la plataforma.' : a.desc;
+      var desc = isSecretLocked ? AT('ach_secret_short','Logro secreto. Explora la plataforma.') : a.desc;
       var statusClass = unlocked ? 'is-unlocked' : 'is-locked';
       var secretClass = a.secret ? 'is-secret' : '';
 
@@ -614,7 +636,7 @@
         '    <p class="ach-desc">' + desc + '</p>' +
         '    <div class="ach-footer">' +
         '      <span class="ach-rarity">' + a.rarity + '%</span>' +
-        '      <span class="ach-status-label">' + (unlocked ? '✓ Desbloqueado' : '🔒 Bloqueado') + '</span>' +
+        '      <span class="ach-status-label">' + (unlocked ? AT('ach_unl','✓ Desbloqueado') : AT('ach_lock','🔒 Bloqueado')) + '</span>' +
         '    </div>' +
         '  </div>' +
         '</div>';
@@ -651,7 +673,7 @@
 
     if (!filtered.length) {
       container.innerHTML = '<div class="profile-empty-state" style="padding: 32px 0; text-align: center;">' +
-        '<p style="color:#71717a; margin:0;">No hay insignias que coincidan con este filtro.</p>' +
+        '<p style="color:#71717a; margin:0;">' + AT('ach_no_badges','No hay insignias que coincidan con este filtro.') + '</p>' +
         '</div>';
       return;
     }
@@ -659,11 +681,11 @@
     var html = filtered.map(function (a) {
       var unlocked = isUnlocked(a.id, userId);
       var isSecretLocked = a.secret && !unlocked;
-      var title = isSecretLocked ? '??? [Logro Secreto]' : a.title;
-      var desc = isSecretLocked ? 'Este logro está oculto en el sistema. Explora y experimenta con la plataforma para descubrir su requisito.' : a.desc;
-      var criteria = isSecretLocked ? 'Pista: Explora características avanzadas, atajos o configuraciones.' : a.criteria;
+      var title = isSecretLocked ? AT('ach_secret_title','??? [Logro secreto]') : a.title;
+      var desc = isSecretLocked ? AT('ach_secret_desc','Este logro está oculto.') : a.desc;
+      var criteria = isSecretLocked ? AT('ach_hint_secret','Pista') : a.criteria;
       var statusClass = unlocked ? 'is-unlocked' : 'is-locked';
-      var statusLabel = unlocked ? '✓ Conseguido' : '🔒 Bloqueado';
+      var statusLabel = unlocked ? AT('ach_unl','✓ Desbloqueado') : AT('ach_lock','🔒 Bloqueado');
 
       return '<div class="ach-guide-row ' + statusClass + '" data-ach-id="' + a.id + '" role="button" tabindex="0">' +
         '  <div class="ach-guide-icon tier-' + a.tier + '">' +
@@ -677,13 +699,13 @@
         '    </div>' +
         '    <p class="ach-guide-desc">' + desc + '</p>' +
         '    <div class="ach-guide-criteria">' +
-        '      <span class="criteria-label">Cómo conseguirlo:</span>' +
+        '      <span class="criteria-label">' + AT('ach_how','Cómo conseguirlo:') + '</span>' +
         '      <span>' + criteria + '</span>' +
         '    </div>' +
         '  </div>' +
         '  <div class="ach-guide-meta">' +
         '    <span class="ach-guide-status ' + statusClass + '">' + statusLabel + '</span>' +
-        '    <span class="ach-guide-rarity">' + a.rarity + '% de autores</span>' +
+        '    <span class="ach-guide-rarity">' + a.rarity + '% ' + AT('ach_rarity','de autores') + '</span>' +
         '  </div>' +
         '</div>';
     }).join('');
@@ -723,14 +745,14 @@
       '  <div class="ach-progress-header">' +
       '    <div class="ach-tier-indicator">' +
       '      <span class="tier-glow-dot tier-' + tier.id + '"></span>' +
-      '      <span class="tier-current-name">Nivel ' + tier.name + '</span>' +
-      '      <span class="tier-ratio-badge">' + count + ' de ' + total + ' Logros (' + pct + '%)</span>' +
+      '      <span class="tier-current-name">' + AT('ach_level','Nivel') + ' ' + tier.name + '</span>' +
+      '      <span class="tier-ratio-badge">' + count + ' ' + AT('ach_of','de') + ' ' + total + ' ' + AT('ach_word','logros') + ' (' + pct + '%)</span>' +
       '    </div>' +
       '    <div class="tier-segments-wrap">' +
-      '      <div class="tier-seg-step ' + (bronzeActive ? 'is-reached tier-bronze' : '') + '" title="Bronce (0-4)"><span>Bronce</span></div>' +
-      '      <div class="tier-seg-step ' + (silverActive ? 'is-reached tier-silver' : '') + '" title="Plata (5-11)"><span>Plata</span></div>' +
-      '      <div class="tier-seg-step ' + (goldActive ? 'is-reached tier-gold' : '') + '" title="Oro (12-19)"><span>Oro</span></div>' +
-      '      <div class="tier-seg-step ' + (diamondActive ? 'is-reached tier-diamond' : '') + '" title="Diamante (20-25)"><span>Diamante</span></div>' +
+      '      <div class="tier-seg-step ' + (bronzeActive ? 'is-reached tier-bronze' : '') + '" title="' + TIERS.bronze.name + ' (0-4)"><span>' + TIERS.bronze.name + '</span></div>' +
+      '      <div class="tier-seg-step ' + (silverActive ? 'is-reached tier-silver' : '') + '" title="' + TIERS.silver.name + ' (5-11)"><span>' + TIERS.silver.name + '</span></div>' +
+      '      <div class="tier-seg-step ' + (goldActive ? 'is-reached tier-gold' : '') + '" title="' + TIERS.gold.name + ' (12-19)"><span>' + TIERS.gold.name + '</span></div>' +
+      '      <div class="tier-seg-step ' + (diamondActive ? 'is-reached tier-diamond' : '') + '" title="' + TIERS.diamond.name + ' (20-25)"><span>' + TIERS.diamond.name + '</span></div>' +
       '    </div>' +
       '  </div>' +
       '  <div class="ach-progress-bar-bg">' +

@@ -154,7 +154,7 @@
 .account-menu button {
   display: block;
   width: 100%;
-  text-align: left;
+  text-align: start;
   padding: 8px 10px;
   border: 0;
   border-radius: 6px;
@@ -924,7 +924,7 @@
 .write-preview th, .write-preview td {
   padding: 8px 12px;
   border: 1px solid var(--border);
-  text-align: left;
+  text-align: start;
 }
 
 .write-preview th {
@@ -1383,7 +1383,7 @@
   color: var(--text-secondary);
   font-size: 12px;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   width: 100%;
 }
 
@@ -1404,7 +1404,7 @@
 }
 
 .home-main .hero {
-  text-align: left;
+  text-align: start;
   padding: 4px 0 22px;
   border: 0;
   background: none;
@@ -2130,7 +2130,7 @@ article.doc table,
   background: var(--bg-code);
   color: var(--text-primary);
   font-size: 13px;
-  text-align: left;
+  text-align: start;
 }
 
 .md-body th,
@@ -2145,7 +2145,7 @@ article.doc th,
   letter-spacing: 0.06em;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border);
-  text-align: left;
+  text-align: start;
   white-space: nowrap;
 }
 
@@ -3139,7 +3139,7 @@ select.form-input:focus {
   cursor: pointer !important;
   text-decoration: none !important;
   transition: background 0.15s ease, color 0.15s ease !important;
-  text-align: left !important;
+  text-align: start !important;
   line-height: 1.4 !important;
   box-sizing: border-box !important;
 }
@@ -3662,7 +3662,7 @@ select.form-input:focus {
 @media (max-width: 480px) {
   .brk-per-share-matrix {
     grid-template-columns: 1fr;
-    text-align: left;
+    text-align: start;
   }
 }
 
@@ -4185,7 +4185,7 @@ select.form-input:focus {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   transition: all 0.15s ease;
 }
 
@@ -4914,7 +4914,7 @@ select.form-input:focus {
   border: 1px solid #3f3f46;
   background: #18181b;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   transition: all 0.15s ease;
 }
 
@@ -5142,7 +5142,7 @@ select.form-input:focus {
   font-weight: 700;
   font-size: 11px;
   letter-spacing: 0.05em;
-  text-align: left;
+  text-align: start;
   padding: 10px 14px;
   border-bottom: 1px solid #27272a;
 }
@@ -5413,7 +5413,7 @@ select.form-input:focus {
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   user-select: none;
   position: relative;
   transition: opacity 0.2s ease, filter 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -6288,7 +6288,7 @@ select.form-input:focus {
 /* Tablas: compactas y desplazables dentro de su contenedor */
 .md-body .table-wrap, .md-body .md-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .md-body table { border-collapse: collapse; font-size: .9rem; line-height: 1.5; }
-.md-body th, .md-body td { padding: .6rem .8rem; vertical-align: top; text-align: left; }
+.md-body th, .md-body td { padding: .6rem .8rem; vertical-align: top; text-align: start; }
 .md-body td code { white-space: nowrap; }
 
 /* Accesibilidad: foco visible y coherente en todos los controles */

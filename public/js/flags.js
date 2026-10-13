@@ -15,7 +15,9 @@
     ru: '<rect width="30" height="20" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>',
     ja: '<rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#BC002D"/>',
     ko: '<rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="5" fill="#CD2E3A"/><path d="M10 10a5 5 0 0 0 10 0a2.5 2.5 0 0 0-5 0a2.5 2.5 0 0 1-5 0z" fill="#0047A0"/>',
-    zh: '<rect width="30" height="20" fill="#DE2910"/><path d="M6 3l.9 2.7H9.7L7.4 7.4l.9 2.7L6 8.4 3.7 10.1l.9-2.7L2.3 5.7h2.8z" fill="#FFDE00"/>'
+    zh: '<rect width="30" height="20" fill="#DE2910"/><path d="M6 3l.9 2.7H9.7L7.4 7.4l.9 2.7L6 8.4 3.7 10.1l.9-2.7L2.3 5.7h2.8z" fill="#FFDE00"/>',
+    ar: '<rect width="30" height="20" fill="#006C35"/><path d="M8 8.5h14M9 10.5h12" stroke="#fff" stroke-width="1.2"/><path d="M9 14h11l1.5-.8" stroke="#fff" stroke-width=".9" fill="none"/>',
+    hi: '<rect width="30" height="20" fill="#fff"/><rect width="30" height="6.67" fill="#FF9933"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width=".7"/><circle cx="15" cy="10" r=".6" fill="#000080"/>'
   };
   window.atmFlag = function (code) {
     code = String(code || '').toLowerCase().slice(0, 2);
