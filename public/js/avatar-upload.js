@@ -6,12 +6,18 @@
   function T(k) { var v = window.atmT ? window.atmT(k) : k; return v || k; }
   function err(code) { var e = new Error(T('av_' + code)); e.code = code; return e; }
 
+  // FileReader + data: URL (la CSP permite img-src data:, no blob:)
   function loadImage(file) {
     return new Promise(function (resolve, reject) {
-      var url = URL.createObjectURL(file), img = new Image();
-      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(err('type')); };
-      img.src = url;
+      var fr = new FileReader();
+      fr.onerror = function () { reject(err('type')); };
+      fr.onload = function () {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { reject(err('type')); };
+        img.src = fr.result;
+      };
+      fr.readAsDataURL(file);
     });
   }
   // Recorte cuadrado centrado y salida webp (o jpeg si el navegador no sabe webp)
