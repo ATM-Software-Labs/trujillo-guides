@@ -1090,6 +1090,15 @@
       var badge = document.createElement('span');
       badge.className = 'read-time-badge meta-chip';
       badge.innerHTML = '<svg class="tool-ic" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>' + mins + ' min de lectura</span>';
+      // El cuerpo de la guía se pinta después; recalcular cuando cambie (antes salía siempre «1 min»)
+      var bodyEl = document.getElementById('guide-body');
+      if (bodyEl && window.MutationObserver) {
+        new MutationObserver(function () {
+          var w = (bodyEl.textContent || '').trim().split(/\s+/).filter(Boolean).length;
+          var label = badge.querySelector('span');
+          if (label && w) label.textContent = Math.max(1, Math.ceil(w / 200)) + ' min de lectura';
+        }).observe(bodyEl, { childList: true, subtree: true });
+      }
       if (copyBtn) posterRight.insertBefore(badge, copyBtn);
       else posterRight.appendChild(badge);
     }
