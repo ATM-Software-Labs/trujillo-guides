@@ -99,7 +99,7 @@
         '<div class="account-menu-head"><strong>' + esc(displayName) + '</strong><span>@' + esc(cleanHandle) + '</span></div>' +
         '<a href="/u/@' + encodeURIComponent(cleanHandle) + '" role="menuitem">Mi perfil</a>' +
         '<a href="/settings" role="menuitem" data-i18n="settings">' + (t('settings') || 'Configuración') + '</a>' +
-        '<button type="button" role="menuitem" data-logout>Cerrar sesión</button>' +
+        '<button type="button" role="menuitem" data-logout>' + ((window.atmT && window.atmT('logoutFull')) || 'Cerrar sesión') + '</button>' +
         '</div></div>';
     }
     var g = guestName();
@@ -116,7 +116,7 @@
         '<a href="/u/@' + encodeURIComponent(guestHandle || 'atrumin16') + '" role="menuitem" data-i18n="profile">' + (t('profile') || 'Perfil') + '</a>' +
         '<a href="/settings" role="menuitem" data-i18n="settings">' + (t('settings') || 'Configuración') + '</a>' +
         '<button type="button" role="menuitem" data-open-auth data-i18n="changeName">' + t('changeName') + '</button>' +
-        '<button type="button" role="menuitem" data-logout>Cerrar sesión</button>' +
+        '<button type="button" role="menuitem" data-logout>' + ((window.atmT && window.atmT('logoutFull')) || 'Cerrar sesión') + '</button>' +
         '</div></div>';
     }
     return '<button type="button" class="account-chip account-login nav-profile-btn" id="auth-open" data-open-auth data-i18n="login">' +
@@ -246,7 +246,7 @@
     return '<div id="auth-modal" class="auth-backdrop" style="display: none;" hidden>' +
       '<div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-describedby="auth-subtitle">' +
       '<span class="auth-grabber" aria-hidden="true"></span>' +
-      '<button type="button" class="auth-close-btn" id="auth-modal-close" data-close-auth aria-label="Cerrar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
+      '<button type="button" class="auth-close-btn" id="auth-modal-close" data-close-auth aria-label="' + ((window.atmT && window.atmT('close')) || 'Cerrar') + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
       '<div class="auth-header">' +
       '<div class="auth-icon-badge">' +
       '<img src="/avatar.png" alt="" width="28" height="28">' +
