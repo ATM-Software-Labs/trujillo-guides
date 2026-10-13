@@ -1,6 +1,22 @@
 import { signJwt, verifyJwt, hashPassword, verifyPassword, generateRandomString, generatePkce } from '../../lib/crypto-auth.js';
 import { sendWelcomeEmail, sendVerificationEmail, sendPasswordResetEmail } from '../../lib/resend.js';
 
+const escHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Página de error breve y con el estilo de la web; el detalle técnico va plegado
+function authErrorPage({ title, message, detail = '', retryHref = '', status = 400 }) {
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escHtml(title)} · Trujillo Guides</title><link rel="stylesheet" href="/css/nutri.css?v=v10"><link rel="icon" href="/favicon.svg">
+<script src="/js/theme-boot.js"></script></head>
+<body class="auth-error-page"><main class="auth-error-card">
+<img src="/avatar.png" alt="" width="40" height="40" class="auth-error-logo">
+<h1>${escHtml(title)}</h1><p>${escHtml(message)}</p>
+<div class="auth-error-actions">${retryHref ? `<a class="auth-error-btn primary" href="${escHtml(retryHref)}">Reintentar</a>` : ''}<a class="auth-error-btn" href="/">Volver al inicio</a></div>
+${detail ? `<details><summary>Detalle técnico</summary><pre>${escHtml(detail)}</pre></details>` : ''}
+</main></body></html>`;
+  return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -165,9 +181,12 @@ export async function onRequest(context) {
 
     if (!tokenRes.ok) {
       const errText = await tokenRes.text().catch(() => '');
-      return new Response(`Fallo al obtener el token de Google: ${errText}`, {
-        status: 500,
-        headers: NO_CACHE_HEADERS
+      return authErrorPage({
+        title: 'El acceso con Google no está disponible',
+        message: 'No hemos podido completar el inicio de sesión con Google. Vuelve a intentarlo en un momento.',
+        detail: errText,
+        retryHref: '/api/auth/google',
+        status: 502,
       });
     }
 
@@ -276,16 +295,12 @@ export async function onRequest(context) {
     const oauthError = url.searchParams.get('error');
     if (oauthError) {
       const errDesc = url.searchParams.get('error_description') || oauthError;
-      return new Response(
-        `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error X OAuth</title></head>
-        <body style="font-family:system-ui,-apple-system,sans-serif;padding:2.5rem;background:#0b0f14;color:#f8fafc;max-width:640px;margin:0 auto;line-height:1.6;">
-          <h2 style="color:#ef4444;margin-top:0;">Autorización en X cancelada o denegada</h2>
-          <p>La plataforma X devolvió el siguiente mensaje de error:</p>
-          <pre style="background:#1e293b;padding:1rem;border-radius:8px;color:#fca5a5;overflow-x:auto;">${errDesc}</pre>
-          <p><a href="/" style="display:inline-block;margin-top:1rem;background:#38bdf8;color:#0b0f14;font-weight:600;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;">← Volver al inicio</a></p>
-        </body></html>`,
-        { status: 400, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-      );
+      return authErrorPage({
+        title: 'Has cancelado el acceso con X',
+        message: 'No se ha iniciado sesión. Puedes volver a intentarlo o entrar con Google o con tu correo.',
+        detail: errDesc,
+        retryHref: '/api/auth/x',
+      });
     }
 
     const code = url.searchParams.get('code');
@@ -293,16 +308,12 @@ export async function onRequest(context) {
     const cookieRaw = cookies.oauth_x_state || cookies.oauth_x_state_local;
 
     if (!code || !stateRaw || !cookieRaw) {
-      return new Response(
-        `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error de Sesión X</title></head>
-        <body style="font-family:system-ui,-apple-system,sans-serif;padding:2.5rem;background:#0b0f14;color:#f8fafc;max-width:640px;margin:0 auto;line-height:1.6;">
-          <h2 style="color:#f59e0b;margin-top:0;">Estado de autorización expirado o ausente</h2>
-          <p>No se encontró la cookie de verificación PKCE o el código de autorización en la solicitud de retorno.</p>
-          <p>Causa común: Han pasado más de 10 minutos entre el inicio de sesión y la confirmación, o el navegador bloqueó cookies de terceros durante la redirección.</p>
-          <p><a href="/api/auth/x" style="display:inline-block;margin-top:1rem;background:#38bdf8;color:#0b0f14;font-weight:600;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;">Reintentar inicio de sesión con X</a></p>
-        </body></html>`,
-        { status: 400, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-      );
+      return authErrorPage({
+        title: 'La sesión con X ha caducado',
+        message: 'Han pasado demasiados minutos o el navegador bloqueó una cookie durante la redirección. Vuelve a intentarlo.',
+        detail: 'Falta el código de autorización, el parámetro state o la cookie PKCE (oauth_x_state).',
+        retryHref: '/api/auth/x',
+      });
     }
 
     let cookieData = {};
@@ -311,11 +322,11 @@ export async function onRequest(context) {
       cookieData = JSON.parse(atob(cookieRaw));
       stateData = JSON.parse(atob(stateRaw.replace(/-/g, '+').replace(/_/g, '/')));
     } catch (e) {
-      return new Response('Payload corrupto en X OAuth.', { status: 400 });
+      return authErrorPage({ title: 'No se ha podido completar el acceso con X', message: 'Los datos de vuelta de X no son válidos. Vuelve a intentarlo.', retryHref: '/api/auth/x', status: 400 });
     }
 
     if (!cookieData.csrf || cookieData.csrf !== stateData.csrf || !cookieData.codeVerifier) {
-      return new Response('Fallo de validación CSRF en X OAuth. Por favor reintenta.', { status: 403 });
+      return authErrorPage({ title: 'No se ha podido verificar el acceso con X', message: 'Por seguridad no hemos podido confirmar la petición. Vuelve a intentarlo.', retryHref: '/api/auth/x', status: 400 });
     }
 
     const clientSecret = (env.X_CLIENT_SECRET || env.TWITTER_CLIENT_SECRET || '').trim();
@@ -353,23 +364,12 @@ export async function onRequest(context) {
     if (!tokenRes.ok || !tokenData.access_token) {
       const detail = tokenData.error_description || tokenData.error || tokenText || 'Error desconocido al intercambiar código';
       console.error('[X OAuth Error]', detail);
-      return new Response(
-        `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Error al intercambiar token con X</title></head>
-        <body style="font-family:system-ui,-apple-system,sans-serif;padding:2.5rem;background:#0b0f14;color:#f8fafc;max-width:680px;margin:0 auto;line-height:1.6;">
-          <h2 style="color:#ef4444;margin-top:0;">Error en el intercambio de credenciales con X (Twitter)</h2>
-          <p><strong>Detalle devuelto por la API de X:</strong></p>
-          <pre style="background:#1e293b;padding:1rem;border-radius:8px;color:#fca5a5;overflow-x:auto;">${detail}</pre>
-          <hr style="border:0;border-top:1px solid #334155;margin:1.5rem 0;" />
-          <h3 style="color:#38bdf8;font-size:1.1rem;">Verificación requerida en X Developer Portal:</h3>
-          <ul style="padding-left:1.25rem;">
-            <li><strong>Callback URI / Redirect URL en X:</strong> <code>${appOrigin}/api/auth/x/callback</code></li>
-            <li><strong>Client ID en uso:</strong> <code>${xClientId}</code></li>
-            <li><strong>Client Secret:</strong> ${clientSecret ? 'Configurado en variables de entorno' : 'No configurado (Modo Public Client / Native App). Si en X configuraste "Web App", debes añadir <code>X_CLIENT_SECRET</code> en Cloudflare Pages.'}</li>
-          </ul>
-          <p><a href="/" style="display:inline-block;margin-top:1rem;background:#38bdf8;color:#0b0f14;font-weight:600;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;">← Volver al inicio</a></p>
-        </body></html>`,
-        { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-      );
+      return authErrorPage({
+        title: 'El acceso con X no está disponible',
+        message: 'Ahora mismo no se puede entrar con X. Usa Google o tu correo mientras lo arreglamos.',
+        detail: `Respuesta de X: ${detail}\nCallback: ${appOrigin}/api/auth/x/callback\nClient secret: ${clientSecret ? 'configurado' : 'no configurado (X_CLIENT_SECRET)'}`,
+        status: 502,
+      });
     }
 
     const userRes = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,description', {

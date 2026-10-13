@@ -226,7 +226,15 @@
     } catch (e) {}
   }
 
+  var hydrating = false;
   async function hydrate(forcedSlug) {
+    // Evita el bucle hydrate → atm:me → forum.load → atm:content → hydrate (desbordaba la pila)
+    if (hydrating) return;
+    hydrating = true;
+    try { return await hydrateInner(forcedSlug); } finally { hydrating = false; }
+  }
+
+  async function hydrateInner(forcedSlug) {
     var slug = (forcedSlug || slugFromPath() || '').toLowerCase().trim();
     var bars = Array.from(document.querySelectorAll('.social-bar'));
     if (!bars.length && slug) {
