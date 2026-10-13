@@ -37,6 +37,7 @@ async function savePublicProfile(env, u) {
     const key = `profile:${String(u.handle).toLowerCase()}`;
     const prev = JSON.parse((await env.BOT_MEMORY.get(key)) || 'null') || {};
     await env.BOT_MEMORY.put(key, JSON.stringify({
+      customAvatar: prev.customAvatar || '',
       handle: String(u.handle).toLowerCase(),
       name: u.name || prev.name || u.handle,
       avatar: u.avatar || prev.avatar || '',
@@ -166,6 +167,10 @@ export async function onRequest(context) {
       headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
       headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
 
+      let customAvatar = '';
+      if (env.BOT_MEMORY && cleanHandle) {
+        try { const pr = JSON.parse((await env.BOT_MEMORY.get(`profile:${cleanHandle.toLowerCase().replace(/[^a-z0-9_]/g, '')}`)) || 'null'); customAvatar = (pr && pr.customAvatar) || ''; } catch (e) {}
+      }
       return new Response(JSON.stringify({
         authenticated: true,
         token: sessionToken,
@@ -503,7 +508,7 @@ export async function onRequest(context) {
           id: user.id || user.sub || '',
           name: user.name || cleanHandle,
           email: user.email || '',
-          avatar: user.avatar || user.picture || '',
+          avatar: customAvatar || user.avatar || user.picture || '',
           handle: cleanHandle,
           role: user.role || 'author'
         }
