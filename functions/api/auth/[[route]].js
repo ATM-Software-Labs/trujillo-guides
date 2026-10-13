@@ -167,10 +167,6 @@ export async function onRequest(context) {
       headers.append('Set-Cookie', `atm_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
       headers.append('Set-Cookie', `ta_session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/${domainAttr}; Max-Age=604800`);
 
-      let customAvatar = '';
-      if (env.BOT_MEMORY && cleanHandle) {
-        try { const pr = JSON.parse((await env.BOT_MEMORY.get(`profile:${cleanHandle.toLowerCase().replace(/[^a-z0-9_]/g, '')}`)) || 'null'); customAvatar = (pr && pr.customAvatar) || ''; } catch (e) {}
-      }
       return new Response(JSON.stringify({
         authenticated: true,
         token: sessionToken,
@@ -502,6 +498,10 @@ export async function onRequest(context) {
         })).catch(() => {}));
       }
 
+      let customAvatar = '';
+      if (env.BOT_MEMORY && cleanHandle) {
+        try { const pr = JSON.parse((await env.BOT_MEMORY.get(`profile:${cleanHandle.toLowerCase().replace(/[^a-z0-9_]/g, '')}`)) || 'null'); customAvatar = (pr && pr.customAvatar) || ''; } catch (e) {}
+      }
       return new Response(JSON.stringify({
         authenticated: true,
         user: {
