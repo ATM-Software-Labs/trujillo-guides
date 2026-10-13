@@ -24,8 +24,8 @@ window.ATM_UI = {
   es: {
     studio: 'Studio', profile: 'Perfil', settings: 'Configuración', index: 'Índice', home: 'Inicio',
     kicker: 'Documentación técnica',
-    'hero-title': 'Guías de ingeniería y runbooks',
-    'hero-sub': 'Arquitecturas reales. En portada, las que sus autores fijan como mejores.',
+    'hero-title': 'Guías técnicas y análisis',
+    'hero-sub': 'Guías prácticas. En portada, las que sus autores fijan como mejores.',
     search: 'Buscar guías…', featured: 'Destacadas', voted: 'Más votadas', all: 'Todas',
     results: 'Resultados', empty: 'Nada coincide.',
     emptyHome: 'Aún no hay guías fijadas. Ábrela y pulsa Fijar.',
@@ -49,7 +49,7 @@ window.ATM_UI = {
     previewFail: 'Este tipo no se puede previsualizar. Descárgalo si lo necesitas.',
     logout: 'Salir',
     newGuide: 'Publicar', editGuide: 'Editar publicación', edit: 'Editar', delete: 'Borrar',
-    writeHeadingNew: 'Nueva publicación', backIndex: '← Índice', backHub: 'Volver al Hub de Guías',
+    writeHeadingNew: 'Nueva publicación', backIndex: '← Índice', backHub: 'Volver al índice',
     publishKicker: 'Studio Enterprise · ATM Guides', writeKind: 'Tipo',
     writeSummary: 'Resumen / Portada', dropHint: 'Suelta archivos aquí: texto al cuerpo, el resto se adjunta.',
     'kind-guide': 'Guía', 'kind-post': 'Post', 'kind-opinion': 'Opinión', 'kind-analysis': 'Análisis',
@@ -86,8 +86,8 @@ window.ATM_UI = {
   en: {
     studio: 'Studio', profile: 'Profile', settings: 'Settings', index: 'Index', home: 'Home',
     kicker: 'Technical documentation',
-    'hero-title': 'Engineering guides and runbooks',
-    'hero-sub': 'Real architectures. The homepage shows the ones authors pin as best.',
+    'hero-title': 'Technical guides and analysis',
+    'hero-sub': 'Practical guides. The homepage shows the ones authors pin as best.',
     search: 'Search guides…', featured: 'Featured', voted: 'Most liked', all: 'All',
     results: 'Results', empty: 'Nothing matches.',
     emptyHome: 'No pinned guides yet. Open one and tap Pin.',
@@ -148,7 +148,7 @@ window.ATM_UI = {
   ca: {
     studio: 'Studio', profile: 'Perfil', settings: 'Configuració', index: 'Índex', home: 'Inici',
     kicker: 'Documentació tècnica',
-    'hero-title': 'Guies d’enginyeria i runbooks',
+    'hero-title': 'Guies tècniques i anàlisis',
     'hero-sub': 'Arquitectures reals. A la portada, les que els autors marquen com a millors.',
     search: 'Cercar guies…', featured: 'Destacades', voted: 'Més votades', all: 'Totes',
     results: 'Resultats', empty: 'Res no coincideix.',
@@ -210,7 +210,7 @@ window.ATM_UI = {
   fr: {
     studio: 'Studio', profile: 'Profil', settings: 'Paramètres', index: 'Index', home: 'Accueil',
     kicker: 'Documentation technique',
-    'hero-title': 'Guides d’ingénierie et runbooks',
+    'hero-title': 'Guides techniques et analyses',
     'hero-sub': 'Architectures réelles. La une montre celles que les auteurs épinglent.',
     search: 'Rechercher des guides…', featured: 'À la une', voted: 'Les plus aimés', all: 'Tous',
     results: 'Résultats', empty: 'Aucun résultat.',
@@ -272,7 +272,7 @@ window.ATM_UI = {
   de: {
     studio: 'Studio', profile: 'Profil', index: 'Index', home: 'Startseite',
     kicker: 'Technische Dokumentation',
-    'hero-title': 'Engineering-Guides und Runbooks',
+    'hero-title': 'Technische Guides und Analysen',
     'hero-sub': 'Echte Architekturen. Die Startseite zeigt die angepinnten Besten.',
     search: 'Guides suchen…', featured: 'Hervorgehoben', voted: 'Beliebteste', all: 'Alle',
     results: 'Ergebnisse', empty: 'Nichts gefunden.',
@@ -334,7 +334,7 @@ window.ATM_UI = {
   it: {
     studio: 'Studio', profile: 'Profilo', index: 'Indice', home: 'Home',
     kicker: 'Documentazione tecnica',
-    'hero-title': 'Guide di ingegneria e runbook',
+    'hero-title': 'Guide tecniche e analisi',
     'hero-sub': 'Architetture reali. In home, quelle che gli autori fissano.',
     search: 'Cerca guide…', featured: 'In evidenza', voted: 'Più votate', all: 'Tutte',
     results: 'Risultati', empty: 'Nessun risultato.',
@@ -396,7 +396,7 @@ window.ATM_UI = {
   pt: {
     studio: 'Studio', profile: 'Perfil', index: 'Índice', home: 'Início',
     kicker: 'Documentação técnica',
-    'hero-title': 'Guias de engenharia e runbooks',
+    'hero-title': 'Guias técnicos e análises',
     'hero-sub': 'Arquiteturas reais. A capa mostra as que os autores fixam.',
     search: 'Pesquisar guias…', featured: 'Destaques', voted: 'Mais votadas', all: 'Todas',
     results: 'Resultados', empty: 'Nada encontrado.',
@@ -458,7 +458,7 @@ window.ATM_UI = {
   zh: {
     studio: 'Studio', profile: '主页', index: '目录', home: '首页',
     kicker: '技术文档',
-    'hero-title': '工程指南与运行手册',
+    'hero-title': '技术指南与分析',
     'hero-sub': '真实架构。首页只展示作者置顶的精品。',
     search: '搜索指南…', featured: '精选', voted: '最受欢迎', all: '全部',
     results: '结果', empty: '没有匹配。',
@@ -641,7 +641,7 @@ window.ATM_UI = {
   nl: {
     studio: 'Studio', profile: 'Profiel', index: 'Index', home: 'Home',
     kicker: 'Technische documentatie',
-    'hero-title': 'Engineeringgidsen en runbooks',
+    'hero-title': 'Technische gidsen en analyses',
     'hero-sub': 'Echte architecturen. Op de voorpagina staan de beste vastgemaakte gidsen.',
     search: 'Zoek gidsen…', featured: 'Uitgelicht', voted: 'Meest gestemd', all: 'Alle',
     results: 'Resultaten', empty: 'Niets gevonden.',
@@ -694,7 +694,7 @@ window.ATM_UI = {
   pl: {
     studio: 'Studio', profile: 'Profil', index: 'Indeks', home: 'Start',
     kicker: 'Dokumentacja techniczna',
-    'hero-title': 'Przewodniki inżynieryjne i runbooki',
+    'hero-title': 'Przewodniki techniczne i analizy',
     'hero-sub': 'Prawdziwe architektury. Na stronie głównej te przypięte przez autorów.',
     search: 'Szukaj przewodników…', featured: 'Wyróżnione', voted: 'Najwyżej oceniane', all: 'Wszystkie',
     results: 'Wyniki', empty: 'Brak wyników.',
@@ -747,7 +747,7 @@ window.ATM_UI = {
   sv: {
     studio: 'Studio', profile: 'Profil', index: 'Index', home: 'Hem',
     kicker: 'Teknisk dokumentation',
-    'hero-title': 'Ingenjörsguider och runbooks',
+    'hero-title': 'Tekniska guider och analyser',
     'hero-sub': 'Verkliga arkitekturer. På startsidan visas de guider författarna nålar fast.',
     search: 'Sök guider…', featured: 'Utvalda', voted: 'Mest röstade', all: 'Alla',
     results: 'Resultat', empty: 'Inget matchar.',

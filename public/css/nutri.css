@@ -394,3 +394,13 @@ html body .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidd
 html body .ticker-badge, html body .gt-title .ticker-badge, html body .profile-card-title .ticker-badge {
   background: var(--bg-card-subtle) !important; border: 1px solid var(--border) !important; color: var(--text-secondary) !important; box-shadow: none !important;
 }
+
+/* ---------- Logros en móvil: la fila se apila en vez de comprimirse ---------- */
+@media (max-width: 600px) {
+  html body .ach-guide-row { flex-wrap: wrap !important; align-items: flex-start !important; gap: 12px !important; }
+  html body .ach-guide-info { flex: 1 1 calc(100% - 64px) !important; min-width: 0 !important; }
+  html body .ach-guide-criteria { display: block !important; line-height: 1.45 !important; }
+  html body .ach-guide-criteria .criteria-label { display: block !important; margin-bottom: 2px !important; }
+  html body .ach-guide-meta { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; padding-left: 56px !important; }
+}
+html body .ach-guide-criteria { color: var(--text-secondary) !important; }

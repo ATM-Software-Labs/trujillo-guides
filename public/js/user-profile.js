@@ -16,7 +16,7 @@
       likes: 3,
       up: 3,
       pinned: true,
-      summary: 'Arquitectura de correo corporativo e identidad para startups sin Google Workspace: enrutamiento en Edge, DKIM 2048-bit y avatares verificados.',
+      summary: 'Correo corporativo para startups sin Google Workspace: enrutamiento con Cloudflare, DKIM y avatares verificados.',
       tags: ['Cloudflare', 'DNS', 'Microsoft Entra ID', 'Linux', 'Correo'],
       date: '11 sep 2026'
     },
