@@ -91,14 +91,15 @@
       var cleanHandle = (me.handle || me.username || 'user').replace(/^@+/, '');
       return '<div class="account-menu-wrap" id="account-menu-wrap" data-notranslate>' +
         '<button type="button" class="account-chip nav-profile-btn bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200" id="account-btn" aria-haspopup="menu" aria-expanded="false" title="' + esc(displayName) + '">' +
-        avatarHtml(me.picture, displayName) +
+        avatarHtml(me.avatar || me.picture, displayName) +
         (label ? '<span class="account-first">' + esc(label) + '</span>' : '') +
         '</button>' +
         '<div class="account-menu" id="account-menu" hidden role="menu">' +
         '<a href="/write" role="menuitem" data-i18n="newGuide">' + t('newGuide') + '</a>' +
-        '<a href="/u/@' + encodeURIComponent(cleanHandle) + '" role="menuitem" data-i18n="profile">' + (t('profile') || 'Perfil') + '</a>' +
+        '<div class="account-menu-head"><strong>' + esc(displayName) + '</strong><span>@' + esc(cleanHandle) + '</span></div>' +
+        '<a href="/u/@' + encodeURIComponent(cleanHandle) + '" role="menuitem">Mi perfil</a>' +
         '<a href="/settings" role="menuitem" data-i18n="settings">' + (t('settings') || 'Configuración') + '</a>' +
-        '<button type="button" role="menuitem" data-logout data-i18n="logout">' + t('logout') + '</button>' +
+        '<button type="button" role="menuitem" data-logout>Cerrar sesión</button>' +
         '</div></div>';
     }
     var g = guestName();
@@ -115,7 +116,7 @@
         '<a href="/u/@' + encodeURIComponent(guestHandle || 'atrumin16') + '" role="menuitem" data-i18n="profile">' + (t('profile') || 'Perfil') + '</a>' +
         '<a href="/settings" role="menuitem" data-i18n="settings">' + (t('settings') || 'Configuración') + '</a>' +
         '<button type="button" role="menuitem" data-open-auth data-i18n="changeName">' + t('changeName') + '</button>' +
-        '<button type="button" role="menuitem" data-logout data-i18n="logout">' + t('logout') + '</button>' +
+        '<button type="button" role="menuitem" data-logout>Cerrar sesión</button>' +
         '</div></div>';
     }
     return '<button type="button" class="account-chip account-login nav-profile-btn" id="auth-open" data-open-auth data-i18n="login">' +
@@ -847,6 +848,12 @@
       if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
     });
     document.addEventListener('atm:me', paintAccount);
+    try {
+      if (new URLSearchParams(location.search).get('login') === '1') {
+        setTimeout(openAuth, 300);
+        history.replaceState(null, '', location.pathname);
+      }
+    } catch (e) {}
     document.addEventListener('atm:lang', paintAccount);
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
