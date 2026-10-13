@@ -349,7 +349,7 @@
     if (handleEl) handleEl.textContent = meta.handle;
     if (roleEl) roleEl.textContent = meta.role === 'Autor principal' ? T('role_main') : meta.role === 'Miembro' ? T('role_member') : meta.role;
     if (bioEl) bioEl.textContent = (!meta.bio || meta.bio === 'Técnico de sistemas en Barcelona. Guías prácticas de Cloudflare, DNS, correo e identidades.') ? T('bio') : meta.bio;
-    document.title = meta.name + ' (' + meta.handle + ') · Perfil | ATM Docs';
+    document.title = meta.name + ' (' + meta.handle + ') · ' + (window.atmTx ? window.atmTx('Perfil') : 'Perfil') + ' | ATM Docs';
 
     // 301 Redirection Notice Banner
     if (redirectBox) {
@@ -357,7 +357,7 @@
         redirectBox.style.display = 'flex';
         redirectBox.innerHTML = '<div class="redirect-notice-inner">' +
           '<span class="redirect-icon">ℹ️</span>' +
-          '<span>Redirigido automáticamente desde el alias anterior <strong>@' + esc(window.__atmRedirectedFrom) + '</strong>. El identificador permanente activo es <strong>' + esc(meta.handle) + '</strong>.</span>' +
+          '<span>' + (window.atmTx || String)('Redirigido automáticamente desde el alias anterior') + ' <strong>@' + esc(window.__atmRedirectedFrom) + '</strong>. ' + (window.atmTx || String)('El identificador permanente activo es') + ' <strong>' + esc(meta.handle) + '</strong>.</span>' +
           '</div>';
       } else {
         redirectBox.style.display = 'none';
@@ -368,9 +368,9 @@
     if (prevHandlesBox) {
       if (meta.previous_handles && meta.previous_handles.length > 0) {
         prevHandlesBox.style.display = 'inline-flex';
-        prevHandlesBox.innerHTML = '<span class="prev-handles-badge" title="Identificadores anteriores de este autor">' +
+        prevHandlesBox.innerHTML = '<span class="prev-handles-badge" title="' + (window.atmTx || String)('Identificadores anteriores de este autor') + '">' +
           '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>' +
-          '<span>Anteriormente: ' + meta.previous_handles.map(function (h) { return '@' + esc(h); }).join(', ') + '</span>' +
+          '<span>' + (window.atmTx || String)('Anteriormente:') + ' ' + meta.previous_handles.map(function (h) { return '@' + esc(h); }).join(', ') + '</span>' +
           '</span>';
       } else {
         prevHandlesBox.style.display = 'none';
@@ -679,7 +679,7 @@
         '  <span class="profile-achievements-title">' + T('ach_title') + '</span>' +
         '  <span class="profile-achievements-count">0 ' + T('ach_unlocked') + '</span>' +
         '</div>' +
-        '<p class="profile-achievements-empty">Sin insignias públicas aún</p>' +
+        '<p class="profile-achievements-empty">' + (window.atmTx || String)('Sin insignias públicas aún') + '</p>' +
         '<a href="/achievements" class="profile-achievements-link">' + T('ach_all') + '</a>';
       return;
     }

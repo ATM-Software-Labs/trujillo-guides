@@ -251,12 +251,12 @@
       '<div class="auth-icon-badge">' +
       '<img src="/avatar.png" alt="" width="28" height="28">' +
       '</div>' +
-      '<h2 class="auth-title" id="auth-title">Entra en Trujillo Guides</h2>' +
-      '<p class="auth-subtitle" id="auth-subtitle">Publica guías, guarda favoritas y sincroniza borradores.</p>' +
+      '<h2 class="auth-title" id="auth-title" data-tx="Entra en Trujillo Guides">Entra en Trujillo Guides</h2>' +
+      '<p class="auth-subtitle" id="auth-subtitle" data-tx="Publica guías, guarda favoritas y sincroniza borradores.">Publica guías, guarda favoritas y sincroniza borradores.</p>' +
       '</div>' +
-      '<div class="auth-tabs" role="tablist" aria-label="Modo de acceso">' +
-      '<button type="button" class="auth-tab active" id="tab-auth-login">Acceder</button>' +
-      '<button type="button" class="auth-tab" id="tab-auth-register">Crear cuenta</button>' +
+      '<div class="auth-tabs" role="tablist" aria-label="Modo de acceso" data-tx-aria="Modo de acceso">' +
+      '<button type="button" class="auth-tab active" id="tab-auth-login" data-tx="Acceder">Acceder</button>' +
+      '<button type="button" class="auth-tab" id="tab-auth-register" data-tx="Crear cuenta">Crear cuenta</button>' +
       '</div>' +
       '<div class="auth-social-buttons">' +
       '<div class="btn-social-google-wrap">' +
@@ -267,7 +267,7 @@
       '<path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 14.8s.7 5.1 1.9 7.5l3.7-2.9z"/>' +
       '<path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/>' +
       '</svg>' +
-      '<span>Continuar con Google</span>' +
+      '<span data-tx="Continuar con Google">Continuar con Google</span>' +
       '</button>' +
       '<div id="google-btn-overlay" class="google-btn-overlay"></div>' +
       '</div>' +
@@ -275,41 +275,41 @@
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">' +
       '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>' +
       '</svg>' +
-      '<span>Continuar con X</span>' +
+      '<span data-tx="Continuar con X">Continuar con X</span>' +
       '</button>' +
       '</div>' +
-      '<div class="auth-divider"><span>o continúa con correo</span></div>' +
+      '<div class="auth-divider"><span data-tx="o continúa con correo">o continúa con correo</span></div>' +
       '<div id="auth-msg" class="auth-msg" role="alert" aria-live="polite" hidden></div>' +
       '<form id="auth-form" novalidate onsubmit="event.preventDefault();">' +
       '<div id="auth-field-name" style="display: none; margin-bottom: 12px;">' +
-      '<label class="auth-input-label" for="auth-name-input">Nombre</label>' +
-      '<input type="text" class="auth-input" placeholder="Tu nombre" id="auth-name-input">' +
+      '<label class="auth-input-label" for="auth-name-input" data-tx="Nombre">Nombre</label>' +
+      '<input type="text" class="auth-input" placeholder="Tu nombre" data-tx-ph="Tu nombre" id="auth-name-input">' +
       '</div>' +
       '<div style="margin-bottom: 12px;">' +
-      '<label class="auth-input-label" for="auth-email-input">Correo electrónico</label>' +
-      '<input type="email" class="auth-input" placeholder="tu@correo.com" id="auth-email-input" autocomplete="email" inputmode="email" required>' +
+      '<label class="auth-input-label" for="auth-email-input" data-tx="Correo electrónico">Correo electrónico</label>' +
+      '<input type="email" class="auth-input" placeholder="tu@correo.com" data-tx-ph="tu@correo.com" id="auth-email-input" autocomplete="email" inputmode="email" required>' +
       '</div>' +
       '<div style="margin-bottom: 16px;">' +
       '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">' +
-      '<label class="auth-input-label" for="auth-pwd-input">Contraseña</label>' +
-      '<a href="#" class="auth-forgot-link" id="auth-forgot-pwd">¿Olvidaste la contraseña?</a>' +
+      '<label class="auth-input-label" for="auth-pwd-input" data-tx="Contraseña">Contraseña</label>' +
+      '<a href="#" class="auth-forgot-link" id="auth-forgot-pwd" data-tx="¿Olvidaste la contraseña?">¿Olvidaste la contraseña?</a>' +
       '</div>' +
       '<div class="auth-pwd-wrap">' +
-      '<input type="password" class="auth-input" placeholder="Mínimo 8 caracteres" id="auth-pwd-input" autocomplete="current-password" minlength="8" required>' +
-      '<button type="button" class="auth-pwd-toggle" id="auth-pwd-toggle" aria-label="Mostrar contraseña" aria-pressed="false">' +
+      '<input type="password" class="auth-input" placeholder="Mínimo 8 caracteres" data-tx-ph="Mínimo 8 caracteres" id="auth-pwd-input" autocomplete="current-password" minlength="8" required>' +
+      '<button type="button" class="auth-pwd-toggle" id="auth-pwd-toggle" aria-label="Mostrar contraseña" data-tx-aria="Mostrar contraseña" aria-pressed="false">' +
       '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>' +
       '</button>' +
       '</div>' +
       '</div>' +
-      '<button type="submit" class="auth-submit-btn" id="auth-submit-action"><span class="auth-spinner" aria-hidden="true"></span><span class="auth-submit-label">Acceder</span></button>' +
+      '<button type="submit" class="auth-submit-btn" id="auth-submit-action"><span class="auth-spinner" aria-hidden="true"></span><span class="auth-submit-label" data-tx="Acceder">Acceder</span></button>' +
       '</form>' +
       '<div class="auth-guest-wrap" style="text-align: center; margin-top: 14px;">' +
-      '<button type="button" class="auth-guest-btn" id="auth-guest-action">Continuar como invitado &rarr;</button>' +
+      '<button type="button" class="auth-guest-btn" id="auth-guest-action" data-tx="Continuar como invitado →">Continuar como invitado &rarr;</button>' +
       '</div>' +
       '<div class="auth-footer-links">' +
-      '<a href="/legal/terms">Términos</a>' +
+      '<a href="/legal/terms" data-tx="Términos">Términos</a>' +
       '<span>·</span>' +
-      '<a href="/legal/privacy">Privacidad</a>' +
+      '<a href="/legal/privacy" data-tx="Privacidad">Privacidad</a>' +
       '<span>·</span>' +
       '<a href="https://ai.trujillomingorance.com" target="_blank" rel="noopener">ai.trujillomingorance.com</a>' +
       '</div>' +
@@ -390,7 +390,7 @@
       paintAccount();
       location.reload();
     } catch (err) {
-      alert(err.message || 'No se pudo iniciar sesión con Google');
+      alert((window.atmTx || String)(err.message || 'No se pudo iniciar sesión con Google'));
     }
   }
 
@@ -422,7 +422,7 @@
         var show = pwdEl.type === 'password';
         pwdEl.type = show ? 'text' : 'password';
         pwdToggle.setAttribute('aria-pressed', show ? 'true' : 'false');
-        pwdToggle.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        pwdToggle.setAttribute('aria-label', (window.atmTx || String)(show ? 'Ocultar contraseña' : 'Mostrar contraseña'));
       });
     }
 
@@ -432,7 +432,7 @@
         tabLogin.classList.add('active');
         tabReg.classList.remove('active');
         if (fieldName) fieldName.style.display = 'none';
-        if (submitBtn) submitBtn.querySelector('.auth-submit-label').textContent = 'Acceder'; if (pwdEl) pwdEl.setAttribute('autocomplete', 'current-password'); authMsg('');
+        if (submitBtn) submitBtn.querySelector('.auth-submit-label').textContent = (window.atmTx || String)('Acceder'); if (pwdEl) pwdEl.setAttribute('autocomplete', 'current-password'); authMsg('');
       });
 
       tabReg.addEventListener('click', function (e) {
@@ -440,7 +440,7 @@
         tabReg.classList.add('active');
         tabLogin.classList.remove('active');
         if (fieldName) fieldName.style.display = 'block';
-        if (submitBtn) submitBtn.querySelector('.auth-submit-label').textContent = 'Crear cuenta'; if (pwdEl) pwdEl.setAttribute('autocomplete', 'new-password'); authMsg('');
+        if (submitBtn) submitBtn.querySelector('.auth-submit-label').textContent = (window.atmTx || String)('Crear cuenta'); if (pwdEl) pwdEl.setAttribute('autocomplete', 'new-password'); authMsg('');
       });
     }
 
@@ -450,7 +450,7 @@
         e.preventDefault();
         var current = guestName();
         if (!current) {
-          setGuestName('Invitado');
+          setGuestName((window.atmTx || String)('Invitado'));
         }
         closeAuth();
         paintAccount();
@@ -581,7 +581,7 @@
     document.querySelectorAll('#auth-modal .auth-input[aria-invalid]').forEach(function (el) { el.removeAttribute('aria-invalid'); });
     if (!box) return;
     if (!text) { box.hidden = true; box.textContent = ''; return; }
-    box.textContent = text;
+    box.textContent = window.atmTx ? window.atmTx(text) : text;
     box.className = 'auth-msg ' + (type === 'ok' ? 'is-ok' : 'is-error');
     box.hidden = false;
     if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }

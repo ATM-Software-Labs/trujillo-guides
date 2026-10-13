@@ -329,7 +329,7 @@
         slugFromPath();
 
       function done() {
-        label.textContent = '¡Copiado!';
+        label.textContent = (window.atmTx || String)('¡Copiado!');
         setTimeout(function () { label.textContent = prev || 'Copiar enlace'; }, 1600);
       }
 
@@ -1007,8 +1007,8 @@
       var copyBtn = document.createElement('button');
       copyBtn.type = 'button';
       copyBtn.className = 'copy-code-btn';
-      copyBtn.title = 'Copiar código';
-      copyBtn.setAttribute('aria-label', 'Copiar código');
+      copyBtn.title = (window.atmTx || String)('Copiar código');
+      copyBtn.setAttribute('aria-label', (window.atmTx || String)('Copiar código'));
       copyBtn.innerHTML = ICON_CLIPBOARD + '<span>Copiar</span>';
 
       copyBtn.addEventListener('click', function (e) {
@@ -1018,7 +1018,7 @@
         if (!textToCopy) return;
 
         function markCopied() {
-          copyBtn.innerHTML = ICON_CHECK + '<span>¡Copiado!</span>';
+          copyBtn.innerHTML = ICON_CHECK + '<span>' + (window.atmTx || String)('¡Copiado!') + '</span>';
           setTimeout(function () {
             copyBtn.innerHTML = ICON_CLIPBOARD + '<span>Copiar</span>';
           }, 1800);
@@ -1096,7 +1096,7 @@
         new MutationObserver(function () {
           var w = (bodyEl.textContent || '').trim().split(/\s+/).filter(Boolean).length;
           var label = badge.querySelector('span');
-          if (label && w) label.textContent = Math.max(1, Math.ceil(w / 200)) + ' min de lectura';
+          if (label && w) label.textContent = Math.max(1, Math.ceil(w / 200)) + ' ' + (window.atmTx || String)('min de lectura');
         }).observe(bodyEl, { childList: true, subtree: true });
       }
       if (copyBtn) posterRight.insertBefore(badge, copyBtn);
@@ -1234,7 +1234,7 @@
 
     var tocNav = document.createElement('nav');
       tocNav.className = 'article-toc';
-      tocNav.setAttribute('aria-label', 'Tabla de contenidos');
+      tocNav.setAttribute('aria-label', (window.atmTx || String)('Tabla de contenidos'));
 
       var titleHtml = '<div class="toc-title">' +
         '<svg class="tool-ic" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +

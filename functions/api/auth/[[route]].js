@@ -23,10 +23,10 @@ function authErrorPage({ title, message, detail = '', retryHref = '', status = 4
 <script src="/js/theme-boot.js"></script></head>
 <body class="auth-error-page"><main class="auth-error-card">
 <img src="/avatar.png" alt="" width="40" height="40" class="auth-error-logo">
-<h1>${escHtml(title)}</h1><p>${escHtml(message)}</p>
-<div class="auth-error-actions">${retryHref ? `<a class="auth-error-btn primary" href="${escHtml(retryHref)}">Reintentar</a>` : ''}<a class="auth-error-btn" href="${escHtml(back || '/')}">Volver</a></div>
-${detail ? `<details><summary>Detalle técnico</summary><pre>${escHtml(detail)}</pre></details>` : ''}
-</main></body></html>`;
+<h1 data-tx="${escHtml(title)}">${escHtml(title)}</h1><p data-tx="${escHtml(message)}">${escHtml(message)}</p>
+<div class="auth-error-actions">${retryHref ? `<a class="auth-error-btn primary" href="${escHtml(retryHref)}" data-tx="Reintentar">Reintentar</a>` : ''}<a class="auth-error-btn" href="${escHtml(back || '/')}" data-tx="Volver">Volver</a></div>
+${detail ? `<details><summary data-tx="Detalle técnico">Detalle técnico</summary><pre>${escHtml(detail)}</pre></details>` : ''}
+</main><script src="/js/i18n.js"></script><script>try{window.atmApplyUi(window.atmLang())}catch(e){}</script></body></html>`;
   return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
