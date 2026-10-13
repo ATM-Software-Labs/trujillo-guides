@@ -1003,7 +1003,8 @@ window.ATM_UI = {
     var btn = document.getElementById('lang-flag-btn');
     var meta = window.ATM_LANGS.filter(function (l) { return l.id === lang || l.code === lang; })[0];
     if (btn && meta) {
-      btn.querySelector('.flag').textContent = meta.flag;
+      var fsvg = window.atmFlag && window.atmFlag(meta.code || meta.id);
+      if (fsvg) btn.querySelector('.flag').innerHTML = fsvg; else btn.querySelector('.flag').textContent = meta.flag;
       btn.querySelector('.lang-code').textContent = (meta.code || meta.id).toUpperCase();
       btn.setAttribute('title', meta.name);
     }
