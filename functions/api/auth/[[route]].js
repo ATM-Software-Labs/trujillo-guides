@@ -6,7 +6,7 @@ const escHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ 
 // Página de error breve y con el estilo de la web; el detalle técnico va plegado
 function authErrorPage({ title, message, detail = '', retryHref = '', status = 400 }) {
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escHtml(title)} · Trujillo Guides</title><link rel="stylesheet" href="/css/nutri.css?v=v10"><link rel="icon" href="/favicon.svg">
+<title>${escHtml(title)} · Trujillo Guides</title><link rel="stylesheet" href="/css/nutri.css?v=202610131420"><link rel="icon" href="/favicon.svg">
 <script src="/js/theme-boot.js"></script></head>
 <body class="auth-error-page"><main class="auth-error-card">
 <img src="/avatar.png" alt="" width="40" height="40" class="auth-error-logo">

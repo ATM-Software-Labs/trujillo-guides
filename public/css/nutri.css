@@ -29,8 +29,8 @@ html[data-theme="light"], html[data-theme="light"] body {
   --bg: #FAFAFA; --bg-elev: #FFFFFF; --bg-card: #FFFFFF; --bg-card-hover: #F4F4F5;
   --bg-card-subtle: #F4F4F5; --bg-code: #F4F4F5;
   --line: #E4E4E7; --line-strong: #D4D4D8; --border: #E4E4E7; --border-subtle: #F4F4F5; --border-focus: #059669;
-  --text: #111827; --text-primary: #111827; --muted: #52525B; --text-secondary: #52525B; --dim: #71717A; --text-muted: #71717A;
-  --white: #111827;
+  --text: #18181b; --text-primary: #18181b; --muted: #52525B; --text-secondary: #52525B; --dim: #71717A; --text-muted: #71717A;
+  --white: #18181b;
   --accent: #047857; --accent-cyan: #047857; --accent-pill: #047857; --accent-pill-text: #FFFFFF; --green: #047857;
   --accent-soft: #ECFDF5;
   --header-bg: rgba(250, 250, 250, .85); --header-border: #E4E4E7;
@@ -352,3 +352,45 @@ html body .card-category-badge, html body .ticker-badge, html body [class*="cat-
 html body .card-category-badge.category-guide { color: var(--accent) !important; }
 html body .filter-search-box { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
 html body .account-menu-wrap { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+
+/* ---------- Valores por defecto del navegador sin azul ---------- */
+html { accent-color: var(--accent-pill, #10B981); }
+html body input[type="checkbox"], html body input[type="radio"], html body input[type="range"], html body progress { accent-color: var(--accent-pill) !important; }
+html body ::selection { background: rgba(16, 185, 129, .28); color: inherit; }
+html body a:visited { color: inherit; }
+html body :focus { outline-color: var(--accent); }
+html body :focus:not(:focus-visible) { outline: none; }
+html body * { -webkit-tap-highlight-color: rgba(16, 185, 129, .15); }
+html { scrollbar-color: var(--line-strong) transparent; }
+html body ::-webkit-scrollbar { width: 10px; height: 10px; }
+html body ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; border: 2px solid var(--bg); }
+html body ::-webkit-scrollbar-track { background: transparent; }
+html body input, html body textarea, html body select { caret-color: var(--accent); }
+/* Resaltado de código: tokens neutros + menta */
+html body .md-body pre .hljs-keyword, html body .md-body pre .token.keyword, html body .md-body pre .hljs-built_in, html body .md-body pre .token.function { color: var(--accent) !important; }
+html body .md-body pre .hljs-string, html body .md-body pre .token.string { color: var(--text-primary) !important; }
+html body .md-body pre .hljs-comment, html body .md-body pre .token.comment { color: var(--text-muted) !important; }
+html body .md-body pre .hljs-number, html body .md-body pre .hljs-attr, html body .md-body pre .token.number, html body .md-body pre .token.property { color: var(--text-secondary) !important; }
+
+/* ---------- Tabla de publicaciones (modo avanzado) ---------- */
+html body .profile-matrix-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-card); }
+html body .gt-scroll { overflow-x: auto; }
+html body .gt-table { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 620px; }
+html body .gt-table th { text-align: left; font-weight: 500; font-size: .78rem; color: var(--text-muted); padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-card-subtle); }
+html body .gt-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text-secondary); }
+html body .gt-table tbody tr:last-child td { border-bottom: 0; }
+html body .gt-table tbody tr:hover td { background: var(--bg-card-hover); }
+html body .gt-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+html body .gt-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .75rem; font-weight: 500; background: var(--bg-card-subtle); border: 1px solid var(--border); color: var(--text-secondary); }
+html body .gt-title a { color: var(--text-primary) !important; font-weight: 600; text-decoration: none; }
+html body .gt-title a:hover { text-decoration: underline; text-decoration-color: var(--line-strong); }
+html body .gt-slug { display: block; font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+html body .gt-pin { margin-left: 8px; font-size: .72rem; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; }
+html body .gt-act { text-align: right; }
+html body .gt-read { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--accent); color: var(--accent) !important; text-decoration: none; font-weight: 500; font-size: .85rem; white-space: nowrap; }
+html body .gt-read:hover { background: var(--accent-soft); }
+html body .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+/* Tickers ($MSFT) neutros en cualquier vista */
+html body .ticker-badge, html body .gt-title .ticker-badge, html body .profile-card-title .ticker-badge {
+  background: var(--bg-card-subtle) !important; border: 1px solid var(--border) !important; color: var(--text-secondary) !important; box-shadow: none !important;
+}
