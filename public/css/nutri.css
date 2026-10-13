@@ -315,3 +315,40 @@ html body .profile-action-btn { background: var(--bg-card) !important; border: 1
 html body .profile-empty-state { background: var(--bg-card) !important; border: 1px dashed var(--border) !important; border-radius: 20px !important; color: var(--text-secondary) !important; }
 html body .profile-empty-state h3 { color: var(--text-primary) !important; }
 html body .profile-handle, html body .stat-value { font-family: var(--font) !important; }
+
+/* ---------- Sin azul: acento único menta y neutros zinc ---------- */
+html[data-theme] body { --accent-cyan: var(--accent); --border-focus: var(--accent); --accent-blue: var(--accent); --link: var(--text-primary); }
+html body a { color: inherit; }
+html body .md-body a, html body .profile-achievements-widget a, html body a.hub-link, html body .back-nav {
+  color: var(--text-primary) !important; text-decoration: underline; text-decoration-color: var(--line-strong) !important; text-underline-offset: 3px;
+}
+html body .md-body a:hover, html body .profile-achievements-widget a:hover, html body .back-nav:hover { text-decoration-color: var(--accent) !important; }
+html body .back-nav { text-decoration: none; }
+html body .profile-tech-tag, html body .tag-chip, html body [class*="tag-chip"] {
+  background: var(--bg-card-subtle) !important; color: var(--text-secondary) !important; border: 1px solid var(--border) !important;
+  border-radius: 999px !important; font-family: var(--font) !important;
+}
+html body .profile-avatar-wrap, html body .profile-large-avatar, html body .profile-avatar-wrap > * {
+  box-shadow: none !important; outline: 0 !important; border-color: var(--border) !important;
+}
+html body .account-initials, html body .profile-avatar-wrap .avatar-initials, html body [class*="avatar-initials"], html body .guide-card-avatar-initials, html body .poster-avatar {
+  background: var(--bg-card-hover) !important; color: var(--text-secondary) !important; border: 1px solid var(--border) !important;
+}
+html body .account-chip, html body #account-btn { border: 1px solid var(--border) !important; box-shadow: none !important; }
+html body .btn-exp-mode, html body .filter-kind-chips button, html body .filter-sort-dropdown, html body #filter-search-input {
+  background: var(--bg-card) !important; border: 1px solid var(--border) !important; color: var(--text-primary) !important; box-shadow: none !important;
+}
+html body .btn-exp-mode.is-advanced, html body .btn-exp-mode[aria-pressed="true"], html body .btn-exp-mode.active { border-color: var(--accent) !important; color: var(--accent) !important; }
+html body .filter-kind-chips button.active, html body .filter-kind-chips button.is-active { background: var(--text-primary) !important; color: var(--bg) !important; border-color: transparent !important; }
+html body input:focus, html body select:focus, html body textarea:focus, html body #filter-search-input:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-soft) !important; }
+html body .profile-search-wrap, html body .filter-search-wrap { border: 0 !important; box-shadow: none !important; background: none !important; }
+html body .profile-header-card::before, html body .profile-header-card::after { display: none !important; }
+html body .role-badge { font-family: var(--font) !important; letter-spacing: .04em; }
+html body .auth-social-btn { background: var(--bg-card) !important; color: var(--text-primary) !important; }
+html body .auth-social-btn:focus-visible { outline: 2px solid var(--accent) !important; }
+html body .card-category-badge, html body .ticker-badge, html body [class*="cat-pill-"] {
+  background: var(--bg-card-subtle) !important; color: var(--text-secondary) !important; border: 1px solid var(--border) !important; font-family: var(--font) !important;
+}
+html body .card-category-badge.category-guide { color: var(--accent) !important; }
+html body .filter-search-box { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+html body .account-menu-wrap { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }

@@ -6,12 +6,12 @@
   <title>Configuración &amp; Preferencias · ATM Docs</title>
   <meta name="description" content="Consola técnica de configuración, inferencia de modelos, claves API y privacidad en ATM Docs.">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="theme-color" content="#0b0f14">
+  <meta name="theme-color" content="#09090b">
   <script src="/js/theme-boot.js?v=v8"></script>
   <link rel="stylesheet" href="/css/tokens.css?v=v8">
   <link rel="stylesheet" href="/style.css?v=v8">
   <link rel="stylesheet" href="/css/community.css?v=v8">
-  <link rel="stylesheet" href="/css/nutri.css?v=v11">
+  <link rel="stylesheet" href="/css/nutri.css?v=v12">
 </head>
 <body class="docs-body">
   <header class="docs-topbar">
@@ -230,17 +230,17 @@
 
             <div class="settings-form-group">
               <div class="settings-label">
-                <span>Temperatura: <strong id="val-temp" style="color:#38bdf8;">0.2</strong></span>
+                <span>Temperatura: <strong id="val-temp" style="color:var(--accent, #10B981);">0.2</strong></span>
                 <span class="settings-hint">Baja para precisión técnica y código</span>
               </div>
-              <input type="range" id="setting-temp" min="0.0" max="1.0" step="0.05" value="0.2" style="width:100%;accent-color:#38bdf8;cursor:pointer;">
+              <input type="range" id="setting-temp" min="0.0" max="1.0" step="0.05" value="0.2" style="width:100%;accent-color:var(--accent, #10B981);cursor:pointer;">
             </div>
 
             <div class="settings-form-group">
               <div class="settings-label">
-                <span>Top-P (Nucleus Sampling): <strong id="val-topp" style="color:#38bdf8;">0.9</strong></span>
+                <span>Top-P (Nucleus Sampling): <strong id="val-topp" style="color:var(--accent, #10B981);">0.9</strong></span>
               </div>
-              <input type="range" id="setting-topp" min="0.1" max="1.0" step="0.05" value="0.9" style="width:100%;accent-color:#38bdf8;cursor:pointer;">
+              <input type="range" id="setting-topp" min="0.1" max="1.0" step="0.05" value="0.9" style="width:100%;accent-color:var(--accent, #10B981);cursor:pointer;">
             </div>
 
             <!-- Monospace System Console Prompt Box -->
@@ -419,7 +419,7 @@ Evita introducciones superficiales, disclaimers obvios y lenguaje corporativo ge
   <script src="/js/i18n.js?v=v8"></script>
   <script src="/js/chrome.js?v=v11"></script>
   <script src="/js/avatars.js?v=v8"></script>
-  <script src="/js/achievements.js?v=v11"></script>
+  <script src="/js/achievements.js?v=v12"></script>
   <script src="/js/settings.js?v=v8"></script>
 </body>
 </html>

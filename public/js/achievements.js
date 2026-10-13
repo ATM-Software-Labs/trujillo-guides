@@ -3,9 +3,9 @@
 
   var TIERS = {
     bronze: { id: 'bronze', name: 'Bronce', min: 0, max: 4, color: '#d97706', badgeClass: 'tier-bronze' },
-    silver: { id: 'silver', name: 'Plata', min: 5, max: 11, color: '#94a3b8', badgeClass: 'tier-silver' },
+    silver: { id: 'silver', name: 'Plata', min: 5, max: 11, color: '#a1a1aa', badgeClass: 'tier-silver' },
     gold: { id: 'gold', name: 'Oro', min: 12, max: 19, color: '#f59e0b', badgeClass: 'tier-gold' },
-    diamond: { id: 'diamond', name: 'Diamante', min: 20, max: 25, color: '#38bdf8', badgeClass: 'tier-diamond' }
+    diamond: { id: 'diamond', name: 'Diamante', min: 20, max: 25, color: 'var(--accent, #10B981)', badgeClass: 'tier-diamond' }
   };
 
   var ACHIEVEMENTS = [
@@ -278,7 +278,7 @@
       tier: 'silver',
       rarity: 22.0,
       secret: true,
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg>'
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>'
     },
     {
       id: 'midnight-coder',
@@ -589,7 +589,7 @@
 
     if (!filtered.length) {
       container.innerHTML = '<div class="profile-empty-state" style="grid-column: 1/-1;">' +
-        '<p style="color:#64748b;">No hay logros en este filtro.</p>' +
+        '<p style="color:#71717a;">No hay logros en este filtro.</p>' +
         '</div>';
       return;
     }
@@ -651,7 +651,7 @@
 
     if (!filtered.length) {
       container.innerHTML = '<div class="profile-empty-state" style="padding: 32px 0; text-align: center;">' +
-        '<p style="color:#6e7681; margin:0;">No hay insignias que coincidan con este filtro.</p>' +
+        '<p style="color:#71717a; margin:0;">No hay insignias que coincidan con este filtro.</p>' +
         '</div>';
       return;
     }
