@@ -187,17 +187,20 @@
     return !!(g && (g.pinned || g.fixada || (g.extras && (g.extras.pinned || g.extras.fixada))));
   }
 
+  function FT(k) { return typeof window.atmT === 'function' ? window.atmT(k) : k; }
   function getKindLabel(g) {
     var raw = String(g.kind || g.category || 'guide').toLowerCase();
     if (raw === 'runbook') return 'Runbook';
-    if (raw === 'analysis' || raw === 'análisis') return 'Análisis';
+    if (raw === 'analysis' || raw === 'análisis') return FT('k_analysis');
+    if (raw === 'reference' || raw === 'referencia') return FT('k_ref');
+    if (raw === 'interactive' || raw === 'simulador') return FT('k_sim');
     if (raw === 'post') return 'Post';
     if (raw === 'opinion' || raw === 'opinión') return 'Opinión';
     if (raw === 'brief') return 'Brief';
     if (raw === 'note' || raw === 'nota') return 'Nota';
     if (raw === 'research') return 'Research';
     if (raw === 'changelog') return 'Changelog';
-    return 'Guía';
+    return FT('k_guide');
   }
 
   function getReadTime(g) {
@@ -311,9 +314,9 @@
 
     var metaHtml = '<span class="meta-badge-kind">' + esc(kindLabel) + '</span>';
     if (pinned) {
-      metaHtml += '<span class="meta-badge-pinned">📌 Fixada</span>';
+      metaHtml += '<span class="meta-badge-pinned">📌 ' + FT('pinned') + '</span>';
     }
-    metaHtml += '<span class="meta-author">Autor: ' + esc(handle) + '</span>' +
+    metaHtml += '<span class="meta-author">' + FT('author_label') + ': ' + esc(handle) + '</span>' +
       '<span class="meta-sep">·</span>' +
       '<span class="meta-read-time">' + esc(readTime) + '</span>' +
       '<span class="meta-sep">·</span>' +

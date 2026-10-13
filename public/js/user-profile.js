@@ -1,6 +1,7 @@
 (function () {
   'use strict';
 
+  function T(k) { return typeof window.atmT === 'function' ? window.atmT(k) : k; }
   var STATIC_CATALOG = [
     {
       slug: 'correo-corporativo-startups',
@@ -336,7 +337,7 @@
 
     if (nameEl) nameEl.textContent = meta.name;
     if (handleEl) handleEl.textContent = meta.handle;
-    if (roleEl) roleEl.textContent = meta.role;
+    if (roleEl) roleEl.textContent = meta.role === 'Autor principal' ? T('role_main') : meta.role === 'Miembro' ? T('role_member') : meta.role;
     if (bioEl) bioEl.textContent = meta.bio;
     document.title = meta.name + ' (' + meta.handle + ') · Perfil | ATM Docs';
 
@@ -482,8 +483,8 @@
       container.className = 'profile-cards-grid';
       container.innerHTML = '<div class="profile-empty-state">' +
         '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:#71717a;margin:0 auto 8px auto;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>' +
-        '<h3>No se encontraron publicaciones</h3>' +
-        '<p>Ajusta el filtro de búsqueda o cambia la categoría para ver más piezas.</p>' +
+        '<h3>' + T('empty_title') + '</h3>' +
+        '<p>' + T('empty_hint') + '</p>' +
         '</div>';
       return;
     }
@@ -494,22 +495,22 @@
       var rowsHtml = guides.map(function (g) {
         var slug = g.slug || g.id || '';
         var href = '/g/' + encodeURIComponent(slug);
-        var category = g.category || (g.kind === 'analysis' ? 'Análisis' : g.kind === 'interactive' ? 'Simulador' : g.kind === 'reference' ? 'Referencia' : 'Guía');
+        var category = T(g.kind === 'analysis' ? 'k_analysis' : g.kind === 'interactive' ? 'k_sim' : g.kind === 'reference' ? 'k_ref' : 'k_guide');
         var titleHtml = formatTitleTickers(esc(g.title || g.slug));
         var mins = parseInt(g.readTime || g.readingTime || '10', 10) || 10;
         var upvotes = Number(g.up || g.likes) || 0;
-        var pinned = (g.pinned || g.fixada) ? '<span class="gt-pin">Fijada</span>' : '';
+        var pinned = (g.pinned || g.fixada) ? '<span class="gt-pin">' + T('pinned') + '</span>' : '';
         return '<tr>' +
           '<td class="gt-kind"><span class="gt-pill">' + esc(category) + '</span></td>' +
           '<td class="gt-title"><a href="' + href + '">' + titleHtml + '</a>' + pinned + '<span class="gt-slug">' + esc(slug) + '</span></td>' +
           '<td class="gt-num">' + mins + ' min</td>' +
           '<td class="gt-num">' + upvotes + '</td>' +
-          '<td class="gt-act"><a href="' + href + '" class="gt-read">Leer →</a></td>' +
+          '<td class="gt-act"><a href="' + href + '" class="gt-read">' + T('read_btn') + '</a></td>' +
           '</tr>';
       }).join('');
       container.innerHTML =
         '<div class="gt-scroll"><table class="gt-table">' +
-        '<thead><tr><th>Tipo</th><th>Guía</th><th class="gt-num">Lectura</th><th class="gt-num">Votos</th><th><span class="sr-only">Acción</span></th></tr></thead>' +
+        '<thead><tr><th>' + T('th_type') + '</th><th>' + T('th_guide') + '</th><th class="gt-num">' + T('th_read') + '</th><th class="gt-num">' + T('th_votes') + '</th><th><span class="sr-only">' + T('th_action') + '</span></th></tr></thead>' +
         '<tbody>' + rowsHtml + '</tbody></table></div>';
     } else {
       // --- MODO SIMPLE: TARJETAS EDITORIALES LIMPIAS ---
@@ -517,14 +518,14 @@
       var cardsHtml = guides.map(function (g) {
         var slug = g.slug || g.id || '';
         var href = '/g/' + encodeURIComponent(slug);
-        var category = g.category || (g.kind === 'analysis' ? 'Análisis' : g.kind === 'interactive' ? 'Simulador' : g.kind === 'reference' ? 'Referencia' : 'Guía');
+        var category = T(g.kind === 'analysis' ? 'k_analysis' : g.kind === 'interactive' ? 'k_sim' : g.kind === 'reference' ? 'k_ref' : 'k_guide');
         var catClass = 'category-' + (g.kind || 'guide');
         var titleHtml = formatTitleTickers(esc(g.title || g.slug));
         var summaryText = esc(g.summary || g.description || '');
         var readTime = g.readTime || g.readingTime || '10 min';
         var upvotes = Number(g.up || g.likes) || 0;
-        var date = g.date || 'Reciente';
-        var pinnedFlag = (g.pinned || g.fixada) ? '<span class="card-pinned-flag">📌 Fijada</span>' : '';
+        var date = g.date || T('recent');
+        var pinnedFlag = (g.pinned || g.fixada) ? '<span class="card-pinned-flag">📌 ' + T('pinned') + '</span>' : '';
 
         return '<a href="' + href + '" class="profile-card">' +
           '<div class="profile-card-top">' +
@@ -552,13 +553,13 @@
     if (!btn || !label) return;
 
     if (activeExperienceMode === 'advanced') {
-      label.textContent = 'Modo: Avanzado';
+      label.textContent = T('pf_mode_adv');
       btn.classList.add('is-advanced');
       if (iconWrap) {
         iconWrap.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>';
       }
     } else {
-      label.textContent = 'Modo: Simple';
+      label.textContent = T('pf_mode_simple');
       btn.classList.remove('is-advanced');
       if (iconWrap) {
         iconWrap.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
@@ -665,11 +666,11 @@
     if (!unlockedList || !unlockedList.length) {
       container.innerHTML =
         '<div class="profile-achievements-header">' +
-        '  <span class="profile-achievements-title">Logros</span>' +
-        '  <span class="profile-achievements-count">0 desbloqueados</span>' +
+        '  <span class="profile-achievements-title">' + T('ach_title') + '</span>' +
+        '  <span class="profile-achievements-count">0 ' + T('ach_unlocked') + '</span>' +
         '</div>' +
         '<p class="profile-achievements-empty">Sin insignias públicas aún</p>' +
-        '<a href="/achievements" class="profile-achievements-link">Ver todas las insignias y requisitos &rarr;</a>';
+        '<a href="/achievements" class="profile-achievements-link">' + T('ach_all') + '</a>';
       return;
     }
 
@@ -683,13 +684,13 @@
 
     container.innerHTML =
       '<div class="profile-achievements-header">' +
-      '  <span class="profile-achievements-title">Logros</span>' +
-      '  <span class="profile-achievements-count">' + unlockedList.length + ' desbloqueados</span>' +
+      '  <span class="profile-achievements-title">' + T('ach_title') + '</span>' +
+      '  <span class="profile-achievements-count">' + unlockedList.length + ' ' + T('ach_unlocked') + '</span>' +
       '</div>' +
       '<div class="profile-achievements-row">' +
       badgesHtml +
       '</div>' +
-      '<a href="/achievements" class="profile-achievements-link">Ver todas las insignias y requisitos &rarr;</a>';
+      '<a href="/achievements" class="profile-achievements-link">' + T('ach_all') + '</a>';
 
     container.querySelectorAll('.profile-achievement-badge').forEach(function (el) {
       el.addEventListener('click', function () {
@@ -755,6 +756,13 @@
     bindCopyProfile();
     renderPublications();
     initProfileAchievements(targetHandle);
+    // Al cambiar de idioma, repintar lo generado por JS
+    document.addEventListener('atm:lang', function () {
+      renderProfileHeader(meta, authorPublications.length, totalUpvotes, totalMinutes);
+      updateExperienceModeUi();
+      renderPublications();
+      initProfileAchievements(targetHandle);
+    });
     document.addEventListener('atm:achievement-unlocked', function () {
       initProfileAchievements(targetHandle);
     });
