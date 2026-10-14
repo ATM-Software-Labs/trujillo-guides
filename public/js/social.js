@@ -308,14 +308,13 @@
         if (!b.getAttribute('data-slug')) b.setAttribute('data-slug', slug);
       });
     }
-    // La sesión real (cookie verificada por /api/auth/me) manda; localStorage solo es respaldo.
-    // Antes se sobrescribía window.__taMe con null y la cabecera volvía a «Entrar» tras iniciar sesión.
     var me = window.__taMe || null;
     if (!me) {
       try {
         me = JSON.parse(localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user') || 'null');
       } catch (e) {}
     }
+    var prevMe = window.__taMe;
     window.__taMe = me;
     window.__taFollowing = [];
     try {
@@ -329,7 +328,10 @@
         }
       }
     } catch (e) {}
-    document.dispatchEvent(new CustomEvent('atm:me'));
+    var meChanged = (!prevMe && me) || (prevMe && !me) || (prevMe && me && (prevMe.id !== me.id || prevMe.handle !== me.handle));
+    if (meChanged) {
+      document.dispatchEvent(new CustomEvent('atm:me', { detail: { user: me } }));
+    }
     var profile = document.getElementById('me-profile');
     if (profile && me && me.handle) {
       profile.hidden = false;
@@ -452,12 +454,17 @@
         }, 1600);
       }
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(done).catch(function () {
-          window.prompt(t('share'), url);
+        navigator.clipboard.writeText(url).then(function () {
+          done();
+          if (window.atmToast) window.atmToast(t('copied') || '¡Copiado!');
+        }).catch(function () {
+          if (window.atmPrompt) window.atmPrompt(t('share'), url);
+          else window.prompt(t('share'), url);
           done();
         });
       } else {
-        window.prompt(t('share'), url);
+        if (window.atmPrompt) window.atmPrompt(t('share'), url);
+        else window.prompt(t('share'), url);
         done();
       }
       return;
@@ -467,9 +474,13 @@
       e.preventDefault();
       var list = savedList();
       var i = list.indexOf(slug);
+      var willSave = i < 0;
       if (i >= 0) list.splice(i, 1);
       else list.unshift(slug);
       setSaved(list);
+      if (window.atmToast) {
+        window.atmToast(willSave ? (t('saved') || 'Guardado') : (t('save') || 'Eliminado de guardados'));
+      }
       document.querySelectorAll('.social-bar[data-slug="' + slug + '"]').forEach(function (b) {
         var btn = b.querySelector('[data-save]');
         if (!btn) return;
@@ -499,10 +510,15 @@
           break;
         }
       }
+      var isNowFollowing = fIdx < 0;
       if (fIdx >= 0) following.splice(fIdx, 1);
       else following.push(handle);
       window.__taFollowing = following;
       try { localStorage.setItem('atm_following', JSON.stringify(following)); } catch (err) {}
+      if (window.atmToast) {
+        window.atmToast(isNowFollowing ? (t('following') + ' @' + handle) : (t('follow') + ' @' + handle));
+      }
+      document.dispatchEvent(new CustomEvent('atm:following', { detail: { following: following, handle: handle, isFollowing: isNowFollowing } }));
       hydrate();
       return;
     }

@@ -305,12 +305,17 @@
   /* 3. Discreet Short Link Copy Logic */
   function copyTextToClipboard(text, onSuccess, onFallback) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(onSuccess).catch(function () {
+      navigator.clipboard.writeText(text).then(function () {
+        if (onSuccess) onSuccess();
+        if (window.atmToast) window.atmToast((window.atmTx || String)('¡Enlace copiado al portapapeles!'));
+      }).catch(function () {
         if (onFallback) onFallback();
+        else if (window.atmPrompt) window.atmPrompt('Copiar enlace:', text);
         else window.prompt('Copiar enlace:', text);
       });
     } else {
       if (onFallback) onFallback();
+      else if (window.atmPrompt) window.atmPrompt('Copiar enlace:', text);
       else window.prompt('Copiar enlace:', text);
     }
   }
@@ -335,7 +340,8 @@
 
       var shareUrl = location.href;
       copyTextToClipboard(shareUrl, done, function () {
-        window.prompt('Copiar enlace:', shareUrl);
+        if (window.atmPrompt) window.atmPrompt('Copiar enlace:', shareUrl);
+        else window.prompt('Copiar enlace:', shareUrl);
         done();
       });
     });

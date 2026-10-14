@@ -355,7 +355,14 @@
       }
       if (f.following) {
         var fol = window.__taFollowing || [];
-        if (fol.indexOf(String(g.handle || '').toLowerCase()) === -1) return false;
+        if (!fol.length) {
+          try { fol = JSON.parse(localStorage.getItem('atm_following') || '[]'); } catch (e) {}
+        }
+        var cleanFol = (fol || []).map(function (x) {
+          return String(x || '').replace(/^@+/, '').toLowerCase().trim();
+        });
+        var guideHandle = String(g.handle || '').replace(/^@+/, '').toLowerCase().trim();
+        if (cleanFol.indexOf(guideHandle) === -1) return false;
       }
       if (f.kind) {
         var cat = String(g.kind || g.category || 'guide').toLowerCase();
@@ -533,6 +540,13 @@
 
   document.addEventListener('atm:me', function () {
     paintComposer();
+    render();
+  });
+
+  document.addEventListener('atm:following', function (e) {
+    if (e && e.detail && e.detail.following) {
+      window.__taFollowing = e.detail.following;
+    }
     render();
   });
 

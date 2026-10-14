@@ -82,6 +82,24 @@ html body .btn-primary, html body .auth-submit, html body #auth-submit-action, h
   box-shadow: none !important;
   transition: background-color .2s var(--ease), transform .2s var(--ease);
 }
+html body #publish-btn, html body .btn-publish, html body button[type="submit"].btn-publish,
+html body .write-actions button[type="submit"], html body .forum-compose button[type="submit"] {
+  background: #10B981 !important;
+  color: #ffffff !important;
+  border: 1px solid #10B981 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25) !important;
+}
+html body #publish-btn svg, html body .btn-publish svg, html body .forum-compose button[type="submit"] svg {
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+}
+html body #publish-btn:hover, html body .btn-publish:hover,
+html body .write-actions button[type="submit"]:hover, html body .forum-compose button[type="submit"]:hover {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
 html[data-theme="light"] body .account-login:hover, html[data-theme="light"] body #auth-submit-action:hover { background: #065F46 !important; }
 html[data-theme="dark"] body .account-login:hover, html[data-theme="dark"] body #auth-submit-action:hover { background: #34D399 !important; }
 html body .meta-chip, html body .social-bar button, html body .theme-toggle, html body .lang-btn,

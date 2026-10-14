@@ -542,33 +542,40 @@
     var btnReset = document.getElementById('btn-reset-all');
     var btnLogout = document.getElementById('btn-logout-all');
 
+    var confirmFn = window.atmConfirm || window.confirmModal || function (m) { return Promise.resolve(confirm(m)); };
+
     if (btnDrafts) {
-      btnDrafts.addEventListener('click', function () {
-        if (confirm((window.atmTx || String)('¿Eliminar todos los borradores locales guardados del editor?'))) {
+      btnDrafts.addEventListener('click', async function () {
+        var ok = await confirmFn((window.atmTx || String)('¿Eliminar todos los borradores locales guardados del editor?'), 'Eliminar borradores', true);
+        if (ok) {
           try {
             localStorage.removeItem('atm_write_draft');
           } catch (e) {}
-          alert((window.atmTx || String)('Borradores eliminados correctamente.'));
+          if (window.atmToast) window.atmToast((window.atmTx || String)('Borradores eliminados correctamente.'));
+          else if (window.atmAlert) window.atmAlert((window.atmTx || String)('Borradores eliminados correctamente.'));
         }
       });
     }
 
     if (btnReset) {
-      btnReset.addEventListener('click', function () {
-        if (confirm((window.atmTx || String)('¿Restablecer toda la configuración a los valores de fábrica? Se perderán las claves y personalizaciones locales.'))) {
+      btnReset.addEventListener('click', async function () {
+        var ok = await confirmFn((window.atmTx || String)('¿Restablecer toda la configuración a los valores de fábrica? Se perderán las claves y personalizaciones locales.'), 'Restablecer configuración', true);
+        if (ok) {
           try {
             localStorage.removeItem('atm_settings');
             localStorage.removeItem('atm_experience_mode');
           } catch (e) {}
           loadSettings();
-          alert((window.atmTx || String)('Configuración restablecida.'));
+          if (window.atmToast) window.atmToast((window.atmTx || String)('Configuración restablecida.'));
+          else if (window.atmAlert) window.atmAlert((window.atmTx || String)('Configuración restablecida.'));
         }
       });
     }
 
     if (btnLogout) {
-      btnLogout.addEventListener('click', function () {
-        if (confirm((window.atmTx || String)('¿Cerrar todas las sesiones activas en este navegador?'))) {
+      btnLogout.addEventListener('click', async function () {
+        var ok = await confirmFn((window.atmTx || String)('¿Cerrar todas las sesiones activas en este navegador?'), 'Cerrar sesiones', true);
+        if (ok) {
           try {
             localStorage.removeItem('trujillo_ai_token');
             localStorage.removeItem('auth_token');

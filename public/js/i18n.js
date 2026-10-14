@@ -1008,7 +1008,24 @@ window.atmTx=function(s){if(!s)return s;var l=(window.atmLang&&window.atmLang())
     pack = Object.assign({}, window.ATM_UI.es || {}, pack);
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
-      if (pack[key]) el.textContent = pack[key];
+      if (!pack[key]) return;
+      var childSpan = el.querySelector(':scope > span:not([class*="icon"]):not([class*="flag"])');
+      var svg = el.querySelector(':scope > svg');
+      if (childSpan) {
+        childSpan.textContent = pack[key];
+      } else if (svg) {
+        var txtNode = null;
+        for (var ci = 0; ci < el.childNodes.length; ci++) {
+          if (el.childNodes[ci].nodeType === 3 && el.childNodes[ci].textContent.trim()) {
+            txtNode = el.childNodes[ci];
+            break;
+          }
+        }
+        if (txtNode) txtNode.textContent = ' ' + pack[key];
+        else el.appendChild(document.createTextNode(' ' + pack[key]));
+      } else {
+        el.textContent = pack[key];
+      }
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
       var key = el.getAttribute('data-i18n-placeholder');

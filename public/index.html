@@ -8,12 +8,12 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="canonical" href="https://guides.trujillomingorance.com/">
   <meta name="theme-color" content="#09090b">
-  <script src="/js/theme-boot.js?v=202610141100b"></script>
+  <script src="/js/theme-boot.js?v=202610141215"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="/css/tokens.css?v=202610141100b">
-  <link rel="stylesheet" href="/style.css?v=202610141100b">
-  <link rel="stylesheet" href="/css/community.css?v=202610141100b">
-  <link rel="stylesheet" href="/css/nutri.css?v=202610141100b">
+  <link rel="stylesheet" href="/css/tokens.css?v=202610141215">
+  <link rel="stylesheet" href="/style.css?v=202610141215">
+  <link rel="stylesheet" href="/css/community.css?v=202610141215">
+  <link rel="stylesheet" href="/css/nutri.css?v=202610141215">
 </head>
 <body class="docs-body">
   <header class="docs-topbar">
@@ -57,20 +57,32 @@
         <option value="recent" data-i18n="sortRecent">Más recientes</option>
         <option value="title" data-i18n="sortTitle">Título</option>
       </select>
-      <label class="filter-check"><input type="checkbox" id="filter-pinned"> <span data-i18n="onlyPinned">Solo fijadas</span></label>
-      <label class="filter-check"><input type="checkbox" id="filter-saved"> <span data-i18n="onlySaved">Guardadas</span></label>
-      <label class="filter-check"><input type="checkbox" id="filter-following"> <span data-i18n="onlyFollowing">Siguiendo</span></label>
+      <label class="filter-check">
+        <input type="checkbox" id="filter-pinned">
+        <svg class="filter-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 2l6 6-4 4 1 7-7-1-4 4-2-2 4-4-1-7 7 1 4-4z"/></svg>
+        <span data-i18n="onlyPinned">Solo fijadas</span>
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" id="filter-saved">
+        <svg class="filter-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span data-i18n="onlySaved">Guardadas</span>
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" id="filter-following">
+        <svg class="filter-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        <span data-i18n="onlyFollowing">Siguiendo</span>
+      </label>
     </div>
     <p class="home-label" id="home-label" data-i18n="all">Todas</p>
     <div class="guides-grid" id="guides-feed"></div>
   </main>
 
-  <script src="/js/i18n.js?v=202610141100b"></script>
-  <script src="/js/flags.js?v=202610141100b"></script>
-  <script src="/js/chrome.js?v=202610141100b"></script>
-  <script src="/js/auth-modal.js?v=202610141100b"></script>
-  <script src="/js/social.js?v=202610141100b"></script>
-  <script src="/js/feed.js?v=202610141100b"></script>
-  <script src="/js/translate.js?v=202610141100b"></script>
+  <script src="/js/i18n.js?v=202610141215"></script>
+  <script src="/js/flags.js?v=202610141215"></script>
+  <script src="/js/chrome.js?v=202610141215"></script>
+  <script src="/js/auth-modal.js?v=202610141215"></script>
+  <script src="/js/social.js?v=202610141215"></script>
+  <script src="/js/feed.js?v=202610141215"></script>
+  <script src="/js/translate.js?v=202610141215"></script>
 </body>
 </html>

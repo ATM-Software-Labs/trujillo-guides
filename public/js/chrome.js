@@ -880,73 +880,207 @@
     });
   }
 
-  window.confirmModal = function confirmModal(message) {
+  /* ==========================================================================
+     ATM CUSTOM DIALOGS (ALERT, CONFIRM, PROMPT) & TOASTS
+     ========================================================================== */
+  function getOrCreateBackdrop() {
+    var b = document.getElementById('atm-dialog-backdrop');
+    if (!b) {
+      b = document.createElement('div');
+      b.id = 'atm-dialog-backdrop';
+      b.className = 'atm-dialog-backdrop';
+      document.body.appendChild(b);
+    }
+    return b;
+  }
+
+  function getOrCreateToastContainer() {
+    var c = document.getElementById('atm-toast-container');
+    if (!c) {
+      c = document.createElement('div');
+      c.id = 'atm-toast-container';
+      c.className = 'atm-toast-container';
+      document.body.appendChild(c);
+    }
+    return c;
+  }
+
+  window.atmToast = function (message, type, duration) {
+    var c = getOrCreateToastContainer();
+    var t = document.createElement('div');
+    t.className = 'atm-toast';
+    var iconSvg = type === 'error'
+      ? '<svg class="atm-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      : '<svg class="atm-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>';
+    t.innerHTML = iconSvg + '<span>' + (window.atmTx ? window.atmTx(message) : message) + '</span>';
+    c.appendChild(t);
+    setTimeout(function () {
+      t.classList.add('is-leaving');
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 220);
+    }, duration || 2800);
+  };
+
+  window.atmAlert = function (message, title) {
     return new Promise(function (resolve) {
-      var dialog = document.getElementById('app-confirm-dialog');
-      if (!dialog) {
-        dialog = document.createElement('dialog');
-        dialog.id = 'app-confirm-dialog';
-        dialog.className = 'auth-card';
-        dialog.style.position = 'fixed';
-        dialog.style.inset = '0';
-        dialog.style.margin = 'auto';
-        dialog.style.maxWidth = 'min(420px, calc(100vw - 32px))';
-        dialog.style.color = 'var(--text-primary)';
-        dialog.style.boxSizing = 'border-box';
-        dialog.innerHTML =
-          '<p class="lede" id="app-confirm-msg" style="margin:0 0 20px;font-size:15px;line-height:1.55;color:var(--text-primary);"></p>' +
-          '<div class="comment-actions" style="display:flex;justify-content:flex-end;gap:10px;margin:0;">' +
-          '<button type="button" class="tool-btn" id="app-confirm-cancel" data-i18n="cancel">Cancelar</button>' +
-          '<button type="button" class="tool-btn danger" id="app-confirm-ok" data-i18n="confirm">Confirmar</button>' +
-          '</div>';
-        document.body.appendChild(dialog);
-
-        dialog.addEventListener('click', function (ev) {
-          if (ev.target === dialog) dialog.close('cancel');
-        });
-
-        var cancelBtn = dialog.querySelector('#app-confirm-cancel');
-        if (cancelBtn) cancelBtn.addEventListener('click', function () {
-          dialog.close('cancel');
-        });
-
-        var okBtn = dialog.querySelector('#app-confirm-ok');
-        if (okBtn) okBtn.addEventListener('click', function () {
-          dialog.close('confirm');
-        });
-      }
-
-      var msgEl = dialog.querySelector('#app-confirm-msg');
-      if (msgEl) msgEl.textContent = String(message || '');
-
+      var backdrop = getOrCreateBackdrop();
       var t = typeof window.atmT === 'function' ? window.atmT : function (k) { return k; };
-      var cancelBtn = dialog.querySelector('#app-confirm-cancel');
-      if (cancelBtn) cancelBtn.textContent = t('cancel') || 'Cancelar';
-      var okBtn = dialog.querySelector('#app-confirm-ok');
-      if (okBtn) okBtn.textContent = t('confirm') || 'Confirmar';
+      var tx = typeof window.atmTx === 'function' ? window.atmTx : function (k) { return k; };
+      backdrop.innerHTML =
+        '<div class="atm-dialog-card" role="dialog" aria-modal="true">' +
+          '<div class="atm-dialog-header">' +
+            '<div class="atm-dialog-icon">' +
+              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+            '</div>' +
+            '<h3 class="atm-dialog-title">' + (title ? tx(title) : 'ATM Docs') + '</h3>' +
+          '</div>' +
+          '<p class="atm-dialog-body">' + tx(message || '') + '</p>' +
+          '<div class="atm-dialog-actions">' +
+            '<button type="button" class="atm-dialog-btn primary" id="atm-dialog-ok">' + (t('close') || 'Entendido') + '</button>' +
+          '</div>' +
+        '</div>';
+      backdrop.classList.add('is-open');
 
-      function onClose() {
-        resolve(dialog.returnValue === 'confirm');
+      function close() {
+        backdrop.classList.remove('is-open');
+        resolve();
       }
-      dialog.addEventListener('close', onClose, { once: true });
 
-      if (dialog.open) dialog.close('cancel');
-      dialog.returnValue = '';
-
-      if (typeof dialog.showModal === 'function') {
-        dialog.showModal();
-        if (okBtn) okBtn.focus();
-      } else {
-        resolve(window.confirm(message));
+      var okBtn = backdrop.querySelector('#atm-dialog-ok');
+      if (okBtn) {
+        okBtn.addEventListener('click', close);
+        okBtn.focus();
       }
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) close();
+      };
     });
   };
+
+  window.atmConfirm = function (message, title, isDanger) {
+    return new Promise(function (resolve) {
+      var backdrop = getOrCreateBackdrop();
+      var t = typeof window.atmT === 'function' ? window.atmT : function (k) { return k; };
+      var tx = typeof window.atmTx === 'function' ? window.atmTx : function (k) { return k; };
+      var iconCls = isDanger ? ' danger' : '';
+      var btnCls = isDanger ? ' danger' : ' primary';
+      backdrop.innerHTML =
+        '<div class="atm-dialog-card" role="dialog" aria-modal="true">' +
+          '<div class="atm-dialog-header">' +
+            '<div class="atm-dialog-icon' + iconCls + '">' +
+              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+            '</div>' +
+            '<h3 class="atm-dialog-title">' + (title ? tx(title) : (t('confirm') || 'Confirmación')) + '</h3>' +
+          '</div>' +
+          '<p class="atm-dialog-body">' + tx(message || '') + '</p>' +
+          '<div class="atm-dialog-actions">' +
+            '<button type="button" class="atm-dialog-btn cancel" id="atm-dialog-cancel">' + (t('cancel') || 'Cancelar') + '</button>' +
+            '<button type="button" class="atm-dialog-btn' + btnCls + '" id="atm-dialog-ok">' + (t('confirm') || 'Confirmar') + '</button>' +
+          '</div>' +
+        '</div>';
+      backdrop.classList.add('is-open');
+
+      function close(val) {
+        backdrop.classList.remove('is-open');
+        resolve(val);
+      }
+
+      var okBtn = backdrop.querySelector('#atm-dialog-ok');
+      var cancelBtn = backdrop.querySelector('#atm-dialog-cancel');
+      if (okBtn) okBtn.addEventListener('click', function () { close(true); });
+      if (cancelBtn) cancelBtn.addEventListener('click', function () { close(false); });
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) close(false);
+      };
+      if (okBtn) okBtn.focus();
+    });
+  };
+
+  window.atmPrompt = function (message, defaultValue, title) {
+    return new Promise(function (resolve) {
+      var backdrop = getOrCreateBackdrop();
+      var t = typeof window.atmT === 'function' ? window.atmT : function (k) { return k; };
+      var tx = typeof window.atmTx === 'function' ? window.atmTx : function (k) { return k; };
+      backdrop.innerHTML =
+        '<div class="atm-dialog-card" role="dialog" aria-modal="true">' +
+          '<div class="atm-dialog-header">' +
+            '<div class="atm-dialog-icon">' +
+              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' +
+            '</div>' +
+            '<h3 class="atm-dialog-title">' + (title ? tx(title) : 'ATM Docs') + '</h3>' +
+          '</div>' +
+          '<p class="atm-dialog-body">' + tx(message || '') + '</p>' +
+          '<input type="text" class="atm-dialog-input" id="atm-dialog-text-input" value="' + String(defaultValue || '').replace(/"/g, '&quot;') + '">' +
+          '<div class="atm-dialog-actions">' +
+            '<button type="button" class="atm-dialog-btn cancel" id="atm-dialog-cancel">' + (t('cancel') || 'Cancelar') + '</button>' +
+            '<button type="button" class="atm-dialog-btn primary" id="atm-dialog-ok">' + (t('confirm') || 'Aceptar') + '</button>' +
+          '</div>' +
+        '</div>';
+      backdrop.classList.add('is-open');
+
+      var input = backdrop.querySelector('#atm-dialog-text-input');
+      if (input) {
+        setTimeout(function () { input.focus(); input.select(); }, 50);
+      }
+
+      function close(val) {
+        backdrop.classList.remove('is-open');
+        resolve(val);
+      }
+
+      var okBtn = backdrop.querySelector('#atm-dialog-ok');
+      var cancelBtn = backdrop.querySelector('#atm-dialog-cancel');
+      if (okBtn) okBtn.addEventListener('click', function () { close(input ? input.value : ''); });
+      if (cancelBtn) cancelBtn.addEventListener('click', function () { close(null); });
+      if (input) {
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); close(input.value); }
+          if (e.key === 'Escape') { e.preventDefault(); close(null); }
+        });
+      }
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) close(null);
+      };
+    });
+  };
+
+  window.alertModal = window.atmAlert;
+  window.confirmModal = window.atmConfirm;
+  window.promptModal = window.atmPrompt;
+
+  // Interceptar window.alert nativo para que use el modal estilizado
+  window.alert = function (msg) {
+    window.atmAlert(msg);
+  };
+
+  function sanitizeFollowingList(user) {
+    try {
+      var raw = JSON.parse(localStorage.getItem('atm_following') || '[]');
+      if (!Array.isArray(raw) || !raw.length) return;
+      var me = user || window.__taMe;
+      if (!me) {
+        try { me = JSON.parse(localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user') || localStorage.getItem('atm_user') || 'null'); } catch (e) {}
+      }
+      if (!me) return;
+      var selfHandles = [me.handle, me.username, me.slug, me.name, 'atrumin16', 'alberto']
+        .filter(Boolean)
+        .map(function (s) { return String(s).replace(/^@+/, '').toLowerCase().trim(); });
+      var cleaned = raw.filter(function (h) {
+        var cleanH = String(h || '').replace(/^@+/, '').toLowerCase().trim();
+        return selfHandles.indexOf(cleanH) === -1;
+      });
+      if (cleaned.length !== raw.length) {
+        localStorage.setItem('atm_following', JSON.stringify(cleaned));
+        window.__taFollowing = cleaned;
+      }
+    } catch (e) {}
+  }
 
   function boot() {
     applyTheme(themeNow());
     ensureHeader();
     ensureFooter();
     bindOnce();
+    sanitizeFollowingList();
     checkSession();
     if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
   }
