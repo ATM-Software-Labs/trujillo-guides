@@ -31,7 +31,7 @@
     <div class="settings-heading-group achievements-guide-heading">
       <p class="kicker">LOGROS</p>
       <h1>Logros</h1>
-      <p class="lede" data-i18n="ach_lede">25 insignias que se desbloquean publicando, leyendo y explorando ATM Docs. Aquí ves qué pide cada una.</p>
+      <p class="lede" data-i18n="ach_lede">33 insignias que se desbloquean publicando, leyendo y explorando ATM Docs. Aquí ves qué pide cada una.</p>
     </div>
 
     <!-- 4-Tier Progress Bar Widget -->
@@ -42,7 +42,7 @@
     <!-- Filter Tabs -->
     <div class="achievement-tabs-wrap" role="tablist">
       <button type="button" class="ach-tab-btn is-active" data-ach-tab="all">
-        <span><span data-i18n="kind_all">Todas</span> (25)</span>
+        <span><span data-i18n="kind_all">Todas</span> (<span id="ach-total-count">33</span>)</span>
       </button>
       <button type="button" class="ach-tab-btn" data-ach-tab="unlocked">
         <span data-i18n="tab_unlocked">✓ Desbloqueadas</span>
@@ -73,6 +73,11 @@
         var progressWrap = document.getElementById('achievement-progress-wrap');
         var listWrap = document.getElementById('achievements-guide-list');
         var currentTab = 'all';
+
+        var countEl = document.getElementById('ach-total-count');
+        if (countEl && window.ATM_ACHIEVEMENTS.achievements) {
+          countEl.textContent = window.ATM_ACHIEVEMENTS.achievements.length;
+        }
 
         function render() {
           window.ATM_ACHIEVEMENTS.renderProgressWidget(progressWrap);

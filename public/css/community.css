@@ -6697,3 +6697,209 @@ img, video, iframe { max-width: 100%; height: auto; }
   from { opacity: 0; transform: translateY(16px) scale(0.94); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* Reading Progress Bar */
+#atm-reading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #10B981 0%, #34D399 50%, #6EE7B7 100%);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+  z-index: 99999;
+  pointer-events: none;
+  transition: width 0.08s ease-out;
+}
+
+/* Zen Focus Mode */
+body.zen-focus-mode .docs-topbar,
+body.zen-focus-mode .docs-footer,
+body.zen-focus-mode .doc-sidebar,
+body.zen-focus-mode .social-bar,
+body.zen-focus-mode .back-nav,
+body.zen-focus-mode .poster-bar,
+body.zen-focus-mode #guide-meta-bar,
+body.zen-focus-mode .table-of-contents {
+  display: none !important;
+}
+
+body.zen-focus-mode .guide-container,
+body.zen-focus-mode .doc-page {
+  max-width: 780px !important;
+  margin: 0 auto !important;
+  padding: 48px 24px 120px !important;
+}
+
+body.zen-focus-mode .doc-layout {
+  display: block !important;
+}
+
+body.zen-focus-mode .doc-content {
+  max-width: 100% !important;
+  font-size: 1.08rem !important;
+  line-height: 1.8 !important;
+}
+
+/* Floating Code Copy Button */
+pre {
+  position: relative;
+}
+
+.atm-code-copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: rgba(24, 24, 27, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #a1a1aa;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  z-index: 10;
+  user-select: none;
+  line-height: 1;
+}
+
+.atm-code-copy-btn:hover {
+  background: rgba(39, 39, 42, 0.95);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fafafa;
+}
+
+.atm-code-copy-btn.is-copied {
+  background: rgba(6, 95, 70, 0.9);
+  border-color: #10B981;
+  color: #a7f3d0;
+}
+
+[data-theme="light"] .atm-code-copy-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #52525b;
+}
+
+[data-theme="light"] .atm-code-copy-btn:hover {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.22);
+  color: #18181b;
+}
+
+[data-theme="light"] .atm-code-copy-btn.is-copied {
+  background: #d1fae5;
+  border-color: #10B981;
+  color: #065f46;
+}
+
+/* Shortcuts Modal */
+.atm-shortcuts-card {
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  padding: 24px 28px;
+  max-width: 520px;
+  width: 90%;
+  animation: atmDialogIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-theme="light"] .atm-shortcuts-card {
+  background: #ffffff;
+  border-color: #e4e4e7;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.16);
+}
+
+.atm-shortcuts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border, #27272a);
+}
+
+.atm-shortcuts-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #10B981;
+}
+
+.atm-shortcuts-title-group h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary, #fafafa);
+}
+
+.atm-shortcuts-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-muted, #71717a);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.atm-shortcuts-close:hover {
+  color: var(--text-primary, #fafafa);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.atm-shortcuts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.atm-shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13.5px;
+  color: var(--text-secondary, #d4d4d8);
+}
+
+.shortcut-desc {
+  flex: 1;
+}
+
+.shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.atm-kbd {
+  display: inline-block;
+  padding: 3px 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-primary, #fafafa);
+  background: rgba(39, 39, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .atm-kbd {
+  background: #f4f4f5;
+  color: #18181b;
+  border-color: #d4d4d8;
+  border-bottom-color: #a1a1aa;
+}

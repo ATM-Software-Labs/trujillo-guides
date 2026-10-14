@@ -773,7 +773,9 @@
       var themeBtn = e.target.closest('.theme-toggle-btn');
       if (themeBtn) {
         e.preventDefault();
-        applyTheme(themeNow() === 'light' ? 'dark' : 'light');
+        var next = themeNow() === 'light' ? 'dark' : 'light';
+        applyTheme(next);
+        document.dispatchEvent(new CustomEvent('atm:theme-toggled', { detail: { theme: next } }));
         return;
       }
       if (e.target.closest('[data-logout]')) {
@@ -1052,6 +1054,185 @@
     window.atmAlert(msg);
   };
 
+  // --- READING PROGRESS BAR ---
+  function initReadingProgressBar() {
+    var hasGuide = document.querySelector('.doc-page, .guide-container, article, .md-body, #guide-viewer, #guide-body');
+    if (!hasGuide) return;
+    var bar = document.getElementById('atm-reading-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'atm-reading-bar';
+      bar.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(bar);
+    }
+
+    var hasFired100 = false;
+    var ticking = false;
+
+    function update() {
+      ticking = false;
+      var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+      var scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) {
+        bar.style.width = '0%';
+        return;
+      }
+      var progress = Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100));
+      bar.style.width = progress.toFixed(1) + '%';
+
+      if (!hasFired100 && progress >= 99) {
+        hasFired100 = true;
+        document.dispatchEvent(new CustomEvent('atm:guide-scroll-100'));
+      }
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    update();
+  }
+
+  // --- FLOATING CODE COPY BUTTON ---
+  function initCodeCopyButtons(root) {
+    var scope = root || document;
+    var pres = scope.querySelectorAll('pre');
+    var COPY_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    var CHECK_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    pres.forEach(function (pre) {
+      if (pre.querySelector('.atm-code-copy-btn')) return;
+      var cs = window.getComputedStyle(pre);
+      if (cs.position === 'static') pre.style.position = 'relative';
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'atm-code-copy-btn';
+      btn.setAttribute('aria-label', 'Copiar código');
+      btn.innerHTML = COPY_ICON + '<span>Copiar</span>';
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var code = pre.querySelector('code');
+        var text = (code ? code.innerText : pre.innerText).replace(/Copiar|Copiado/g, '').trim();
+
+        function onCopied() {
+          btn.innerHTML = CHECK_ICON + '<span>Copiado</span>';
+          btn.classList.add('is-copied');
+          document.dispatchEvent(new CustomEvent('atm:code-copied'));
+          if (window.atmToast) window.atmToast('Código copiado al portapapeles');
+          setTimeout(function () {
+            btn.innerHTML = COPY_ICON + '<span>Copiar</span>';
+            btn.classList.remove('is-copied');
+          }, 1800);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(onCopied).catch(function () {
+            copyFallback(text, onCopied);
+          });
+        } else {
+          copyFallback(text, onCopied);
+        }
+      });
+
+      pre.appendChild(btn);
+    });
+
+    function copyFallback(text, cb) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        cb();
+      } catch (err) {}
+    }
+  }
+  window.atmInitCodeCopy = initCodeCopyButtons;
+
+  // --- ZEN FOCUS MODE (Alt + Z) ---
+  function initZenMode() {
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'z' || e.key === 'Z')) {
+        var isZen = document.body.classList.toggle('zen-focus-mode');
+        document.dispatchEvent(new CustomEvent('atm:zen-toggled', { detail: { active: isZen } }));
+        if (window.atmToast) {
+          window.atmToast(isZen ? 'Modo Foco Zen activado (Alt + Z para salir)' : 'Modo Foco Zen desactivado');
+        }
+      }
+    });
+  }
+
+  // --- KEYBOARD SHORTCUTS MODAL (? or Alt + /) ---
+  function initShortcutsModal() {
+    function openShortcuts() {
+      var old = document.getElementById('atm-shortcuts-overlay');
+      if (old) old.remove();
+
+      var overlay = document.createElement('div');
+      overlay.id = 'atm-shortcuts-overlay';
+      overlay.className = 'atm-dialog-backdrop is-open';
+      overlay.innerHTML =
+        '<div class="atm-shortcuts-card" role="dialog" aria-modal="true">' +
+          '<div class="atm-shortcuts-header">' +
+            '<div class="atm-shortcuts-title-group">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M10 16h4"/></svg>' +
+              '<h3>Atajos de Teclado</h3>' +
+            '</div>' +
+            '<button type="button" class="atm-shortcuts-close" aria-label="Cerrar">&times;</button>' +
+          '</div>' +
+          '<div class="atm-shortcuts-grid">' +
+            '<div class="atm-shortcut-row"><span class="shortcut-desc">Alternar Modo Zen (Foco lectura)</span><div class="shortcut-keys"><kbd class="atm-kbd">Alt</kbd> + <kbd class="atm-kbd">Z</kbd></div></div>' +
+            '<div class="atm-shortcut-row"><span class="shortcut-desc">Alternar fuente monoespaciada</span><div class="shortcut-keys"><kbd class="atm-kbd">Alt</kbd> + <kbd class="atm-kbd">M</kbd></div></div>' +
+            '<div class="atm-shortcut-row"><span class="shortcut-desc">Alternar vista matricial / tabla</span><div class="shortcut-keys"><kbd class="atm-kbd">Alt</kbd> + <kbd class="atm-kbd">J</kbd></div></div>' +
+            '<div class="atm-shortcut-row"><span class="shortcut-desc">Ver atajos de teclado</span><div class="shortcut-keys"><kbd class="atm-kbd">?</kbd> o <kbd class="atm-kbd">Alt</kbd> + <kbd class="atm-kbd">/</kbd></div></div>' +
+            '<div class="atm-shortcut-row"><span class="shortcut-desc">Cerrar modales o diálogos</span><div class="shortcut-keys"><kbd class="atm-kbd">Esc</kbd></div></div>' +
+            '<div class="atm-shortcut-row"><span class="shortcut-desc">Secuencia de videojuegos clásica</span><div class="shortcut-keys"><kbd class="atm-kbd">↑</kbd><kbd class="atm-kbd">↑</kbd><kbd class="atm-kbd">↓</kbd><kbd class="atm-kbd">↓</kbd><kbd class="atm-kbd">←</kbd><kbd class="atm-kbd">→</kbd><kbd class="atm-kbd">B</kbd><kbd class="atm-kbd">A</kbd></div></div>' +
+          '</div>' +
+        '</div>';
+
+      document.body.appendChild(overlay);
+
+      function close() {
+        overlay.classList.remove('is-open');
+        setTimeout(function () { overlay.remove(); }, 200);
+      }
+
+      overlay.querySelector('.atm-shortcuts-close').addEventListener('click', close);
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
+      });
+      document.addEventListener('keydown', function onEsc(e) {
+        if (e.key === 'Escape') {
+          close();
+          document.removeEventListener('keydown', onEsc);
+        }
+      });
+    }
+
+    window.atmOpenShortcuts = openShortcuts;
+
+    document.addEventListener('keydown', function (e) {
+      var tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
+
+      if ((e.key === '?' && !e.ctrlKey && !e.altKey && !e.metaKey) || (e.altKey && e.key === '/')) {
+        e.preventDefault();
+        openShortcuts();
+      }
+    });
+  }
+
   function sanitizeFollowingList(user) {
     try {
       var raw = JSON.parse(localStorage.getItem('atm_following') || '[]');
@@ -1082,6 +1263,10 @@
     bindOnce();
     sanitizeFollowingList();
     checkSession();
+    initReadingProgressBar();
+    initCodeCopyButtons();
+    initZenMode();
+    initShortcutsModal();
     if (typeof window.atmApplyUi === 'function') window.atmApplyUi(window.atmLang());
   }
 

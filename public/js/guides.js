@@ -674,6 +674,9 @@
     wrapTables(target);
     linkifyTickers(target);
     initBrkCalculator(target);
+    if (window.atmInitCodeCopy) {
+      window.atmInitCodeCopy(target);
+    }
   }
 
   function initBrkCalculator(root) {

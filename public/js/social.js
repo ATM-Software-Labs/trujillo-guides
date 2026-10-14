@@ -478,6 +478,9 @@
       if (i >= 0) list.splice(i, 1);
       else list.unshift(slug);
       setSaved(list);
+      if (willSave) {
+        document.dispatchEvent(new CustomEvent('atm:bookmark-saved', { detail: { count: list.length, slug: slug } }));
+      }
       if (window.atmToast) {
         window.atmToast(willSave ? (t('saved') || 'Guardado') : (t('save') || 'Eliminado de guardados'));
       }

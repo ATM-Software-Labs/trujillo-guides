@@ -310,6 +310,8 @@
     };
     comments.push(c);
     saveComments(slug, comments);
+    document.dispatchEvent(new CustomEvent('atm:comment-published', { detail: { slug: slug, comment: c } }));
+    if (window.atmToast) window.atmToast('Comentario publicado');
     form.text.value = '';
     form.parentId.value = '';
     load(slug, root);

@@ -2,14 +2,14 @@
   'use strict';
 
   var TIERS = {
-    bronze: { id: 'bronze', name: 'Bronce', min: 0, max: 4, color: '#d97706', badgeClass: 'tier-bronze' },
-    silver: { id: 'silver', name: 'Plata', min: 5, max: 11, color: '#a1a1aa', badgeClass: 'tier-silver' },
-    gold: { id: 'gold', name: 'Oro', min: 12, max: 19, color: '#f59e0b', badgeClass: 'tier-gold' },
-    diamond: { id: 'diamond', name: 'Diamante', min: 20, max: 25, color: 'var(--accent, #10B981)', badgeClass: 'tier-diamond' }
+    bronze: { id: 'bronze', name: 'Bronce', min: 0, max: 7, color: '#d97706', badgeClass: 'tier-bronze' },
+    silver: { id: 'silver', name: 'Plata', min: 8, max: 16, color: '#a1a1aa', badgeClass: 'tier-silver' },
+    gold: { id: 'gold', name: 'Oro', min: 17, max: 26, color: '#f59e0b', badgeClass: 'tier-gold' },
+    diamond: { id: 'diamond', name: 'Diamante', min: 27, max: 33, color: 'var(--accent, #10B981)', badgeClass: 'tier-diamond' }
   };
 
   var ACHIEVEMENTS = [
-    // 1. Creación & Arquitectura (6)
+    // 1. Creación & Arquitectura (7)
     {
       id: 'genesis',
       title: 'Primera publicación',
@@ -82,8 +82,20 @@
       secret: false,
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.8l-1.78.89A2 2 0 0 0 5 15.24Z"/></svg>'
     },
+    {
+      id: 'community-voice',
+      title: 'Voz en la Comunidad',
+      desc: 'Aportar comentarios o abrir debate en un artículo.',
+      criteria: 'Publicar al menos un comentario técnico o aporte en una guía.',
+      category: 'creation',
+      categoryLabel: 'Creación',
+      tier: 'silver',
+      rarity: 31.4,
+      secret: false,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><polyline points="8 9 12 9 16 9"/><polyline points="8 13 14 13"/></svg>'
+    },
 
-    // 2. Exploración & Validación (6)
+    // 2. Exploración & Validación (10)
     {
       id: 'runtime',
       title: 'Primer cálculo',
@@ -156,8 +168,56 @@
       secret: false,
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
     },
+    {
+      id: 'code-copy',
+      title: 'Copia Limpia',
+      desc: 'Copiar un fragmento de código con el botón interactivo.',
+      criteria: 'Usar el botón "Copiar" en cualquier bloque de código de la plataforma.',
+      category: 'exploration',
+      categoryLabel: 'Exploración',
+      tier: 'bronze',
+      rarity: 68.2,
+      secret: false,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+    },
+    {
+      id: 'deep-reader',
+      title: 'Lector Voraz',
+      desc: 'Explorar y leer al menos 3 guías técnicas distintas.',
+      criteria: 'Consultar y explorar al menos 3 guías o documentos técnicos en la plataforma.',
+      category: 'exploration',
+      categoryLabel: 'Exploración',
+      tier: 'silver',
+      rarity: 35.0,
+      secret: false,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><polyline points="10 6 14 6 12 11"/></svg>'
+    },
+    {
+      id: 'curator-supreme',
+      title: 'Biblioteca Personal',
+      desc: 'Guardar guías en favoritos para consulta permanente.',
+      criteria: 'Guardar al menos 2 guías técnicas en tus marcadores de la plataforma.',
+      category: 'exploration',
+      categoryLabel: 'Exploración',
+      tier: 'silver',
+      rarity: 27.5,
+      secret: false,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>'
+    },
+    {
+      id: 'network-zero',
+      title: 'Guardián Zero Trust',
+      desc: 'Explorar la arquitectura de seguridad y redes Zero Trust.',
+      criteria: 'Consultar la guía o arquitectura de redes y seguridad Zero Trust de ATM.',
+      category: 'exploration',
+      categoryLabel: 'Exploración',
+      tier: 'gold',
+      rarity: 13.5,
+      secret: false,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'
+    },
 
-    // 3. Identidad & Plataforma (6)
+    // 3. Identidad & Plataforma (7)
     {
       id: 'identity',
       title: 'Identidad Verificada',
@@ -230,8 +290,20 @@
       secret: false,
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
     },
+    {
+      id: 'theme-master',
+      title: 'Sincronía de Luz',
+      desc: 'Alternar entre modo claro y modo oscuro para adaptar tu vista.',
+      criteria: 'Cambiar el tema de la interfaz al menos 3 veces con el selector de tema.',
+      category: 'identity',
+      categoryLabel: 'Perfil y ajustes',
+      tier: 'bronze',
+      rarity: 72.0,
+      secret: false,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'
+    },
 
-    // 4. Secretos & Easter Eggs (7)
+    // 4. Secretos & Easter Eggs (9)
     {
       id: '404-resolved',
       title: 'Perdido y encontrado',
@@ -315,6 +387,30 @@
       rarity: 5.2,
       secret: true,
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'
+    },
+    {
+      id: 'speed-reader',
+      title: 'Lectura Relámpago',
+      desc: 'Completar el scroll de una guía técnica al 100%.',
+      criteria: 'Completar la lectura y la barra de progreso al 100% en cualquier guía.',
+      category: 'secrets',
+      categoryLabel: 'Secretos & Easter Eggs',
+      tier: 'gold',
+      rarity: 9.8,
+      secret: true,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/><line x1="4" y1="22" x2="20" y2="22"/></svg>'
+    },
+    {
+      id: 'zen-mode',
+      title: 'Modo Foco Zen',
+      desc: 'Activar la lectura inmersiva sin distracciones.',
+      criteria: 'Presionar la combinación de teclas Alt + Z.',
+      category: 'secrets',
+      categoryLabel: 'Secretos & Easter Eggs',
+      tier: 'diamond',
+      rarity: 4.5,
+      secret: true,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12c2.5-5 6.5-8 10-8s7.5 3 10 8c-2.5 5-6.5 8-10 8s-7.5-3-10-8z"/></svg>'
     }
   ];
 
@@ -462,6 +558,84 @@
     } catch (e) {}
   }
 
+  // Particle Confetti Engine (Vanilla JS Canvas, zero dependencies)
+  function launchConfetti() {
+    try {
+      var old = document.getElementById('atm-confetti-canvas');
+      if (old) old.remove();
+
+      var canvas = document.createElement('canvas');
+      canvas.id = 'atm-confetti-canvas';
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '999999';
+      document.body.appendChild(canvas);
+
+      var ctx = canvas.getContext('2d');
+      var w = (canvas.width = window.innerWidth);
+      var h = (canvas.height = window.innerHeight);
+
+      var colors = ['#10B981', '#34D399', '#6EE7B7', '#F59E0B', '#FBBF24', '#FFFFFF', '#6366F1'];
+      var particles = [];
+      var count = 55;
+
+      for (var i = 0; i < count; i++) {
+        particles.push({
+          x: w * 0.5 + (Math.random() - 0.5) * 220,
+          y: h * 0.4 + (Math.random() - 0.5) * 120,
+          vx: (Math.random() - 0.5) * 16,
+          vy: Math.random() * -12 - 5,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          opacity: 1
+        });
+      }
+
+      var start = performance.now();
+      var duration = 2400;
+
+      function frame(time) {
+        var elapsed = time - start;
+        var p = elapsed / duration;
+        if (p >= 1) {
+          if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+          return;
+        }
+
+        ctx.clearRect(0, 0, w, h);
+        var alpha = p > 0.7 ? 1 - (p - 0.7) / 0.3 : 1;
+
+        for (var j = 0; j < particles.length; j++) {
+          var pt = particles[j];
+          pt.x += pt.vx;
+          pt.y += pt.vy;
+          pt.vy += 0.42; // gravity
+          pt.vx *= 0.985; // drag
+          pt.rotation += pt.rotSpeed;
+
+          ctx.save();
+          ctx.translate(pt.x, pt.y);
+          ctx.rotate((pt.rotation * Math.PI) / 180);
+          ctx.fillStyle = pt.color;
+          ctx.globalAlpha = Math.max(0, alpha);
+          ctx.fillRect(-pt.size / 2, -pt.size / 2, pt.size, pt.size * 0.6);
+          ctx.restore();
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      requestAnimationFrame(frame);
+    } catch (e) {}
+  }
+  window.atmConfetti = launchConfetti;
+
   function showToast(achievement) {
     var old = document.getElementById('achievement-toast');
     if (old) old.remove();
@@ -522,6 +696,9 @@
       toasted.push(id);
       try { localStorage.setItem('atm_ach_toasted', JSON.stringify(toasted)); } catch (e) {}
       showToast(ach);
+      if (ach.tier === 'gold' || ach.tier === 'diamond') {
+        launchConfetti();
+      }
     }
 
     document.dispatchEvent(new CustomEvent('atm:achievement-unlocked', {
@@ -908,6 +1085,78 @@
     document.addEventListener('atm:logout', function () {
       clearUserAchievements();
     });
+
+    // 16. Code copied listener
+    document.addEventListener('atm:code-copied', function () {
+      unlock('code-copy');
+    });
+
+    // 17. Comment published listener
+    document.addEventListener('atm:comment-published', function () {
+      unlock('community-voice');
+    });
+
+    // 18. Bookmark / Saved listener
+    document.addEventListener('atm:bookmark-saved', function (e) {
+      var count = (e.detail && e.detail.count) || 0;
+      if (count >= 2) unlock('curator-supreme');
+    });
+    try {
+      var savedGuides = JSON.parse(localStorage.getItem('atm_saved') || '[]');
+      if (Array.isArray(savedGuides) && savedGuides.length >= 2) {
+        unlock('curator-supreme', { silent: true });
+      }
+    } catch (e) {}
+
+    // 19. Theme toggle count listener (Switch 3 times)
+    document.addEventListener('atm:theme-toggled', function () {
+      try {
+        var countKey = 'atm_theme_switches_' + (getCurrentUserId() || 'guest');
+        var switches = (parseInt(localStorage.getItem(countKey) || '0', 10) || 0) + 1;
+        localStorage.setItem(countKey, String(switches));
+        if (switches >= 3) {
+          unlock('theme-master');
+        }
+      } catch (e) {}
+    });
+
+    // 20. 100% reading scroll completion
+    document.addEventListener('atm:guide-scroll-100', function () {
+      unlock('speed-reader');
+    });
+
+    // 21. Zen Focus Mode toggle
+    document.addEventListener('atm:zen-toggled', function (e) {
+      if (e.detail && e.detail.active) {
+        unlock('zen-mode');
+      }
+    });
+
+    // 22. Deep reader: track distinct guides read
+    try {
+      var path = window.location.pathname || '';
+      var m = path.match(/\/(?:guides|g|s)\/([a-z0-9-]+)/i);
+      var currentGuide = m && m[1];
+      if (currentGuide) {
+        var readKey = 'atm_read_guides_' + (getCurrentUserId() || 'guest');
+        var readList = JSON.parse(localStorage.getItem(readKey) || '[]');
+        if (readList.indexOf(currentGuide) === -1) {
+          readList.push(currentGuide);
+          localStorage.setItem(readKey, JSON.stringify(readList));
+        }
+        if (readList.length >= 3) {
+          unlock('deep-reader');
+        }
+      }
+    } catch (e) {}
+
+    // 23. Zero Trust & Security Guide Reader
+    try {
+      var fullUrl = (window.location.pathname || '') + (window.location.search || '');
+      if (fullUrl.indexOf('zero-trust') !== -1 || fullUrl.indexOf('dns-zero') !== -1 || fullUrl.indexOf('cloudflare') !== -1 || fullUrl.indexOf('seguridad') !== -1) {
+        unlock('network-zero');
+      }
+    } catch (e) {}
   }
 
   // --- CATALOG & REQUIREMENT EVALUATION (STRICT ZERO-FALLBACK) ---
@@ -1074,6 +1323,7 @@
     renderProgressWidget: renderProgressWidget,
     evaluateCatalogAchievements: evaluateCatalogAchievements,
     getAuthorAchievements: getAuthorAchievements,
-    clearUserAchievements: clearUserAchievements
+    clearUserAchievements: clearUserAchievements,
+    launchConfetti: launchConfetti
   };
 })();
