@@ -704,7 +704,7 @@
   function footerHtml() {
     if (isShare()) return '<p data-i18n="docLabel">Documento</p>';
     var t = typeof window.atmT === 'function' ? window.atmT : function (k) { return k; };
-    return '<p data-i18n="footer">' + t('footer') + '</p>' +
+    return '<p class="docs-footer-copy"><a href="https://labs.trujillomingorance.com" target="_blank" rel="noopener noreferrer" class="docs-footer-brand-link" data-i18n="footer">' + t('footer') + '</a></p>' +
       '<nav class="docs-footer-nav">' +
       '<a href="/" data-i18n="index">' + t('index') + '</a>' +
       '<a href="https://ai.trujillomingorance.com" rel="noopener" data-i18n="studio">' + t('studio') + '</a>' +

@@ -2454,6 +2454,15 @@ article.doc code:not(pre code),
 }
 
 .docs-footer p { margin: 0; }
+.docs-footer-brand-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+.docs-footer-brand-link:hover {
+  color: var(--accent, #10B981);
+  opacity: 0.95;
+}
 
 .docs-footer-nav {
   display: flex;
