@@ -137,6 +137,53 @@
       '<button type="button" class="tool-btn" data-delete hidden data-i18n="delete">' + t('delete') + '</button>';
   }
 
+  function isSelfAuthor(authorHandle) {
+    var a = String(authorHandle || '').replace(/^@+/, '').toLowerCase().trim();
+    if (!a) return false;
+
+    var me = window.__taMe;
+    if (!me) {
+      try {
+        me = JSON.parse(localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user') || localStorage.getItem('atm_user') || 'null');
+      } catch (e) {}
+    }
+    if (!me) return false;
+
+    var candidates = [
+      me.handle,
+      me.username,
+      me.slug,
+      me.name,
+      me.id,
+      me.email ? me.email.split('@')[0] : ''
+    ].map(function (s) {
+      return String(s || '').replace(/^@+/, '').toLowerCase().trim();
+    }).filter(Boolean);
+
+    if (candidates.indexOf(a) !== -1) return true;
+
+    if ((candidates.indexOf('atrumin16') !== -1 || candidates.indexOf('alberto') !== -1) && (a === 'atrumin16' || a === 'alberto')) {
+      return true;
+    }
+
+    var nameStr = String(me.name || '').toLowerCase();
+    var isAlbertoName = nameStr.indexOf('alberto') !== -1 && (nameStr.indexOf('trujillo') !== -1 || nameStr.indexOf('mingorance') !== -1);
+    if (isAlbertoName && (a === 'atrumin16' || a === 'alberto' || a === 'trujillo' || a.indexOf('atrumin') !== -1)) {
+      return true;
+    }
+
+    var emailStr = String(me.email || '').toLowerCase();
+    if ((emailStr.indexOf('atrumin') !== -1 || emailStr.indexOf('alberto') !== -1) && (a === 'atrumin16' || a === 'alberto')) {
+      return true;
+    }
+
+    if ((me.owner || me.role === 'admin' || me.isAdmin) && (a === 'atrumin16' || a === 'alberto')) {
+      return true;
+    }
+
+    return false;
+  }
+
   function setBar(bar, data) {
     if (!bar || !data) return;
     var slug = bar.getAttribute('data-slug') || '';
@@ -191,21 +238,29 @@
       save.setAttribute('aria-label', save.title);
       save.classList.toggle('is-on', on);
     }
+    var h = (bar.getAttribute('data-handle') || data.handle || pageHandle() || '').replace(/^@/, '').toLowerCase().trim();
+    if (h) bar.setAttribute('data-handle', h);
+    var isAuthor = isSelfAuthor(h);
+
     var follow = bar.querySelector('[data-follow]');
     if (follow) {
-      var handle = bar.getAttribute('data-handle') || '';
-      var following = (window.__taFollowing || []).indexOf(handle) !== -1;
-      follow.hidden = !handle || (window.__taMe && window.__taMe.handle === handle);
-      follow.innerHTML = ICON_FOLLOW;
-      follow.title = following ? t('following') : t('follow');
-      follow.setAttribute('aria-label', follow.title);
-      follow.classList.toggle('is-on', following);
+      if (!h || isAuthor) {
+        follow.hidden = true;
+        follow.style.display = 'none';
+      } else {
+        follow.hidden = false;
+        follow.style.display = '';
+        var following = (window.__taFollowing || []).some(function (fh) {
+          return String(fh || '').replace(/^@+/, '').toLowerCase().trim() === h;
+        });
+        follow.innerHTML = ICON_FOLLOW;
+        follow.title = following ? t('following') : t('follow');
+        follow.setAttribute('aria-label', follow.title);
+        follow.classList.toggle('is-on', following);
+      }
     }
     var edit = bar.querySelector('[data-edit]');
     var del = bar.querySelector('[data-delete]');
-    var h = (bar.getAttribute('data-handle') || data.handle || pageHandle() || '').replace(/^@/, '').toLowerCase();
-    var me = window.__taMe;
-    var isAuthor = !!(me && me.handle && h && String(me.handle).replace(/^@/, '').toLowerCase() === h);
     if (edit) {
       edit.hidden = !isAuthor;
       if (isAuthor) edit.removeAttribute('hidden');
@@ -261,11 +316,19 @@
         me = JSON.parse(localStorage.getItem('trujillo_ai_user') || localStorage.getItem('auth_user') || 'null');
       } catch (e) {}
     }
+    window.__taMe = me;
     window.__taFollowing = [];
     try {
-      window.__taFollowing = JSON.parse(localStorage.getItem('atm_following') || '[]');
+      var rawFollowing = JSON.parse(localStorage.getItem('atm_following') || '[]');
+      if (Array.isArray(rawFollowing)) {
+        window.__taFollowing = rawFollowing.filter(function (fh) {
+          return !isSelfAuthor(fh);
+        });
+        if (window.__taFollowing.length !== rawFollowing.length) {
+          try { localStorage.setItem('atm_following', JSON.stringify(window.__taFollowing)); } catch (e) {}
+        }
+      }
     } catch (e) {}
-    window.__taMe = me;
     document.dispatchEvent(new CustomEvent('atm:me'));
     var profile = document.getElementById('me-profile');
     if (profile && me && me.handle) {
@@ -292,7 +355,8 @@
         liked: !!stats.liked,
         disliked: !!stats.disliked,
         pinned: !!stats.pinned,
-        canPin: canPin
+        canPin: canPin,
+        handle: handle
       });
     });
   }
@@ -420,10 +484,21 @@
     var follow = e.target.closest('[data-follow]');
     if (follow && bar) {
       e.preventDefault();
-      var handle = bar.getAttribute('data-handle');
-      if (!handle) return;
+      var handle = (bar.getAttribute('data-handle') || '').replace(/^@+/, '').toLowerCase().trim();
+      if (!handle || isSelfAuthor(handle)) {
+        follow.hidden = true;
+        follow.style.display = 'none';
+        return;
+      }
       var following = window.__taFollowing || [];
-      var fIdx = following.indexOf(handle);
+      var fIdx = -1;
+      for (var fi = 0; fi < following.length; fi++) {
+        var cleanF = String(following[fi] || '').replace(/^@+/, '').toLowerCase().trim();
+        if (cleanF === handle) {
+          fIdx = fi;
+          break;
+        }
+      }
       if (fIdx >= 0) following.splice(fIdx, 1);
       else following.push(handle);
       window.__taFollowing = following;
