@@ -97,8 +97,10 @@
         '<div class="account-menu" id="account-menu" hidden role="menu">' +
         '<a href="/write" role="menuitem" data-i18n="newGuide">' + t('newGuide') + '</a>' +
         '<div class="account-menu-head"><strong>' + esc(displayName) + '</strong><span>@' + esc(cleanHandle) + '</span></div>' +
-        '<a href="/u/@' + encodeURIComponent(cleanHandle) + '" role="menuitem">Mi perfil</a>' +
+        '<a href="/u/@' + encodeURIComponent(cleanHandle) + '" role="menuitem">' + (window.atmTx ? window.atmTx('Mi perfil') : 'Mi perfil') + '</a>' +
         '<a href="/settings" role="menuitem" data-i18n="settings">' + (t('settings') || 'Configuración') + '</a>' +
+        '<a href="/achievements" role="menuitem">' + (window.atmTx ? window.atmTx('Logros') : 'Logros') + '</a>' +
+        '<a href="https://trujillomingorance.com/" role="menuitem">trujillomingorance.com</a>' +
         '<button type="button" role="menuitem" data-logout>' + ((window.atmT && window.atmT('logoutFull')) || 'Cerrar sesión') + '</button>' +
         '</div></div>';
     }

@@ -469,7 +469,9 @@ export async function onRequest(context) {
   // 5. ENDPOINT DE ESTADO DE SESIÓN (/api/auth/me)
   // ==========================================
   if (path === '/api/auth/me') {
-    const rawToken = cookies.session_token || cookies.atm_session || cookies.ta_session || (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    // Probar todas las cookies de sesión: una caducada no debe tapar otra válida (p. ej. ta_session tras entrar con Google en ai.)
+    const candidates = [cookies.session_token, cookies.atm_session, cookies.ta_session, cookies.auth_token, (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '')].filter(Boolean);
+    const rawToken = candidates[0];
 
     if (!rawToken) {
       return new Response(JSON.stringify({ authenticated: false, user: null }), {
@@ -480,7 +482,10 @@ export async function onRequest(context) {
 
     try {
       // Validar primero firma JWT con secret
-      let user = await verifyJwt(rawToken, jwtSecret);
+      let user = null;
+      for (const tk of candidates) {
+        try { const u = await verifyJwt(tk, jwtSecret); if (u && !(u.exp && u.exp < Math.floor(Date.now() / 1000))) { user = u; break; } } catch (e) {}
+      }
 
       // Sin firma válida no hay sesión (antes se aceptaba JSON en base64 sin firmar,
       // lo que permitía falsificar cualquier usuario, incluido admin)
