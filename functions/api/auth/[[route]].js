@@ -475,7 +475,8 @@ export async function onRequest(context) {
 
     if (!rawToken) {
       return new Response(JSON.stringify({ authenticated: false, user: null }), {
-        status: 401,
+        // 200 (not 401) for "no session": every client reads data.authenticated, and a 401 shows up as a console error on each anonymous page view.
+        status: 200,
         headers: NO_CACHE_HEADERS,
       });
     }
@@ -523,7 +524,8 @@ export async function onRequest(context) {
       });
     } catch {
       return new Response(JSON.stringify({ authenticated: false, user: null }), {
-        status: 401,
+        // 200 (not 401) for "no session": every client reads data.authenticated, and a 401 shows up as a console error on each anonymous page view.
+        status: 200,
         headers: NO_CACHE_HEADERS,
       });
     }

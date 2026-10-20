@@ -346,6 +346,15 @@
     });
   }
 
+  function deferMountGoogle() {
+    var go = function () {
+      if (window.requestIdleCallback) window.requestIdleCallback(mountGoogle, { timeout: 4000 });
+      else setTimeout(mountGoogle, 1500);
+    };
+    if (document.readyState === 'complete') go();
+    else window.addEventListener('load', go, { once: true });
+  }
+
   function mountGoogle() {
     ensureGoogleGsi().then(function () {
       if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
@@ -461,7 +470,9 @@
       });
     }
 
-    mountGoogle();
+    // The Google button lives in the (hidden) auth modal: load GSI once the page is idle
+    // instead of competing with first paint. openAuth() still mounts it immediately.
+    deferMountGoogle();
 
     var googleBtn = document.getElementById('btn-login-google') || document.getElementById('btn-oauth-google');
     if (googleBtn) {

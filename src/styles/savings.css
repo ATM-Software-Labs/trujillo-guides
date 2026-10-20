@@ -18,7 +18,7 @@
   --border-focus: #3b82f6;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #8b98ab;
   --accent: #3b82f6;
   --accent-hover: #2563eb;
   --accent-subtle: rgba(59, 130, 246, 0.12);
@@ -465,7 +465,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  background-color: var(--accent);
+  background-color: #2563eb;
   color: #ffffff;
   padding: 0.25rem 0.6rem;
   border-radius: var(--radius-sm);

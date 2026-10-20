@@ -141,6 +141,7 @@ export const UniversalDropzone: React.FC<UniversalDropzoneProps> = ({
           className="sr-only"
           onChange={handleFileInputChange}
           aria-hidden="true"
+          tabIndex={-1}
         />
 
         <div className="dropzone-icon-box">
