@@ -3375,3 +3375,20 @@ body {
   }
 }
 
+
+/* ATM Software Labs: shared network footer strip (v1, 2026-10-20).
+   Copy this file into each site; it has no runtime dependency on another origin.
+   Theme-agnostic: inherits the site's text colour and background (works in light and dark). */
+.atm-net{border-top:1px solid color-mix(in srgb,currentColor 14%,transparent);margin-top:0;padding:18px 0 22px;font-family:var(--atm-font-sans,Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif);font-size:13px;line-height:1.5;text-align:left}
+.atm-net__in{box-sizing:border-box;width:min(70rem,calc(100% - 2.5rem));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px}
+.atm-net a{color:inherit;text-decoration:none}
+.atm-net__brand{font-family:var(--atm-font-mono,"JetBrains Mono","IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace);font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;padding:6px 0}
+.atm-net__sites{display:flex;flex-wrap:wrap;gap:0 2px;margin:0;padding:0;list-style:none;flex:1 1 auto}
+.atm-net__sites a{display:inline-block;padding:6px 8px;border-radius:6px;color:color-mix(in srgb,currentColor 78%,transparent)}
+.atm-net__sites a:hover,.atm-net__sites a:focus-visible,.atm-net__sites a[aria-current]{color:inherit;background:color-mix(in srgb,currentColor 8%,transparent)}
+.atm-net__legal{margin:0;color:color-mix(in srgb,currentColor 78%,transparent);white-space:nowrap}
+.atm-net__legal a{text-decoration:underline;text-underline-offset:2px}
+.atm-net a:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+@media (max-width:640px){.atm-net__in{flex-direction:column;align-items:flex-start}.atm-net__sites{margin-left:-8px}.atm-net__legal{white-space:normal}}
+@media print{.atm-net{display:none}}
+.savings-footer .atm-net{margin-top:1.5rem;padding-bottom:0}

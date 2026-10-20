@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { AtmNet } from './components/AtmNet';
 import { ParseResult } from './types';
 import { calculateRunway } from './utils/runwayCalculator';
 import { calculateCategoryBreakdown, calculateSavingsRate } from './utils/categories';
@@ -205,10 +206,8 @@ const SavingsMainContent: React.FC = () => {
             <span>Procesamiento 100% en memoria volátil RAM del navegador. Ningún dato bancario viaja a ningún servidor externo.</span>
           </div>
 
-          <p className="footer-copyright">
-            © 2026 Alberto Trujillo Mingorance · ATM Labs · trujillomingorance.com
-          </p>
         </div>
+        <AtmNet current="savings" />
       </footer>
 
       {/* Modal de Bóveda y Memoria Local */}

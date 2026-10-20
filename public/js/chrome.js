@@ -715,11 +715,29 @@
   function footerHtml() {
     if (isShare()) return '<p data-i18n="docLabel">Documento</p>';
     var t = typeof window.atmT === 'function' ? window.atmT : function (k) { return k; };
-    return '<p class="docs-footer-copy"><a href="https://labs.trujillomingorance.com" target="_blank" rel="noopener noreferrer" class="docs-footer-brand-link" data-i18n="footer">' + t('footer') + '</a></p>' +
-      '<nav class="docs-footer-nav">' +
+    return '<nav class="docs-footer-nav">' +
       '<a href="/" data-i18n="index">' + t('index') + '</a>' +
       '<a href="https://ai.trujillomingorance.com" rel="noopener" data-i18n="studio">' + t('studio') + '</a>' +
-      '</nav>';
+      '</nav>' + atmNetHtml();
+  }
+
+  // ATM Software Labs: shared network footer strip (v1); same markup on every *.trujillomingorance.com site.
+  function atmNetHtml() {
+    var lang = (document.documentElement.lang || 'es').slice(0, 2);
+    var T = {
+      es: ['Sitios de ATM Software Labs', 'Privacidad', 'Términos', 'Guías', 'https://trujillomingorance.com/privacy', 'https://trujillomingorance.com/terms'],
+      en: ['ATM Software Labs sites', 'Privacy', 'Terms', 'Guides', 'https://trujillomingorance.com/en/privacy/', 'https://trujillomingorance.com/en/terms/'],
+      ca: ['Llocs d’ATM Software Labs', 'Privacitat', 'Termes', 'Guies', 'https://trujillomingorance.com/ca/privacy/', 'https://trujillomingorance.com/ca/terms/']
+    }[lang] || null;
+    if (!T) T = ['ATM Software Labs', 'Privacy', 'Terms', 'Guides', 'https://trujillomingorance.com/en/privacy/', 'https://trujillomingorance.com/en/terms/'];
+    var cur = location.hostname.indexOf('savings.') === 0 ? 'savings' : 'guides';
+    var sites = [['labs', 'https://labs.trujillomingorance.com/', 'ATM Labs'], ['invest', 'https://invest.trujillomingorance.com/', 'INVEST'], ['charts', 'https://charts.trujillomingorance.com/', 'Markets Briefing'], ['ai', 'https://ai.trujillomingorance.com/', 'Trujillo AI'], ['guides', 'https://guides.trujillomingorance.com/', T[3]], ['tools', 'https://tools.trujillomingorance.com/', 'Tools'], ['rewrite', 'https://rewrite.trujillomingorance.com/', 'Rewrite'], ['alberto', 'https://alberto.trujillomingorance.com/', 'Alberto']];
+    var li = sites.map(function (x) { return '<li><a href="' + x[1] + '"' + (x[0] === cur ? ' aria-current="page"' : '') + '>' + x[2] + '</a></li>'; }).join('');
+    return '<div class="atm-net"><div class="atm-net__in">' +
+      '<a class="atm-net__brand" href="https://trujillomingorance.com/">ATM Software Labs</a>' +
+      '<nav aria-label="' + T[0] + '"><ul class="atm-net__sites">' + li + '</ul></nav>' +
+      '<p class="atm-net__legal">© 2026 ATM Software Labs · Alberto Trujillo Mingorance · <a href="' + T[4] + '">' + T[1] + '</a> · <a href="' + T[5] + '">' + T[2] + '</a></p>' +
+      '</div></div>';
   }
 
   function fillActions(actions) {
