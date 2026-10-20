@@ -731,7 +731,7 @@
     }[lang] || null;
     if (!T) T = ['ATM Software Labs', 'Privacy', 'Terms', 'Guides', 'https://trujillomingorance.com/en/privacy/', 'https://trujillomingorance.com/en/terms/'];
     var cur = location.hostname.indexOf('savings.') === 0 ? 'savings' : 'guides';
-    var sites = [['labs', 'https://labs.trujillomingorance.com/', 'ATM Labs'], ['invest', 'https://invest.trujillomingorance.com/', 'INVEST'], ['charts', 'https://charts.trujillomingorance.com/', 'Markets Briefing'], ['ai', 'https://ai.trujillomingorance.com/', 'Trujillo AI'], ['guides', 'https://guides.trujillomingorance.com/', T[3]], ['tools', 'https://tools.trujillomingorance.com/', 'Tools'], ['rewrite', 'https://rewrite.trujillomingorance.com/', 'Rewrite'], ['alberto', 'https://alberto.trujillomingorance.com/', 'Alberto']];
+    var sites = [['labs', 'https://labs.trujillomingorance.com/', 'ATM Labs'], ['invest', 'https://invest.trujillomingorance.com/', 'INVEST'], ['charts', 'https://charts.trujillomingorance.com/', 'Markets Briefing'], ['ai', 'https://ai.trujillomingorance.com/', 'Trujillo AI'], ['guides', 'https://guides.trujillomingorance.com/', T[3]], ['tools', 'https://tools.trujillomingorance.com/', 'Tools'], ['rewrite', 'https://rewrite.trujillomingorance.com/', 'Rewrite']];
     var li = sites.map(function (x) { return '<li><a href="' + x[1] + '"' + (x[0] === cur ? ' aria-current="page"' : '') + '>' + x[2] + '</a></li>'; }).join('');
     return '<div class="atm-net"><div class="atm-net__in">' +
       '<a class="atm-net__brand" href="https://trujillomingorance.com/">ATM Software Labs</a>' +

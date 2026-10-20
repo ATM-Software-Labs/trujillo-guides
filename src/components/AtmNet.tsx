@@ -7,7 +7,6 @@ const SITES: [string, string, string][] = [
   ['guides', 'https://guides.trujillomingorance.com/', 'Guías'],
   ['tools', 'https://tools.trujillomingorance.com/', 'Tools'],
   ['rewrite', 'https://rewrite.trujillomingorance.com/', 'Rewrite'],
-  ['alberto', 'https://alberto.trujillomingorance.com/', 'Alberto'],
 ];
 
 export function AtmNet({ current }: { current: string }) {
