@@ -26,6 +26,32 @@ export async function onRequest(context) {
   // Edge routing for savings subdomain (savings.trujillomingorance.com)
   const isSavingsDomain = hostname === 'savings.trujillomingorance.com' || hostname.startsWith('savings.');
 
+  // Per-host robots.txt + sitemap.xml (guides and savings share this Pages project).
+  if (path === '/robots.txt' || path === '/sitemap.xml') {
+    const origin = 'https://' + (isSavingsDomain ? 'savings' : 'guides') + '.trujillomingorance.com';
+    if (path === '/robots.txt') {
+      const body = 'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /settings\nDisallow: /write\n\nSitemap: ' + origin + '/sitemap.xml\n';
+      return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=3600', ...SECURITY_HEADERS } });
+    }
+    const urls = [{ loc: origin + '/' }];
+    if (!isSavingsDomain && context.env && context.env.ASSETS) {
+      try {
+        const r = await context.env.ASSETS.fetch(new URL('/data/guides.json', url.origin));
+        const data = r.ok ? await r.json() : null;
+        for (const g of (data && data.guides) || []) {
+          if (!g || typeof g.href !== 'string' || !g.href.startsWith('/')) continue;
+          const lm = typeof g.updatedAt === 'number' ? new Date(g.updatedAt).toISOString().slice(0, 10) : String(g.updatedAt || '').slice(0, 10);
+          urls.push({ loc: origin + g.href, lastmod: /^\d{4}-\d{2}-\d{2}$/.test(lm) ? lm : '' });
+        }
+      } catch (e) {}
+    }
+    const xmlEsc = (v) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+      urls.map((u) => '  <url><loc>' + xmlEsc(u.loc) + '</loc>' + (u.lastmod ? '<lastmod>' + u.lastmod + '</lastmod>' : '') + '</url>').join('\n') +
+      '\n</urlset>\n';
+    return new Response(body, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600', ...SECURITY_HEADERS } });
+  }
+
   if (isSavingsDomain) {
     // 1. Serve ATM Savings app at root (/) and /index.html instead of ATM Docs
     if (path === '/' || path === '' || path === '/index.html') {
