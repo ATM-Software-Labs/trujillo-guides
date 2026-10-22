@@ -51,3 +51,14 @@ test('logout borra las cookies de sesión', async () => {
   const list = r.headers.getSetCookie();
   for (const n of ['ta_session', 'session_token']) assert.ok(list.some((c) => c.startsWith(n + '=;') && /Max-Age=0/.test(c)), n);
 });
+test('/me: CORS con credenciales solo para https://*.trujillomingorance.com', async () => {
+  const ok = await auth(ctx(new Request(G + '/api/auth/me', { headers: { Origin: 'https://labs.trujillomingorance.com' } }), envOf()));
+  assert.equal(ok.headers.get('Access-Control-Allow-Origin'), 'https://labs.trujillomingorance.com');
+  assert.equal(ok.headers.get('Access-Control-Allow-Credentials'), 'true');
+  for (const o of ['https://evil.com', 'http://labs.trujillomingorance.com', 'https://trujillomingorance.com.evil.com']) {
+    const r = await auth(ctx(new Request(G + '/api/auth/me', { headers: { Origin: o } }), envOf()));
+    assert.equal(r.headers.get('Access-Control-Allow-Origin'), null, o);
+  }
+  const pre = await auth(ctx(new Request(G + '/api/auth/me', { method: 'OPTIONS', headers: { Origin: 'https://ai.trujillomingorance.com' } }), envOf()));
+  assert.equal(pre.status, 204);
+});

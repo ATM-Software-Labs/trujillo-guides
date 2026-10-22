@@ -695,10 +695,7 @@
     if (!opts.silent && toasted.indexOf(id) === -1) {
       toasted.push(id);
       try { localStorage.setItem('atm_ach_toasted', JSON.stringify(toasted)); } catch (e) {}
-      showToast(ach);
-      if (ach.tier === 'gold' || ach.tier === 'diamond') {
-        launchConfetti();
-      }
+      showToast(ach); // aviso discreto, sin confeti ni sonido por defecto
     }
 
     document.dispatchEvent(new CustomEvent('atm:achievement-unlocked', {

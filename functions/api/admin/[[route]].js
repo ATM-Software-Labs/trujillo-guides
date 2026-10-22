@@ -1,6 +1,7 @@
 // Panel interno: cada endpoint comprueba en servidor la sesión interna (Entra ID, tenant de ATM).
 // Lectura: rol internal. Cambios (moderación): además admin (rol de app Admin o MS_ADMIN_EMAILS).
 import { internalSession, msConfig } from '../../lib/entra.js';
+import { SITES, DEPLOYS_URL, checkSite } from '../../lib/sites.js';
 
 const DEFAULT_JWT_SECRET = 'trujillo_jwt_secret_2026';
 const GUIDES_ORIGIN = 'https://guides.trujillomingorance.com';
@@ -84,6 +85,13 @@ export async function onRequest(context) {
     }
     users.sort((a, b) => String(b.lastSeenAt).localeCompare(String(a.lastSeenAt)));
     return json({ ok: true, users, internal });
+  }
+
+  if (request.method === 'GET' && path === '/api/admin/sites') {
+    const checks = await Promise.all(SITES.map((s) => checkSite(s)));
+    const byId = Object.fromEntries(checks.map((c) => [c.id, c]));
+    return json({ ok: true, checkedAt: new Date().toISOString(), deploysUrl: DEPLOYS_URL,
+      sites: SITES.map((s) => ({ ...s, health: byId[s.id] })) });
   }
 
   if (path === '/api/admin/content' && request.method === 'GET') {
