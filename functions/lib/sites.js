@@ -1,8 +1,9 @@
+// www sirve el mismo sitio que la raíz (canonical a la raíz), no redirige.
 // Inventario de sitios de trujillomingorance.com (Cloudflare DNS, Pages y Workers, 22/10/2026).
 // auth: clave traducida en el panel. summary: endpoint /api/admin/* del propio sitio (CORS con credenciales).
 export const SITES = [
   { id: 'apex', name: 'trujillomingorance.com', url: 'https://trujillomingorance.com/', repo: 'ATM-Software-Labs/domain-root', cf: { type: 'pages', name: 'domain-root' }, auth: 'none' },
-  { id: 'www', name: 'www', url: 'https://www.trujillomingorance.com/', repo: 'ATM-Software-Labs/domain-root', cf: { type: 'pages', name: 'domain-root' }, auth: 'redirect' },
+  { id: 'www', name: 'www', url: 'https://www.trujillomingorance.com/', repo: 'ATM-Software-Labs/domain-root', cf: { type: 'pages', name: 'domain-root' }, auth: 'none' },
   { id: 'guides', name: 'ATM Docs', url: 'https://guides.trujillomingorance.com/', repo: 'ATM-Software-Labs/trujillo-guides', cf: { type: 'pages', name: 'trujillo-guides' }, auth: 'central', admin: 'https://guides.trujillomingorance.com/admin' },
   { id: 'savings', name: 'Savings', url: 'https://savings.trujillomingorance.com/', repo: 'ATM-Software-Labs/trujillo-guides', cf: { type: 'pages', name: 'trujillo-guides' }, auth: 'central' },
   { id: 'rewrite', name: 'Rewrite', url: 'https://rewrite.trujillomingorance.com/', repo: 'ATM-Software-Labs/rewrite-ai', cf: { type: 'pages', name: 'rewrite-ai' }, auth: 'delegated', summary: 'https://rewrite.trujillomingorance.com/api/admin/summary' },
