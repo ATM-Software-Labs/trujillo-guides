@@ -67,6 +67,8 @@
       aBadge: 'Insígnia', aUsers: 'Autores com ela', aShare: 'Percentagem', aBased: 'Calculado sobre {n} autores.',
       lCf: 'Cloudflare', lCfd: 'Pages, KV e DNS', lGh: 'GitHub', lGhd: 'Repositórios da ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'Registos de aplicações e funções', lMyApps: 'As minhas aplicações', lMyAppsd: 'Portal de acesso do tenant', lSite: 'Guias públicos', lSited: 'Página inicial', error: 'Não foi possível carregar. Tenta de novo.' }
   };
+  var S = {"es": {"tabSites": "Sitios", "stSite": "Sitio", "stStatus": "Estado", "stAuth": "Acceso", "stDeploy": "Último despliegue", "stLinks": "Enlaces", "stOpen": "Abrir", "stRepo": "Repositorio", "stCf": "Cloudflare", "stAdmin": "Panel", "stDown": "Caído", "stRedirect": "Redirige", "stNoDeploy": "Sin datos de despliegue", "stChecked": "Comprobado {n}", "stRefresh": "Volver a comprobar", "stUsers": "usuarios", "stConv": "conversaciones", "stDeployNote": "Los despliegues vienen de ATM Labs (API de Cloudflare de solo lectura).", "auth_none": "Sin cuentas", "auth_redirect": "Redirección", "auth_central": "Central (X · Google · correo · Microsoft)", "auth_delegated": "Sesión central compartida", "auth_own": "Cuentas propias", "auth_proxy-ai": "Cuentas de Trujillo AI", "auth_own-admin": "Acceso de administración propio", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}, "en": {"tabSites": "Sites", "stSite": "Site", "stStatus": "Status", "stAuth": "Access", "stDeploy": "Last deploy", "stLinks": "Links", "stOpen": "Open", "stRepo": "Repository", "stCf": "Cloudflare", "stAdmin": "Panel", "stDown": "Down", "stRedirect": "Redirects", "stNoDeploy": "No deploy data", "stChecked": "Checked {n}", "stRefresh": "Check again", "stUsers": "users", "stConv": "conversations", "stDeployNote": "Deploys come from ATM Labs (read-only Cloudflare API).", "auth_none": "No accounts", "auth_redirect": "Redirect", "auth_central": "Central (X · Google · email · Microsoft)", "auth_delegated": "Shared central session", "auth_own": "Own accounts", "auth_proxy-ai": "Trujillo AI accounts", "auth_own-admin": "Own admin access", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}, "ca": {"tabSites": "Llocs", "stSite": "Lloc", "stStatus": "Estat", "stAuth": "Accés", "stDeploy": "Darrer desplegament", "stLinks": "Enllaços", "stOpen": "Obre", "stRepo": "Repositori", "stCf": "Cloudflare", "stAdmin": "Tauler", "stDown": "Caigut", "stRedirect": "Redirigeix", "stNoDeploy": "Sense dades de desplegament", "stChecked": "Comprovat {n}", "stRefresh": "Torna a comprovar", "stUsers": "usuaris", "stConv": "converses", "stDeployNote": "Els desplegaments vénen d’ATM Labs (API de Cloudflare només de lectura).", "auth_none": "Sense comptes", "auth_redirect": "Redirecció", "auth_central": "Central (X · Google · correu · Microsoft)", "auth_delegated": "Sessió central compartida", "auth_own": "Comptes propis", "auth_proxy-ai": "Comptes de Trujillo AI", "auth_own-admin": "Accés d’administració propi", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}, "fr": {"tabSites": "Sites", "stSite": "Site", "stStatus": "État", "stAuth": "Accès", "stDeploy": "Dernier déploiement", "stLinks": "Liens", "stOpen": "Ouvrir", "stRepo": "Dépôt", "stCf": "Cloudflare", "stAdmin": "Panneau", "stDown": "Hors ligne", "stRedirect": "Redirige", "stNoDeploy": "Pas de données de déploiement", "stChecked": "Vérifié {n}", "stRefresh": "Vérifier à nouveau", "stUsers": "utilisateurs", "stConv": "conversations", "stDeployNote": "Les déploiements viennent d’ATM Labs (API Cloudflare en lecture seule).", "auth_none": "Sans comptes", "auth_redirect": "Redirection", "auth_central": "Central (X · Google · e-mail · Microsoft)", "auth_delegated": "Session centrale partagée", "auth_own": "Comptes propres", "auth_proxy-ai": "Comptes Trujillo AI", "auth_own-admin": "Accès admin propre", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}, "de": {"tabSites": "Websites", "stSite": "Website", "stStatus": "Status", "stAuth": "Zugang", "stDeploy": "Letztes Deployment", "stLinks": "Links", "stOpen": "Öffnen", "stRepo": "Repository", "stCf": "Cloudflare", "stAdmin": "Bereich", "stDown": "Nicht erreichbar", "stRedirect": "Leitet weiter", "stNoDeploy": "Keine Deployment-Daten", "stChecked": "Geprüft {n}", "stRefresh": "Erneut prüfen", "stUsers": "Nutzer", "stConv": "Unterhaltungen", "stDeployNote": "Deployments kommen von ATM Labs (Cloudflare-API nur lesend).", "auth_none": "Keine Konten", "auth_redirect": "Weiterleitung", "auth_central": "Zentral (X · Google · E-Mail · Microsoft)", "auth_delegated": "Geteilte zentrale Sitzung", "auth_own": "Eigene Konten", "auth_proxy-ai": "Trujillo-AI-Konten", "auth_own-admin": "Eigener Admin-Zugang", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}, "it": {"tabSites": "Siti", "stSite": "Sito", "stStatus": "Stato", "stAuth": "Accesso", "stDeploy": "Ultimo deploy", "stLinks": "Link", "stOpen": "Apri", "stRepo": "Repository", "stCf": "Cloudflare", "stAdmin": "Pannello", "stDown": "Non raggiungibile", "stRedirect": "Reindirizza", "stNoDeploy": "Nessun dato di deploy", "stChecked": "Controllato {n}", "stRefresh": "Ricontrolla", "stUsers": "utenti", "stConv": "conversazioni", "stDeployNote": "I deploy arrivano da ATM Labs (API Cloudflare in sola lettura).", "auth_none": "Senza account", "auth_redirect": "Reindirizzamento", "auth_central": "Centrale (X · Google · email · Microsoft)", "auth_delegated": "Sessione centrale condivisa", "auth_own": "Account propri", "auth_proxy-ai": "Account Trujillo AI", "auth_own-admin": "Accesso admin proprio", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}, "pt": {"tabSites": "Sites", "stSite": "Site", "stStatus": "Estado", "stAuth": "Acesso", "stDeploy": "Última implementação", "stLinks": "Ligações", "stOpen": "Abrir", "stRepo": "Repositório", "stCf": "Cloudflare", "stAdmin": "Painel", "stDown": "Em baixo", "stRedirect": "Redireciona", "stNoDeploy": "Sem dados de implementação", "stChecked": "Verificado {n}", "stRefresh": "Verificar de novo", "stUsers": "utilizadores", "stConv": "conversas", "stDeployNote": "As implementações vêm do ATM Labs (API da Cloudflare só de leitura).", "auth_none": "Sem contas", "auth_redirect": "Redirecionamento", "auth_central": "Central (X · Google · e-mail · Microsoft)", "auth_delegated": "Sessão central partilhada", "auth_own": "Contas próprias", "auth_proxy-ai": "Contas Trujillo AI", "auth_own-admin": "Acesso de administração próprio", "auth_api": "API", "auth_myapps": "Microsoft My Apps"}};
+  Object.keys(S).forEach(function (l) { Object.keys(S[l]).forEach(function (k) { L[l][k] = S[l][k]; }); });
   function lang() { var l = (window.atmLang && window.atmLang()) || 'es'; return L[l] ? l : 'en'; }
   function t(k, n) { var s = (L[lang()] || L.en)[k] || L.en[k] || k; return n != null ? s.replace('{n}', n) : s; }
   function $(id) { return document.getElementById(id); }
@@ -141,7 +143,58 @@
     ];
     $('adm-links').innerHTML = links.map(function (l) { return '<a href="' + l[0] + '"' + (l[0].charAt(0) === '/' ? '' : ' target="_blank" rel="noopener"') + '>' + esc(t(l[1])) + '<small>' + esc(t(l[2])) + '</small></a>'; }).join('');
   }
-  function renderAll() { applyStatic(); renderStats(); renderUsers(); renderContent(); renderAch(); renderLinks(); }
+  function ago(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleString(document.documentElement.lang || undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return '—'; }
+  }
+  function renderSites() {
+    var d = state.sites; var box = $('adm-sites'); if (!box) return;
+    if (!d) { box.innerHTML = '<p class="admin-note">…</p>'; return; }
+    var dep = (state.deploys && state.deploys.projects) || {};
+    var sum = state.summaries || {};
+    var rows = d.sites.map(function (s) {
+      var h = s.health || {};
+      var pill = !h.status ? '<span class="admin-pill off">' + t('stDown') + (h.error ? ' · ' + esc(h.error) : '') + '</span>'
+        : h.status >= 300 && h.status < 400 ? '<span class="admin-pill">' + t('stRedirect') + ' · ' + h.status + '</span>'
+        : h.ok ? '<span class="admin-pill ok">' + h.status + ' · ' + h.ms + ' ms</span>' : '<span class="admin-pill off">' + h.status + '</span>';
+      var dp = s.cf && dep[s.cf.type + ':' + s.cf.name];
+      var dtxt = dp ? (dp.status ? '<span class="admin-pill' + (dp.status === 'success' ? ' ok' : dp.status === 'failure' ? ' off' : '') + '">' + esc(dp.status) + '</span> ' : '') + ago(dp.at) + (dp.branch ? ' <span class="admin-note">' + esc(dp.branch) + '</span>' : '') : '<span class="admin-note">' + t('stNoDeploy') + '</span>';
+      var extra = sum[s.id] ? '<div class="admin-note">' + esc(sum[s.id]) + '</div>' : '';
+      var cfUrl = s.cf ? 'https://dash.cloudflare.com/?to=/:account/' + (s.cf.type === 'pages' ? 'pages/view/' : 'workers/services/view/') + encodeURIComponent(s.cf.name) + (s.cf.type === 'pages' ? '' : '/production') : '';
+      var links = '<a class="admin-btn" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + t('stOpen') + '</a>' +
+        (s.repo ? '<a class="admin-btn" href="https://github.com/' + esc(s.repo) + '" target="_blank" rel="noopener">' + t('stRepo') + '</a>' : '') +
+        (cfUrl ? '<a class="admin-btn" href="' + cfUrl + '" target="_blank" rel="noopener">' + t('stCf') + '</a>' : '') +
+        (s.admin ? '<a class="admin-btn primary" href="' + esc(s.admin) + '">' + t('stAdmin') + '</a>' : '');
+      return '<tr><td><strong>' + esc(s.name) + '</strong><div class="admin-note">' + esc(s.url.replace(/^https:\/\//, '').replace(/\/$/, '')) + '</div>' + extra + '</td><td>' + pill + '</td><td>' + esc(t('auth_' + s.auth)) + '</td><td>' + dtxt + '</td><td><div class="admin-actions">' + links + '</div></td></tr>';
+    }).join('');
+    box.innerHTML = '<div class="admin-actions" style="justify-content:space-between;align-items:center;margin-bottom:10px"><span class="admin-note">' + esc(t('stChecked', ago(d.checkedAt))) + ' · ' + esc(t('stDeployNote')) + '</span><button type="button" class="admin-btn" id="adm-sites-refresh">' + t('stRefresh') + '</button></div>' +
+      '<div class="admin-scroll"><table class="admin-table"><thead><tr><th>' + t('stSite') + '</th><th>' + t('stStatus') + '</th><th>' + t('stAuth') + '</th><th>' + t('stDeploy') + '</th><th>' + t('stLinks') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  function loadSites(force) {
+    if (state.sites && !force) return;
+    if (force) { state.sites = null; renderSites(); }
+    api('/api/admin/sites').then(function (d) {
+      if (!d.ok) return;
+      state.sites = d; renderSites();
+      // Despliegues (ATM Labs) y resúmenes propios de cada sitio: CORS con credenciales, cada sitio comprueba la sesión
+      if (d.deploysUrl && !state.deploys) {
+        fetch(d.deploysUrl, { credentials: 'include', cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (x) { if (x && x.ok) { state.deploys = x; renderSites(); } }).catch(function () {});
+      }
+      state.summaries = state.summaries || {};
+      d.sites.forEach(function (s) {
+        if (!s.summary) return;
+        fetch(s.summary, { credentials: 'include', cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (x) {
+          if (!x || !x.ok) return;
+          var parts = [];
+          if (typeof x.users === 'number') parts.push(x.users + ' ' + t('stUsers'));
+          if (typeof x.conversations === 'number') parts.push(x.conversations + ' ' + t('stConv'));
+          if (parts.length) { state.summaries[s.id] = parts.join(' · '); renderSites(); }
+        }).catch(function () {});
+      });
+    });
+  }
+  function renderAll() { applyStatic(); renderStats(); renderUsers(); renderContent(); renderAch(); renderLinks(); renderSites(); }
 
   function loadAch() {
     if (state.ach || !state.users) return;
@@ -158,6 +211,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('.admin-tab'), function (b) { var on = b.getAttribute('data-tab') === tab; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
     Array.prototype.forEach.call(document.querySelectorAll('.admin-panel'), function (p) { p.hidden = p.getAttribute('data-panel') !== tab; });
     if (tab === 'ach') loadAch();
+    if (tab === 'sites') loadSites();
   }
   function toast(msg) { if (window.atmToast) window.atmToast(msg); }
 
@@ -176,6 +230,7 @@
     }).catch(function () { $('adm-gate').hidden = false; });
     document.addEventListener('click', function (e) {
       var tab = e.target.closest('.admin-tab'); if (tab) { show(tab.getAttribute('data-tab')); return; }
+      if (e.target.closest('#adm-sites-refresh')) { loadSites(true); return; }
       var b = e.target.closest('[data-mod]'); if (!b || b.disabled) return;
       b.disabled = true;
       api('/api/admin/content', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-ATM-Admin': '1' }, body: JSON.stringify({ slug: b.getAttribute('data-slug'), action: b.getAttribute('data-mod') }) })

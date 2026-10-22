@@ -558,6 +558,20 @@ export async function onRequest(context) {
   // ==========================================
   // 5. ENDPOINT DE ESTADO DE SESIÓN (/api/auth/me)
   // ==========================================
+  // /me con CORS con credenciales solo para https://*.trujillomingorance.com (los demás sitios muestran «Panel interno»)
+  if (path === '/api/auth/me') {
+    const origin = request.headers.get('Origin') || '';
+    let okOrigin = false;
+    try { const o = new URL(origin); okOrigin = o.protocol === 'https:' && (o.hostname === 'trujillomingorance.com' || o.hostname.endsWith('.trujillomingorance.com')); } catch (_) {}
+    if (okOrigin) {
+      NO_CACHE_HEADERS['Access-Control-Allow-Origin'] = origin;
+      NO_CACHE_HEADERS['Access-Control-Allow-Credentials'] = 'true';
+      NO_CACHE_HEADERS['Vary'] = 'Origin, Cookie, Authorization';
+    }
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: okOrigin ? { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Max-Age': '600', 'Vary': 'Origin' } : {} });
+    }
+  }
   if (path === '/api/auth/me') {
     // Probar todas las cookies de sesión: una caducada no debe tapar otra válida (p. ej. ta_session tras entrar con Google en ai.)
     const candidates = [cookies.session_token, cookies.atm_session, cookies.ta_session, cookies.auth_token, (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '')].filter(Boolean);

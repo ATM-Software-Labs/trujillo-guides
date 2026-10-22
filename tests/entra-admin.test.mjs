@@ -238,3 +238,30 @@ test('el handle no pisa un perfil existente de otro proveedor', async () => {
   assert.equal(me.user.handle, 'alberto_ms');
   assert.equal(JSON.parse(env.BOT_MEMORY.m.get('profile:alberto')).provider, 'x');
 });
+
+test('sitios: solo sesión interna; devuelve inventario con salud', async () => {
+  const env = envOf();
+  assert.equal((await admin(ctx(req('/api/admin/sites'), env))).status, 403);
+  const author = await session({ handle: 'pepe', role: 'author', provider: 'x' });
+  assert.equal((await admin(ctx(req('/api/admin/sites', author), env))).status, 403);
+  const prev = globalThis.fetch;
+  globalThis.fetch = async (u, init) => {
+    const s = String(u);
+    if (s.startsWith('https://login.microsoftonline.com/')) return prev(u, init);
+    if (s.includes('www.')) return new Response(null, { status: 301, headers: { Location: 'https://trujillomingorance.com/' } });
+    if (s.includes('rocky.')) throw new Error('down');
+    return new Response('ok', { status: 200 });
+  };
+  try {
+    const tok = await session({ handle: 'ana', role: 'internal', provider: 'microsoft', tid: TENANT });
+    const r = await admin(ctx(req('/api/admin/sites', tok), env));
+    assert.equal(r.status, 200);
+    const d = await r.json();
+    const by = Object.fromEntries(d.sites.map((s) => [s.id, s]));
+    assert.ok(by.guides && by.rewrite && by.ai && by.labs && by.focusguard && by.nutri);
+    assert.equal(by.guides.health.ok, true);
+    assert.equal(by.www.health.status, 301);
+    assert.equal(by.rocky.health.ok, false);
+    assert.ok(d.deploysUrl.startsWith('https://labs.trujillomingorance.com/'));
+  } finally { globalThis.fetch = prev; }
+});
