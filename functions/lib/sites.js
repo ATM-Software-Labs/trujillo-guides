@@ -5,7 +5,7 @@ export const SITES = [
   { id: 'www', name: 'www', url: 'https://www.trujillomingorance.com/', repo: 'ATM-Software-Labs/domain-root', cf: { type: 'pages', name: 'domain-root' }, auth: 'redirect' },
   { id: 'guides', name: 'ATM Docs', url: 'https://guides.trujillomingorance.com/', repo: 'ATM-Software-Labs/trujillo-guides', cf: { type: 'pages', name: 'trujillo-guides' }, auth: 'central', admin: 'https://guides.trujillomingorance.com/admin' },
   { id: 'savings', name: 'Savings', url: 'https://savings.trujillomingorance.com/', repo: 'ATM-Software-Labs/trujillo-guides', cf: { type: 'pages', name: 'trujillo-guides' }, auth: 'central' },
-  { id: 'rewrite', name: 'Rewrite', url: 'https://rewrite.trujillomingorance.com/', repo: 'ATM-Software-Labs/rewrite-ai', cf: { type: 'pages', name: 'rewrite-ai' }, auth: 'delegated' },
+  { id: 'rewrite', name: 'Rewrite', url: 'https://rewrite.trujillomingorance.com/', repo: 'ATM-Software-Labs/rewrite-ai', cf: { type: 'pages', name: 'rewrite-ai' }, auth: 'delegated', summary: 'https://rewrite.trujillomingorance.com/api/admin/summary' },
   { id: 'ai', name: 'Trujillo AI', url: 'https://ai.trujillomingorance.com/', repo: 'ATM-Software-Labs/trujillo-ai-studio', cf: { type: 'worker', name: 'groq-discord-bot' }, auth: 'own', summary: 'https://ai.trujillomingorance.com/api/admin/summary' },
   { id: 'labs', name: 'ATM Labs', url: 'https://labs.trujillomingorance.com/', repo: 'ATM-Software-Labs/atm-labs-hub', cf: { type: 'pages', name: 'atm-labs-hub' }, auth: 'proxy-ai' },
   { id: 'tools', name: 'Tools', url: 'https://tools.trujillomingorance.com/', repo: 'ATM-Software-Labs/atm-tools', cf: { type: 'pages', name: 'atm-tools' }, auth: 'none' },
