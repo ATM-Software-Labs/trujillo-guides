@@ -474,7 +474,20 @@
     });
   }
 
+  // Moderación del panel interno (ocultar / fijar / desfijar por slug)
+  var MOD = { hidden: [], pinned: [], unpinned: [] };
+  function applyMod(list) {
+    return (list || []).filter(function (g) { return MOD.hidden.indexOf(String(g.slug || '')) === -1; }).map(function (g) {
+      var sl = String(g.slug || '');
+      if (MOD.pinned.indexOf(sl) !== -1) return Object.assign({}, g, { pinned: true, fixada: true });
+      if (MOD.unpinned.indexOf(sl) !== -1) return Object.assign({}, g, { pinned: false, fixada: false, extras: Object.assign({}, g.extras || {}, { pinned: false, fixada: false }) });
+      return g;
+    });
+  }
   function mergeLocalGuides(baseList) {
+    return applyMod(mergeLocalGuidesRaw(baseList));
+  }
+  function mergeLocalGuidesRaw(baseList) {
     try {
       var localList = JSON.parse(localStorage.getItem('atm_guides_data') || localStorage.getItem('atm_custom_guides') || '[]');
       if (Array.isArray(localList) && localList.length) {
@@ -511,6 +524,16 @@
     featuredGuides = allGuides.filter(isPinnedGuide);
     render();
 
+    var baseCatalog = STATIC_CATALOG;
+    fetch('/api/moderation', { cache: 'default' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (m) {
+      if (!m || (!(m.hidden || []).length && !(m.pinned || []).length && !(m.unpinned || []).length)) return;
+      MOD = { hidden: m.hidden || [], pinned: m.pinned || [], unpinned: m.unpinned || [] };
+      allGuides = mergeLocalGuides(baseCatalog);
+      featuredGuides = allGuides.filter(isPinnedGuide);
+      fillAuthors();
+      render();
+    }).catch(function () {});
+
     // 3. Static CDN refresh from /data/guides.json (0 worker requests)
     fetch('/data/guides.json', { cache: 'default' })
       .then(function (r) {
@@ -520,6 +543,7 @@
       .then(function (data) {
         var items = listFrom(data);
         if (items && items.length) {
+          baseCatalog = items;
           allGuides = mergeLocalGuides(items);
           featuredGuides = allGuides.filter(isPinnedGuide);
           fillAuthors();

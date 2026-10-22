@@ -1,0 +1,191 @@
+// Panel interno de ATM Software Labs. La interfaz es solo presentación:
+// cada dato y cada cambio pasa por /api/admin/*, que comprueba la sesión interna en servidor.
+(function () {
+  'use strict';
+  var L = {
+    es: { kicker: 'ATM SOFTWARE LABS · INTERNO', title: 'Panel interno', gateTitle: 'Acceso restringido', gateText: 'Este panel es solo para cuentas de ATM Software Labs. Entra con tu cuenta de Microsoft del trabajo.', gateBtn: 'Continuar con Microsoft', unavailable: 'El acceso con Microsoft todavía no está activado.',
+      tabStats: 'Resumen', tabUsers: 'Usuarios', tabContent: 'Contenido', tabAch: 'Logros', tabLinks: 'Enlaces',
+      who: 'Sesión interna: {n}', roleAdmin: 'Administrador', roleInternal: 'Interno (solo lectura)',
+      sProfiles: 'Perfiles públicos', sEmail: 'Cuentas con correo', sInternal: 'Cuentas internas', sGuides: 'Publicaciones', sPinned: 'Fijadas', sHidden: 'Ocultas', sProviders: 'Perfiles por proveedor',
+      uUser: 'Usuario', uProvider: 'Proveedor', uRole: 'Rol', uJoined: 'Alta', uSeen: 'Última visita', uInternal: 'Cuentas internas', uEmail: 'Correo', uLastLogin: 'Último acceso', none: 'Sin datos todavía.',
+      cTitle: 'Título', cAuthor: 'Autor', cState: 'Estado', cActions: 'Acciones', pinned: 'Fijada', visible: 'Visible', hiddenS: 'Oculta',
+      pin: 'Fijar', unpin: 'Desfijar', hide: 'Ocultar', unhide: 'Mostrar', reset: 'Restablecer', readonly: 'Solo los administradores pueden moderar. Tu cuenta es interna de solo lectura.', modNote: 'Los cambios se aplican en la portada en menos de un minuto.', saved: 'Guardado', failed: 'No se pudo guardar',
+      aBadge: 'Insignia', aUsers: 'Autores con ella', aShare: 'Porcentaje', aBased: 'Calculado sobre {n} autores.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV y DNS', lGh: 'GitHub', lGhd: 'Repositorios de ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'Registros de aplicaciones y roles', lMyApps: 'Mis aplicaciones', lMyAppsd: 'Portal de acceso del tenant', lSite: 'Guías públicas', lSited: 'Portada', error: 'No se pudo cargar. Vuelve a intentarlo.' },
+    en: { kicker: 'ATM SOFTWARE LABS · INTERNAL', title: 'Internal panel', gateTitle: 'Restricted access', gateText: 'This panel is only for ATM Software Labs accounts. Sign in with your work Microsoft account.', gateBtn: 'Continue with Microsoft', unavailable: 'Microsoft sign-in is not enabled yet.',
+      tabStats: 'Overview', tabUsers: 'Users', tabContent: 'Content', tabAch: 'Achievements', tabLinks: 'Links',
+      who: 'Internal session: {n}', roleAdmin: 'Administrator', roleInternal: 'Internal (read-only)',
+      sProfiles: 'Public profiles', sEmail: 'Email accounts', sInternal: 'Internal accounts', sGuides: 'Posts', sPinned: 'Pinned', sHidden: 'Hidden', sProviders: 'Profiles by provider',
+      uUser: 'User', uProvider: 'Provider', uRole: 'Role', uJoined: 'Joined', uSeen: 'Last seen', uInternal: 'Internal accounts', uEmail: 'Email', uLastLogin: 'Last sign-in', none: 'No data yet.',
+      cTitle: 'Title', cAuthor: 'Author', cState: 'Status', cActions: 'Actions', pinned: 'Pinned', visible: 'Visible', hiddenS: 'Hidden',
+      pin: 'Pin', unpin: 'Unpin', hide: 'Hide', unhide: 'Show', reset: 'Reset', readonly: 'Only administrators can moderate. Your account is internal read-only.', modNote: 'Changes reach the homepage in under a minute.', saved: 'Saved', failed: 'Could not save',
+      aBadge: 'Badge', aUsers: 'Authors with it', aShare: 'Share', aBased: 'Based on {n} authors.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV and DNS', lGh: 'GitHub', lGhd: 'ATM Software Labs repositories', lEntra: 'Microsoft Entra', lEntrad: 'App registrations and roles', lMyApps: 'My Apps', lMyAppsd: 'Tenant access portal', lSite: 'Public guides', lSited: 'Homepage', error: 'Could not load. Try again.' },
+    ca: { kicker: 'ATM SOFTWARE LABS · INTERN', title: 'Tauler intern', gateTitle: 'Accés restringit', gateText: 'Aquest tauler és només per a comptes d’ATM Software Labs. Entra amb el teu compte de Microsoft de la feina.', gateBtn: 'Continua amb Microsoft', unavailable: 'L’accés amb Microsoft encara no està activat.',
+      tabStats: 'Resum', tabUsers: 'Usuaris', tabContent: 'Contingut', tabAch: 'Assoliments', tabLinks: 'Enllaços',
+      who: 'Sessió interna: {n}', roleAdmin: 'Administrador', roleInternal: 'Intern (només lectura)',
+      sProfiles: 'Perfils públics', sEmail: 'Comptes amb correu', sInternal: 'Comptes interns', sGuides: 'Publicacions', sPinned: 'Fixades', sHidden: 'Amagades', sProviders: 'Perfils per proveïdor',
+      uUser: 'Usuari', uProvider: 'Proveïdor', uRole: 'Rol', uJoined: 'Alta', uSeen: 'Darrera visita', uInternal: 'Comptes interns', uEmail: 'Correu', uLastLogin: 'Darrer accés', none: 'Encara no hi ha dades.',
+      cTitle: 'Títol', cAuthor: 'Autor', cState: 'Estat', cActions: 'Accions', pinned: 'Fixada', visible: 'Visible', hiddenS: 'Amagada',
+      pin: 'Fixa', unpin: 'Desfixa', hide: 'Amaga', unhide: 'Mostra', reset: 'Restableix', readonly: 'Només els administradors poden moderar. El teu compte és intern de només lectura.', modNote: 'Els canvis arriben a la portada en menys d’un minut.', saved: 'Desat', failed: 'No s’ha pogut desar',
+      aBadge: 'Insígnia', aUsers: 'Autors que la tenen', aShare: 'Percentatge', aBased: 'Calculat sobre {n} autors.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV i DNS', lGh: 'GitHub', lGhd: 'Repositoris d’ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'Registres d’aplicacions i rols', lMyApps: 'Les meves aplicacions', lMyAppsd: 'Portal d’accés del tenant', lSite: 'Guies públiques', lSited: 'Portada', error: 'No s’ha pogut carregar. Torna-ho a provar.' },
+    fr: { kicker: 'ATM SOFTWARE LABS · INTERNE', title: 'Panneau interne', gateTitle: 'Accès restreint', gateText: 'Ce panneau est réservé aux comptes ATM Software Labs. Connectez-vous avec votre compte Microsoft professionnel.', gateBtn: 'Continuer avec Microsoft', unavailable: 'La connexion Microsoft n’est pas encore activée.',
+      tabStats: 'Aperçu', tabUsers: 'Utilisateurs', tabContent: 'Contenu', tabAch: 'Succès', tabLinks: 'Liens',
+      who: 'Session interne : {n}', roleAdmin: 'Administrateur', roleInternal: 'Interne (lecture seule)',
+      sProfiles: 'Profils publics', sEmail: 'Comptes e-mail', sInternal: 'Comptes internes', sGuides: 'Publications', sPinned: 'Épinglées', sHidden: 'Masquées', sProviders: 'Profils par fournisseur',
+      uUser: 'Utilisateur', uProvider: 'Fournisseur', uRole: 'Rôle', uJoined: 'Inscription', uSeen: 'Dernière visite', uInternal: 'Comptes internes', uEmail: 'E-mail', uLastLogin: 'Dernière connexion', none: 'Pas encore de données.',
+      cTitle: 'Titre', cAuthor: 'Auteur', cState: 'État', cActions: 'Actions', pinned: 'Épinglée', visible: 'Visible', hiddenS: 'Masquée',
+      pin: 'Épingler', unpin: 'Désépingler', hide: 'Masquer', unhide: 'Afficher', reset: 'Réinitialiser', readonly: 'Seuls les administrateurs peuvent modérer. Votre compte interne est en lecture seule.', modNote: 'Les changements arrivent sur l’accueil en moins d’une minute.', saved: 'Enregistré', failed: 'Échec de l’enregistrement',
+      aBadge: 'Badge', aUsers: 'Auteurs qui l’ont', aShare: 'Part', aBased: 'Calculé sur {n} auteurs.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV et DNS', lGh: 'GitHub', lGhd: 'Dépôts ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'Inscriptions d’applications et rôles', lMyApps: 'Mes applications', lMyAppsd: 'Portail d’accès du tenant', lSite: 'Guides publics', lSited: 'Accueil', error: 'Chargement impossible. Réessayez.' },
+    de: { kicker: 'ATM SOFTWARE LABS · INTERN', title: 'Interner Bereich', gateTitle: 'Eingeschränkter Zugang', gateText: 'Dieser Bereich ist nur für Konten von ATM Software Labs. Melde dich mit deinem geschäftlichen Microsoft-Konto an.', gateBtn: 'Weiter mit Microsoft', unavailable: 'Die Anmeldung mit Microsoft ist noch nicht aktiviert.',
+      tabStats: 'Übersicht', tabUsers: 'Nutzer', tabContent: 'Inhalte', tabAch: 'Erfolge', tabLinks: 'Links',
+      who: 'Interne Sitzung: {n}', roleAdmin: 'Administrator', roleInternal: 'Intern (nur Lesen)',
+      sProfiles: 'Öffentliche Profile', sEmail: 'E-Mail-Konten', sInternal: 'Interne Konten', sGuides: 'Beiträge', sPinned: 'Angeheftet', sHidden: 'Ausgeblendet', sProviders: 'Profile nach Anbieter',
+      uUser: 'Nutzer', uProvider: 'Anbieter', uRole: 'Rolle', uJoined: 'Beitritt', uSeen: 'Zuletzt gesehen', uInternal: 'Interne Konten', uEmail: 'E-Mail', uLastLogin: 'Letzte Anmeldung', none: 'Noch keine Daten.',
+      cTitle: 'Titel', cAuthor: 'Autor', cState: 'Status', cActions: 'Aktionen', pinned: 'Angeheftet', visible: 'Sichtbar', hiddenS: 'Ausgeblendet',
+      pin: 'Anheften', unpin: 'Lösen', hide: 'Ausblenden', unhide: 'Einblenden', reset: 'Zurücksetzen', readonly: 'Nur Administratoren können moderieren. Dein internes Konto hat nur Lesezugriff.', modNote: 'Änderungen erscheinen in weniger als einer Minute auf der Startseite.', saved: 'Gespeichert', failed: 'Speichern fehlgeschlagen',
+      aBadge: 'Abzeichen', aUsers: 'Autoren damit', aShare: 'Anteil', aBased: 'Berechnet aus {n} Autoren.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV und DNS', lGh: 'GitHub', lGhd: 'Repositories von ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'App-Registrierungen und Rollen', lMyApps: 'Meine Apps', lMyAppsd: 'Zugangsportal des Tenants', lSite: 'Öffentliche Anleitungen', lSited: 'Startseite', error: 'Laden fehlgeschlagen. Bitte erneut versuchen.' },
+    it: { kicker: 'ATM SOFTWARE LABS · INTERNO', title: 'Pannello interno', gateTitle: 'Accesso riservato', gateText: 'Questo pannello è solo per gli account ATM Software Labs. Accedi con il tuo account Microsoft di lavoro.', gateBtn: 'Continua con Microsoft', unavailable: 'L’accesso con Microsoft non è ancora attivo.',
+      tabStats: 'Panoramica', tabUsers: 'Utenti', tabContent: 'Contenuti', tabAch: 'Traguardi', tabLinks: 'Link',
+      who: 'Sessione interna: {n}', roleAdmin: 'Amministratore', roleInternal: 'Interno (sola lettura)',
+      sProfiles: 'Profili pubblici', sEmail: 'Account email', sInternal: 'Account interni', sGuides: 'Pubblicazioni', sPinned: 'In evidenza', sHidden: 'Nascoste', sProviders: 'Profili per provider',
+      uUser: 'Utente', uProvider: 'Provider', uRole: 'Ruolo', uJoined: 'Iscrizione', uSeen: 'Ultima visita', uInternal: 'Account interni', uEmail: 'Email', uLastLogin: 'Ultimo accesso', none: 'Ancora nessun dato.',
+      cTitle: 'Titolo', cAuthor: 'Autore', cState: 'Stato', cActions: 'Azioni', pinned: 'In evidenza', visible: 'Visibile', hiddenS: 'Nascosta',
+      pin: 'Fissa', unpin: 'Sblocca', hide: 'Nascondi', unhide: 'Mostra', reset: 'Ripristina', readonly: 'Solo gli amministratori possono moderare. Il tuo account interno è in sola lettura.', modNote: 'Le modifiche arrivano in home in meno di un minuto.', saved: 'Salvato', failed: 'Salvataggio non riuscito',
+      aBadge: 'Badge', aUsers: 'Autori che lo hanno', aShare: 'Quota', aBased: 'Calcolato su {n} autori.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV e DNS', lGh: 'GitHub', lGhd: 'Repository di ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'Registrazioni app e ruoli', lMyApps: 'Le mie app', lMyAppsd: 'Portale di accesso del tenant', lSite: 'Guide pubbliche', lSited: 'Home', error: 'Impossibile caricare. Riprova.' },
+    pt: { kicker: 'ATM SOFTWARE LABS · INTERNO', title: 'Painel interno', gateTitle: 'Acesso restrito', gateText: 'Este painel é só para contas da ATM Software Labs. Entra com a tua conta Microsoft de trabalho.', gateBtn: 'Continuar com Microsoft', unavailable: 'O acesso com Microsoft ainda não está ativo.',
+      tabStats: 'Resumo', tabUsers: 'Utilizadores', tabContent: 'Conteúdo', tabAch: 'Conquistas', tabLinks: 'Ligações',
+      who: 'Sessão interna: {n}', roleAdmin: 'Administrador', roleInternal: 'Interno (só leitura)',
+      sProfiles: 'Perfis públicos', sEmail: 'Contas com e-mail', sInternal: 'Contas internas', sGuides: 'Publicações', sPinned: 'Fixadas', sHidden: 'Ocultas', sProviders: 'Perfis por fornecedor',
+      uUser: 'Utilizador', uProvider: 'Fornecedor', uRole: 'Função', uJoined: 'Registo', uSeen: 'Última visita', uInternal: 'Contas internas', uEmail: 'E-mail', uLastLogin: 'Último acesso', none: 'Ainda sem dados.',
+      cTitle: 'Título', cAuthor: 'Autor', cState: 'Estado', cActions: 'Ações', pinned: 'Fixada', visible: 'Visível', hiddenS: 'Oculta',
+      pin: 'Fixar', unpin: 'Desafixar', hide: 'Ocultar', unhide: 'Mostrar', reset: 'Repor', readonly: 'Só os administradores podem moderar. A tua conta interna é só de leitura.', modNote: 'As alterações chegam à página inicial em menos de um minuto.', saved: 'Guardado', failed: 'Não foi possível guardar',
+      aBadge: 'Insígnia', aUsers: 'Autores com ela', aShare: 'Percentagem', aBased: 'Calculado sobre {n} autores.',
+      lCf: 'Cloudflare', lCfd: 'Pages, KV e DNS', lGh: 'GitHub', lGhd: 'Repositórios da ATM Software Labs', lEntra: 'Microsoft Entra', lEntrad: 'Registos de aplicações e funções', lMyApps: 'As minhas aplicações', lMyAppsd: 'Portal de acesso do tenant', lSite: 'Guias públicos', lSited: 'Página inicial', error: 'Não foi possível carregar. Tenta de novo.' }
+  };
+  function lang() { var l = (window.atmLang && window.atmLang()) || 'es'; return L[l] ? l : 'en'; }
+  function t(k, n) { var s = (L[lang()] || L.en)[k] || L.en[k] || k; return n != null ? s.replace('{n}', n) : s; }
+  function $(id) { return document.getElementById(id); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function fmtDate(s) { if (!s) return '—'; try { return new Date(s).toLocaleDateString(document.documentElement.lang || undefined, { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return '—'; } }
+  function api(path, opts) {
+    return fetch(path, Object.assign({ credentials: 'include', cache: 'no-store', headers: { Accept: 'application/json' } }, opts || {}))
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { d.__status = r.status; return d; }); });
+  }
+  var state = { me: null, users: null, content: null, stats: null, ach: null, tab: 'stats' };
+
+  function applyStatic() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-adm]'), function (el) { el.textContent = t(el.getAttribute('data-adm')); });
+    document.title = t('title') + ' · ATM Software Labs';
+    if (state.me) $('adm-who').textContent = t('who', state.me.name || state.me.handle) + ' · ' + (state.me.admin ? t('roleAdmin') : t('roleInternal'));
+  }
+  function stat(n, label) { return '<div class="admin-stat"><b>' + esc(n) + '</b><span>' + esc(label) + '</span></div>'; }
+  function renderStats() {
+    var s = state.stats; if (!s) return;
+    var prov = Object.keys(s.byProvider || {}).map(function (k) { return '<span class="admin-pill">' + esc(k) + ' · ' + esc(s.byProvider[k]) + '</span>'; }).join(' ');
+    $('adm-stats').innerHTML = stat(s.profiles, t('sProfiles')) + stat(s.emailAccounts, t('sEmail')) + stat(s.internalAccounts, t('sInternal')) +
+      stat(s.guides, t('sGuides')) + stat(s.pinned, t('sPinned')) + stat(s.hidden, t('sHidden')) +
+      '<div class="admin-stat" style="grid-column:1/-1"><span>' + esc(t('sProviders')) + '</span><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">' + (prov || esc(t('none'))) + '</div></div>';
+  }
+  function renderUsers() {
+    var d = state.users; if (!d) return;
+    var rows = (d.users || []).map(function (u) {
+      var av = u.avatar ? '<img class="admin-avatar" src="' + esc(u.avatar) + '" alt="" referrerpolicy="no-referrer">' : '<span class="admin-avatar"></span>';
+      return '<tr><td>' + av + '<a href="/u/@' + encodeURIComponent(u.handle) + '">' + esc(u.name || u.handle) + '</a> <span class="admin-note">@' + esc(u.handle) + '</span></td><td>' + esc(u.provider || '—') + '</td><td><span class="admin-pill' + (u.role === 'admin' ? ' ok' : '') + '">' + esc(u.role) + '</span></td><td>' + fmtDate(u.joinedAt) + '</td><td>' + fmtDate(u.lastSeenAt) + '</td></tr>';
+    }).join('');
+    var irows = (d.internal || []).map(function (u) {
+      return '<tr><td>' + esc(u.name || u.handle) + ' <span class="admin-note">@' + esc(u.handle) + '</span></td><td>' + esc(u.email || '—') + '</td><td><span class="admin-pill' + (u.admin ? ' ok' : '') + '">' + esc(u.admin ? t('roleAdmin') : t('roleInternal')) + '</span></td><td>' + fmtDate(u.lastLoginAt) + '</td></tr>';
+    }).join('');
+    $('adm-users').innerHTML = '<div class="admin-scroll"><table class="admin-table"><thead><tr><th>' + t('uUser') + '</th><th>' + t('uProvider') + '</th><th>' + t('uRole') + '</th><th>' + t('uJoined') + '</th><th>' + t('uSeen') + '</th></tr></thead><tbody>' + (rows || '<tr><td colspan="5">' + t('none') + '</td></tr>') + '</tbody></table></div>' +
+      '<h2 style="font-size:1rem;margin:24px 0 8px">' + t('uInternal') + '</h2><div class="admin-scroll"><table class="admin-table"><thead><tr><th>' + t('uUser') + '</th><th>' + t('uEmail') + '</th><th>' + t('uRole') + '</th><th>' + t('uLastLogin') + '</th></tr></thead><tbody>' + (irows || '<tr><td colspan="4">' + t('none') + '</td></tr>') + '</tbody></table></div>';
+  }
+  function renderContent() {
+    var d = state.content; if (!d) return;
+    $('adm-content-note').textContent = d.canModerate ? t('modNote') : t('readonly');
+    var dis = d.canModerate ? '' : ' disabled';
+    $('adm-content').innerHTML = '<div class="admin-scroll"><table class="admin-table"><thead><tr><th>' + t('cTitle') + '</th><th>' + t('cAuthor') + '</th><th>' + t('cState') + '</th><th>' + t('cActions') + '</th></tr></thead><tbody>' +
+      (d.items || []).map(function (g) {
+        return '<tr><td><a href="' + esc(g.href) + '">' + esc(g.title || g.slug) + '</a><div class="admin-note">' + esc(g.kind) + ' · ' + fmtDate(g.date) + '</div></td><td>@' + esc(g.handle || '') + '</td><td>' +
+          (g.hidden ? '<span class="admin-pill off">' + t('hiddenS') + '</span>' : '<span class="admin-pill">' + t('visible') + '</span>') + (g.pinned ? ' <span class="admin-pill ok">' + t('pinned') + '</span>' : '') +
+          '</td><td><div class="admin-actions">' +
+          '<button type="button" class="admin-btn" data-mod="' + (g.pinned ? 'unpin' : 'pin') + '" data-slug="' + esc(g.slug) + '"' + dis + '>' + t(g.pinned ? 'unpin' : 'pin') + '</button>' +
+          '<button type="button" class="admin-btn" data-mod="' + (g.hidden ? 'unhide' : 'hide') + '" data-slug="' + esc(g.slug) + '"' + dis + '>' + t(g.hidden ? 'unhide' : 'hide') + '</button>' +
+          (g.by ? '<button type="button" class="admin-btn" data-mod="reset" data-slug="' + esc(g.slug) + '"' + dis + '>' + t('reset') + '</button>' : '') +
+          '</div></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  function achTitle(a) {
+    var v = a.title; if (typeof v === 'function') { try { v = v(); } catch (e) { v = a.id; } }
+    return v || a.id;
+  }
+  function renderAch() {
+    var d = state.ach; var A = window.ATM_ACHIEVEMENTS; if (!d) return;
+    var list = (A && A.achievements) || [];
+    var rows = list.map(function (a) {
+      var n = d.counts[a.id] || 0; var pct = d.total ? Math.round(n * 1000 / d.total) / 10 : 0;
+      return '<tr><td>' + esc(achTitle(a)) + '</td><td>' + n + '</td><td><div style="display:flex;align-items:center;gap:8px"><div class="admin-bar"><i style="width:' + pct + '%"></i></div>' + pct + '%</div></td></tr>';
+    }).join('');
+    $('adm-ach').innerHTML = '<p class="admin-note">' + esc(t('aBased', d.total)) + '</p><div class="admin-scroll"><table class="admin-table"><thead><tr><th>' + t('aBadge') + '</th><th>' + t('aUsers') + '</th><th>' + t('aShare') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  function renderLinks() {
+    var links = [
+      ['https://dash.cloudflare.com/', 'lCf', 'lCfd'],
+      ['https://github.com/ATM-Software-Labs', 'lGh', 'lGhd'],
+      ['https://entra.microsoft.com/', 'lEntra', 'lEntrad'],
+      ['https://myapps.microsoft.com/?tenantId=686bb631-e5e4-4fbf-bf55-835dd40fb263', 'lMyApps', 'lMyAppsd'],
+      ['/', 'lSite', 'lSited']
+    ];
+    $('adm-links').innerHTML = links.map(function (l) { return '<a href="' + l[0] + '"' + (l[0].charAt(0) === '/' ? '' : ' target="_blank" rel="noopener"') + '>' + esc(t(l[1])) + '<small>' + esc(t(l[2])) + '</small></a>'; }).join('');
+  }
+  function renderAll() { applyStatic(); renderStats(); renderUsers(); renderContent(); renderAch(); renderLinks(); }
+
+  function loadAch() {
+    if (state.ach || !state.users) return;
+    var users = (state.users.users || []).slice(0, 40);
+    var counts = {};
+    Promise.all(users.map(function (u) {
+      return fetch('/api/user/achievements?handle=' + encodeURIComponent(u.handle), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+        (d && (d.unlocked || d.achievements || []) || []).forEach(function (id) { if (typeof id === 'object') id = id.id; counts[id] = (counts[id] || 0) + 1; });
+      }).catch(function () {});
+    })).then(function () { state.ach = { total: users.length, counts: counts }; renderAch(); });
+  }
+  function show(tab) {
+    state.tab = tab;
+    Array.prototype.forEach.call(document.querySelectorAll('.admin-tab'), function (b) { var on = b.getAttribute('data-tab') === tab; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+    Array.prototype.forEach.call(document.querySelectorAll('.admin-panel'), function (p) { p.hidden = p.getAttribute('data-panel') !== tab; });
+    if (tab === 'ach') loadAch();
+  }
+  function toast(msg) { if (window.atmToast) window.atmToast(msg); }
+
+  function init() {
+    applyStatic(); renderLinks();
+    api('/api/admin/me').then(function (d) {
+      if (!d.ok) {
+        $('adm-gate').hidden = false;
+        if (d.__status === 404) { $('adm-ms-login').hidden = true; document.querySelector('[data-adm="gateText"]').textContent = t('unavailable'); }
+        return;
+      }
+      state.me = d.user; $('adm-app').hidden = false; applyStatic();
+      api('/api/admin/stats').then(function (s) { if (s.ok) { state.stats = s; renderStats(); } });
+      api('/api/admin/users').then(function (u) { if (u.ok) { state.users = u; renderUsers(); if (state.tab === 'ach') loadAch(); } });
+      api('/api/admin/content').then(function (c) { if (c.ok) { state.content = c; renderContent(); } });
+    }).catch(function () { $('adm-gate').hidden = false; });
+    document.addEventListener('click', function (e) {
+      var tab = e.target.closest('.admin-tab'); if (tab) { show(tab.getAttribute('data-tab')); return; }
+      var b = e.target.closest('[data-mod]'); if (!b || b.disabled) return;
+      b.disabled = true;
+      api('/api/admin/content', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-ATM-Admin': '1' }, body: JSON.stringify({ slug: b.getAttribute('data-slug'), action: b.getAttribute('data-mod') }) })
+        .then(function (r) {
+          if (!r.ok) { toast(t('failed')); b.disabled = false; return; }
+          toast(t('saved'));
+          return api('/api/admin/content').then(function (c) { if (c.ok) { state.content = c; renderContent(); } });
+        });
+    });
+    document.addEventListener('atm:lang', renderAll);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

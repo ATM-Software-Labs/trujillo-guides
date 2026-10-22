@@ -458,3 +458,36 @@ html body .achievement-toast .toast-kicker { color: var(--accent, #10B981) !impo
 html body .achievement-toast .toast-title { color: var(--text-primary) !important; }
 html body .achievement-toast .toast-tier-pill { background: transparent !important; color: var(--text-muted) !important; border: 0 !important; padding: 0 !important; }
 html body .ticker-badge { white-space: nowrap; display: inline-block; }
+
+/* Panel interno: sobrio, neutros y verde */
+html body .admin-container { max-width: 1040px; }
+html body .admin-card { border: 1px solid var(--border); background: var(--bg-card); border-radius: 14px; padding: 20px; margin: 18px 0; }
+html body .admin-card h2 { font-size: 1.05rem; margin: 0 0 8px; }
+html body .admin-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text); font: inherit; font-size: .88rem; cursor: pointer; text-decoration: none; }
+html body .admin-btn:hover { background: var(--bg-card-hover); }
+html body .admin-btn.primary { background: var(--accent-pill); color: var(--accent-pill-text); border-color: transparent; }
+html body .admin-btn[disabled] { opacity: .45; cursor: not-allowed; }
+html body .admin-tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); margin: 18px 0; }
+html body .admin-tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 10px 12px; font: inherit; font-size: .9rem; cursor: pointer; }
+html body .admin-tab.is-active { color: var(--text); border-bottom-color: var(--accent); }
+html body .admin-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+html body .admin-stat { border: 1px solid var(--border); background: var(--bg-card); border-radius: 12px; padding: 14px; }
+html body .admin-stat b { display: block; font-size: 1.6rem; font-weight: 650; }
+html body .admin-stat span { color: var(--muted); font-size: .82rem; }
+html body .admin-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+html body .admin-table th, html body .admin-table td { text-align: start; padding: 9px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+html body .admin-table th { color: var(--muted); font-weight: 500; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+html body .admin-scroll { overflow-x: auto; }
+html body .admin-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-inline-end: 8px; background: var(--bg-card-hover); display: inline-block; }
+html body .admin-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .74rem; border: 1px solid var(--border); color: var(--muted); }
+html body .admin-pill.ok { color: var(--accent); border-color: var(--accent-soft); background: var(--accent-soft); }
+html body .admin-pill.off { color: #e4a4a4; }
+html body .admin-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+html body .admin-note { color: var(--muted); font-size: .86rem; }
+html body .admin-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+html body .admin-links a { display: block; border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: var(--text); text-decoration: none; background: var(--bg-card); }
+html body .admin-links a:hover { background: var(--bg-card-hover); }
+html body .admin-links small { display: block; color: var(--muted); margin-top: 4px; }
+html body .admin-bar { height: 6px; border-radius: 4px; background: var(--bg-card-hover); overflow: hidden; min-width: 80px; }
+html body .admin-bar i { display: block; height: 100%; background: var(--accent); }
+html body .auth-provider-ms[hidden] { display: none !important; }

@@ -100,6 +100,7 @@
         '<a href="/u/@' + encodeURIComponent(cleanHandle) + '" role="menuitem">' + (window.atmTx ? window.atmTx('Mi perfil') : 'Mi perfil') + '</a>' +
         '<a href="/settings" role="menuitem" data-i18n="settings">' + (t('settings') || 'Configuración') + '</a>' +
         '<a href="/achievements" role="menuitem">' + (window.atmTx ? window.atmTx('Logros') : 'Logros') + '</a>' +
+        (me.role === 'internal' ? '<a href="/admin" role="menuitem" class="account-menu-admin">' + (window.atmTx ? window.atmTx('Panel interno') : 'Panel interno') + '</a>' : '') +
         '<a href="https://trujillomingorance.com/" role="menuitem">trujillomingorance.com</a>' +
         '<button type="button" role="menuitem" data-logout>' + ((window.atmT && window.atmT('logoutFull')) || 'Cerrar sesión') + '</button>' +
         '</div></div>';
@@ -278,6 +279,10 @@
       '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>' +
       '</svg>' +
       '<span data-tx="Continuar con X">Continuar con X</span>' +
+      '</button>' +
+      '<button type="button" class="auth-social-btn auth-provider-ms" id="btn-login-ms" data-oauth="microsoft" hidden>' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 2h9.5v9.5H2zM12.5 2H22v9.5h-9.5zM2 12.5h9.5V22H2zM12.5 12.5H22V22h-9.5z" opacity=".9"/></svg>' +
+      '<span data-tx="Continuar con Microsoft">Continuar con Microsoft</span>' +
       '</button>' +
       '</div>' +
       '<div class="auth-divider"><span data-tx="o continúa con correo">o continúa con correo</span></div>' +
@@ -500,6 +505,18 @@
         e.preventDefault();
         window.location.href = '/api/auth/x?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search);
       });
+    }
+
+    var msBtn = document.getElementById('btn-login-ms');
+    if (msBtn) {
+      msBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = '/api/auth/microsoft?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search);
+      });
+      // Solo visible si el servidor tiene configurado Microsoft Entra ID
+      fetch('/api/auth/providers', { cache: 'default' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (p) {
+        if (p && p.microsoft) msBtn.hidden = false;
+      }).catch(function () {});
     }
 
     var forgotBtn = document.getElementById('auth-forgot-pwd');
