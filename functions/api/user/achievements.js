@@ -44,7 +44,7 @@ export async function onRequestGet(context) {
     try {
       sessionUser = await verifyJwt(rawToken, env.JWT_SECRET || DEFAULT_JWT_SECRET);
       if (!sessionUser) {
-        sessionUser = JSON.parse(atob(rawToken));
+        sessionUser = null; // sin firma válida no hay sesión
       }
       if (sessionUser && sessionUser.exp && sessionUser.exp < Math.floor(Date.now() / 1000)) {
         sessionUser = null;

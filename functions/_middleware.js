@@ -30,7 +30,7 @@ export async function onRequest(context) {
   if (path === '/robots.txt' || path === '/sitemap.xml') {
     const origin = 'https://' + (isSavingsDomain ? 'savings' : 'guides') + '.trujillomingorance.com';
     if (path === '/robots.txt') {
-      const body = 'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /settings\nDisallow: /write\n\nSitemap: ' + origin + '/sitemap.xml\n';
+      const body = 'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /settings\nDisallow: /write\nDisallow: /admin\n\nSitemap: ' + origin + '/sitemap.xml\n';
       return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=3600', ...SECURITY_HEADERS } });
     }
     const urls = [{ loc: origin + '/' }];
@@ -118,6 +118,8 @@ export async function onRequest(context) {
   const isPrivatePath =
     path.startsWith('/api/auth/') ||
     path.startsWith('/api/user/') ||
+    path.startsWith('/api/admin/') ||
+    path === '/admin' || path === '/admin.html' ||
     path === '/settings' || path.startsWith('/settings/') ||
     path === '/write' || path.startsWith('/write/') ||
     path === '/login';

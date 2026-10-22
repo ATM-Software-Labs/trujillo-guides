@@ -1,4 +1,5 @@
 import { signJwt, verifyJwt, hashPassword, verifyPassword, generateRandomString, generatePkce } from '../../lib/crypto-auth.js';
+import { msConfig, msStart, msReadStateCookie, msExchange, msVerifyIdToken, msIsAdmin } from '../../lib/entra.js';
 import { sendWelcomeEmail, sendVerificationEmail, sendPasswordResetEmail } from '../../lib/resend.js';
 
 const escHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -19,14 +20,14 @@ function authErrorPage({ title, message, detail = '', retryHref = '', status = 4
   // Página neutra (trujillomingorance.com): también la ven usuarios de otros subdominios, p. ej. rewrite.
   if (back && retryHref === '/api/auth/x') retryHref = '/api/auth/x?returnTo=' + encodeURIComponent(back);
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escHtml(title)} · trujillomingorance.com</title><link rel="stylesheet" href="/css/nutri.css?v=202610132155"><link rel="icon" href="/favicon.svg">
+<title>${escHtml(title)} · trujillomingorance.com</title><link rel="stylesheet" href="/css/nutri.css?v=202610221330"><link rel="icon" href="/favicon.svg">
 <script src="/js/theme-boot.js"></script></head>
 <body class="auth-error-page"><main class="auth-error-card">
 <img src="/avatar.png" alt="" width="40" height="40" class="auth-error-logo">
 <h1 data-tx="${escHtml(title)}">${escHtml(title)}</h1><p data-tx="${escHtml(message)}">${escHtml(message)}</p>
 <div class="auth-error-actions">${retryHref ? `<a class="auth-error-btn primary" href="${escHtml(retryHref)}" data-tx="Reintentar">Reintentar</a>` : ''}<a class="auth-error-btn" href="${escHtml(back || '/')}" data-tx="Volver">Volver</a></div>
 ${detail ? `<details><summary data-tx="Detalle técnico">Detalle técnico</summary><pre>${escHtml(detail)}</pre></details>` : ''}
-</main><script src="/js/i18n.js"></script><script>try{window.atmApplyUi(window.atmLang())}catch(e){}</script></body></html>`;
+</main><script src="/js/i18n.js?v=202610221330"></script><script>try{window.atmApplyUi(window.atmLang())}catch(e){}</script></body></html>`;
   return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
@@ -83,6 +84,95 @@ export async function onRequest(context) {
       cookies[p.substring(0, idx).trim()] = decodeURIComponent(p.substring(idx + 1).trim());
     }
   });
+
+  // ==========================================
+  // 0. PROVEEDORES DISPONIBLES (para mostrar u ocultar botones en todos los sitios)
+  // ==========================================
+  const ms = msConfig(env);
+  if (path === '/api/auth/providers') {
+    const origin = request.headers.get('Origin') || '';
+    const h = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60', 'Vary': 'Origin' };
+    try { const o = new URL(origin); if (o.protocol === 'https:' && (o.hostname === 'trujillomingorance.com' || o.hostname.endsWith('.trujillomingorance.com'))) h['Access-Control-Allow-Origin'] = origin; } catch (_) {}
+    return new Response(JSON.stringify({ google: true, x: true, email: true, microsoft: ms.enabled }), { status: 200, headers: h });
+  }
+
+  // ==========================================
+  // 0b. MICROSOFT ENTRA ID (solo el tenant de ATM Software Labs)
+  // ==========================================
+  const GUIDES_HOST = 'guides.trujillomingorance.com';
+  const msRedirectUri = isMainDomain ? `https://${GUIDES_HOST}/api/auth/microsoft/callback` : `${appOrigin}/api/auth/microsoft/callback`;
+  if (path === '/api/auth/microsoft' && request.method === 'GET') {
+    if (!ms.enabled) {
+      return authErrorPage({ title: 'Microsoft no está disponible', message: 'El acceso con Microsoft todavía no está activado. Usa Google, X o tu correo.', status: 404, back: allowedReturn(url.searchParams.get('returnTo') || '') });
+    }
+    // El flujo vive en guides para que la cookie de estado y el callback coincidan
+    if (isMainDomain && hostname !== GUIDES_HOST) {
+      return Response.redirect(`https://${GUIDES_HOST}/api/auth/microsoft${url.search}`, 302);
+    }
+    const returnTo = allowedReturn(url.searchParams.get('returnTo') || '') || '/';
+    const { location, cookie } = await msStart(ms, { redirectUri: msRedirectUri, returnTo, jwtSecret });
+    const headers = new Headers({ Location: location, 'Cache-Control': 'private, no-cache, no-store, must-revalidate' });
+    headers.append('Set-Cookie', `ms_oauth=${cookie}; HttpOnly; Secure; SameSite=Lax; Path=/api/auth/microsoft; Max-Age=600`);
+    return new Response(null, { status: 302, headers });
+  }
+
+  if (path === '/api/auth/microsoft/callback' && request.method === 'GET') {
+    const st = await msReadStateCookie(cookies.ms_oauth, jwtSecret);
+    const back = (st && allowedReturn(st.r)) || '/';
+    const clearState = 'ms_oauth=; HttpOnly; Secure; SameSite=Lax; Path=/api/auth/microsoft; Max-Age=0';
+    const fail = (code, status = 400) => {
+      const r = authErrorPage({ title: 'No se ha podido entrar con Microsoft', message: 'Solo pueden entrar cuentas de ATM Software Labs. Vuelve a intentarlo o usa otro método.', detail: `Código: ${code}`, retryHref: '/api/auth/microsoft?returnTo=' + encodeURIComponent(back), status, back });
+      r.headers.append('Set-Cookie', clearState);
+      return r;
+    };
+    if (!ms.enabled) return fail('provider_disabled', 404);
+    if (url.searchParams.get('error')) return fail(String(url.searchParams.get('error')).slice(0, 60));
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state');
+    if (!st || !code || !state || state !== st.s) return fail('state_mismatch');
+    let claims;
+    try {
+      const tokens = await msExchange(ms, { code, codeVerifier: st.v, redirectUri: msRedirectUri });
+      claims = await msVerifyIdToken(ms, tokens.id_token, { nonce: st.n });
+    } catch (e) {
+      return fail(String((e && (e.code ? 'token_' + e.code : e.message)) || 'error').slice(0, 60), 401);
+    }
+    const mail = String(claims.email || claims.preferred_username || '').toLowerCase();
+    let handle = (mail.split('@')[0] || String(claims.name || 'user')).toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 24) || 'user';
+    if (env.BOT_MEMORY) {
+      try {
+        const prev = JSON.parse((await env.BOT_MEMORY.get(`profile:${handle}`)) || 'null');
+        if (prev && prev.provider && prev.provider !== 'microsoft') handle = (handle.slice(0, 21) + '_ms');
+      } catch (_) {}
+    }
+    const sessionPayload = {
+      id: 'ms:' + (claims.oid || claims.sub),
+      email: mail,
+      name: claims.name || handle,
+      avatar: '',
+      handle,
+      role: 'internal',
+      admin: msIsAdmin(ms, claims),
+      provider: 'microsoft',
+      tid: String(claims.tid).toLowerCase(),
+      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 12)
+    };
+    const sessionToken = await signJwt(sessionPayload, jwtSecret);
+    await savePublicProfile(env, sessionPayload);
+    if (env.BOT_MEMORY) {
+      try {
+        await env.BOT_MEMORY.put(`user:ms:${claims.oid || claims.sub}`, JSON.stringify({ id: sessionPayload.id, name: sessionPayload.name, email: mail, handle, role: 'internal', admin: sessionPayload.admin, provider: 'microsoft', lastLoginAt: new Date().toISOString() }));
+      } catch (_) {}
+    }
+    const headers = new Headers({ Location: back, 'Cache-Control': 'private, no-cache, no-store, must-revalidate' });
+    const maxAge = 60 * 60 * 12;
+    for (const n of ['session_token', 'atm_session', 'ta_session']) {
+      if (domainAttr) headers.append('Set-Cookie', `${n}=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Domain=.trujillomingorance.com; Max-Age=${maxAge}`);
+      headers.append('Set-Cookie', `${n}=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${maxAge}`);
+    }
+    headers.append('Set-Cookie', clearState);
+    return new Response(null, { status: 302, headers });
+  }
 
   // ==========================================
   // 1. REDIRECCIÓN A GOOGLE OAUTH
@@ -516,7 +606,9 @@ export async function onRequest(context) {
           email: user.email || '',
           avatar: customAvatar || user.avatar || user.picture || '',
           handle: cleanHandle,
-          role: user.role || 'author'
+          role: user.role || 'author',
+          provider: user.provider || '',
+          admin: user.role === 'internal' && user.admin === true
         }
       }), {
         status: 200,

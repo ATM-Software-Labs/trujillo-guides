@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel interno · ATM Software Labs</title>
+  <link rel="icon" href="/favicon.svg?v=20261020a" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico?v=20261020a" sizes="any">
+  <meta name="theme-color" content="#09090b">
+  <script src="/js/theme-boot.js?v=202610202345"></script>
+  <link rel="stylesheet" href="/css/tokens.css?v=202610202345">
+  <link rel="stylesheet" href="/style.css?v=202610202345">
+  <link rel="stylesheet" href="/css/community.css?v=202610202345">
+  <link rel="stylesheet" href="/css/nutri.css?v=202610221330">
+</head>
+<body class="docs-body admin-body">
+  <header class="docs-topbar">
+    <a href="/" class="brand">
+      <img src="/avatar.png" alt="" class="brand-avatar" width="28" height="28">
+      <span>ATM Docs</span>
+    </a>
+    <div class="topbar-actions"></div>
+  </header>
+  <main class="guide-container admin-container" id="admin-root" aria-live="polite">
+    <div class="settings-heading-group">
+      <p class="kicker" data-adm="kicker">ATM SOFTWARE LABS · INTERNO</p>
+      <h1 data-adm="title">Panel interno</h1>
+      <p class="lede" id="adm-who"></p>
+    </div>
+    <section id="adm-gate" class="admin-card" hidden>
+      <h2 data-adm="gateTitle">Acceso restringido</h2>
+      <p data-adm="gateText">Este panel es solo para cuentas de ATM Software Labs. Entra con tu cuenta de Microsoft del trabajo.</p>
+      <a class="admin-btn primary" id="adm-ms-login" href="/api/auth/microsoft?returnTo=%2Fadmin" data-adm="gateBtn">Continuar con Microsoft</a>
+    </section>
+    <div id="adm-app" hidden>
+      <nav class="admin-tabs" role="tablist">
+        <button type="button" role="tab" class="admin-tab is-active" data-tab="stats" data-adm="tabStats">Resumen</button>
+        <button type="button" role="tab" class="admin-tab" data-tab="users" data-adm="tabUsers">Usuarios</button>
+        <button type="button" role="tab" class="admin-tab" data-tab="content" data-adm="tabContent">Contenido</button>
+        <button type="button" role="tab" class="admin-tab" data-tab="ach" data-adm="tabAch">Logros</button>
+        <button type="button" role="tab" class="admin-tab" data-tab="links" data-adm="tabLinks">Enlaces</button>
+      </nav>
+      <section class="admin-panel" data-panel="stats"><div class="admin-stats" id="adm-stats"></div></section>
+      <section class="admin-panel" data-panel="users" hidden><div id="adm-users"></div></section>
+      <section class="admin-panel" data-panel="content" hidden><p class="admin-note" id="adm-content-note"></p><div id="adm-content"></div></section>
+      <section class="admin-panel" data-panel="ach" hidden><div id="adm-ach"></div></section>
+      <section class="admin-panel" data-panel="links" hidden><div class="admin-links" id="adm-links"></div></section>
+    </div>
+  </main>
+  <script src="/js/i18n.js?v=202610221330"></script>
+  <script src="/js/flags.js?v=202610202345"></script>
+  <script src="/js/chrome.js?v=202610221330"></script>
+  <script src="/js/achievements.js?v=202610202345"></script>
+  <script src="/js/admin.js?v=202610221330"></script>
+</body>
+</html>
